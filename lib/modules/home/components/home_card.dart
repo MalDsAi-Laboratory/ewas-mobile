@@ -22,35 +22,38 @@ class FeatureCards extends StatelessWidget {
               fontSize: 16.sp),
         ),
         SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FeatureCardItem(
-              text: "Sell your E-waste",
-              child: Image.asset(
-                'assets/images/sell_ewaste.jpg',
-                width: 46.w,
-                height: 72.h,
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              FeatureCardItem(
+                text: "Sell your E-waste",
+                child: Image.asset(
+                  'assets/images/sell_ewaste.jpg',
+                  width: 25.w,
+                  height: 30.h,
+                ),
+                onTap: () {
+                  Get.to(() => CategoriesPage());
+                },
               ),
-              onTap: () {
-                Get.to(() => CategoriesPage());
-              },
-            ),
-            SizedBox(
-              width: 10.w,
-            ),
-            FeatureCardItem(
-              text: "Locate Recyclers ",
-              child: Image.asset(
-                'assets/images/recycler_for_seller.png',
-                width: 84.w,
-                height: 72.h,
+              SizedBox(
+                width: 10.w,
               ),
-              onTap: () {
-                Get.to(() => OpenStreetMapPage());
-              },
-            )
-          ],
+              FeatureCardItem(
+                text: "Locate Recyclers ",
+                child: Image.asset(
+                  'assets/images/recycler_for_seller.png',
+                  width: 25.w,
+                  height: 30.h,
+                ),
+                onTap: () {
+                  Get.to(() => OpenStreetMapPage());
+                },
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -70,29 +73,23 @@ class FeatureCardItem extends StatelessWidget {
       onTap: onTap ?? () {},
       borderRadius: BorderRadius.circular(15.r),
       child: Container(
-        width: 171.w,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
               color: const Color.fromRGBO(201, 201, 201, 1.0), width: 0.7),
         ),
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 10.h,
-            ),
             child,
             SizedBox(
               height: 10.h,
             ),
             BricolageText(
               text: text,
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(
-              height: 10.h,
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
             ),
           ],
         ),

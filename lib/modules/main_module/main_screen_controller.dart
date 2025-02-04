@@ -11,7 +11,7 @@ class MainScreenController extends GetxController {
     CategoriesPage(
       isAccessFromBottomTab: true,
     ),
-    HomePage(),
+    OrderScreen(),
     HomePage(),
     HomePage(),
   ];
