@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:simple_ui/modules/submit_item/submit_item_controller.dart';
+import 'package:simple_ui/ui_utils/button_widgets.dart';
+
+class ImagePickerWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GetBuilder<SubmitItemController>(builder: (controller) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextandIconButton(
+                buttonText: 'Add Images',
+                onTap: controller.pickMultipleImages,
+                iconData: Icons.photo_library,
+                isBtnActive: controller.images.length < 5 ? true : false,
+              ),
+              SizedBox(
+                width: 10.w,
+              ),
+              TextandIconButton(
+                  buttonText: 'Capture Images',
+                  onTap: () {
+                    controller.pickImage(ImageSource.camera);
+                  },
+                  iconData: Icons.camera_alt,
+                  isBtnActive: controller.images.length < 5 ? true : false),
+            ],
+          );
+        }),
+        SizedBox(
+          height: 20.h,
+        ),
+        GetBuilder<SubmitItemController>(builder: (controller) {
+          return Wrap(
+            spacing: 8.0.w,
+            runSpacing: 8.w,
+            children: List.generate(controller.images.length, (index) {
+              return Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      controller.images[index],
+                      width: 80.w,
+                      height: 80.w,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => controller.removeImage(index),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 16.r,
+                      ),
+                    ),
+                  )
+                ],
+              );
+            }),
+          );
+        })
+      ],
+    );
+  }
+}

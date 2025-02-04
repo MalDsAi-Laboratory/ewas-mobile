@@ -5,9 +5,16 @@ environment:
   sdk: ">=2.19.0 <3.0.0"
 
 dependencies:
+  carousel_slider: ^5.0.0
+  cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   flutter_map: ^7.0.2
+  flutter_screenutil: ^5.9.3
+  flutter_svg: ^2.0.17
+  get: ^4.6.6
+  google_fonts: ^6.2.1
+  image_picker: ^1.1.2
   latlong2: ^0.9.1
   location: ^8.0.0
 
@@ -24,4 +31,5 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/image.png
+    - assets/images/
+    - assets/icons/
