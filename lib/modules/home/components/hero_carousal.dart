@@ -4,21 +4,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
-import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class HeroCarousal extends StatelessWidget {
-  const HeroCarousal({super.key});
+  final String title;
+  final List<String> imgList;
+  const HeroCarousal({super.key, required this.title, required this.imgList});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SectionHeader(
-          color: const Color.fromARGB(255, 241, 241, 241),
-          text: "EXPLORE",
+        Divider(
+          thickness: 0.3,
+          color: Colors.grey,
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: 16.h),
         InkWell(
           onTap: () {
             Get.to(() => CategoriesPage());
@@ -39,7 +40,9 @@ class HeroCarousal extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CarousalWidget(),
+                CarousalWidget(
+                  imgList: imgList,
+                ),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25.r),
@@ -51,7 +54,7 @@ class HeroCarousal extends StatelessWidget {
                     children: [
                       SizedBox(height: 8.h),
                       BricolageText(
-                        text: 'Sell your E-waste',
+                        text: title,
                         style: TextStyle(
                             fontSize: 18.sp, fontWeight: FontWeight.bold),
                       ),
@@ -102,16 +105,13 @@ class HeroCarousal extends StatelessWidget {
 }
 
 class CarousalWidget extends StatefulWidget {
+  final List<String> imgList;
+  CarousalWidget({Key? key, required this.imgList}) : super(key: key);
   @override
   _CarousalWidgetState createState() => _CarousalWidgetState();
 }
 
 class _CarousalWidgetState extends State<CarousalWidget> {
-  final List<String> imgList = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
-    'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
-  ];
-
   int _currentIndex = 0; // Track the current index of the carousel
 
   @override
@@ -146,7 +146,7 @@ class _CarousalWidgetState extends State<CarousalWidget> {
                   });
                 },
               ),
-              items: imgList.map((item) {
+              items: widget.imgList.map((item) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Container(
@@ -169,8 +169,8 @@ class _CarousalWidgetState extends State<CarousalWidget> {
           padding: EdgeInsets.only(bottom: 16.0.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: imgList.map((url) {
-              int index = imgList.indexOf(url);
+            children: widget.imgList.map((url) {
+              int index = widget.imgList.indexOf(url);
               return Container(
                 width: _currentIndex == index ? 16.0.w : 5.0.w,
                 height: 5.w,

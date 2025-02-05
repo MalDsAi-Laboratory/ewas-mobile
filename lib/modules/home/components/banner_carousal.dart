@@ -38,15 +38,15 @@ class CarousalWidget extends StatefulWidget {
 }
 
 class _CarousalWidgetState extends State<CarousalWidget> {
-  final List<String> imgList = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
-    'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
-  ];
-
   int _currentIndex = 0; // Track the current index of the carousel
 
   @override
   Widget build(BuildContext context) {
+    final List<String> imgList = [
+      'https://static.vecteezy.com/system/resources/previews/002/372/705/non_2x/abstract-green-geometric-banner-background-free-vector.jpg',
+      'https://e7.pngegg.com/pngimages/869/370/png-clipart-low-polygon-background-green-banner-low-poly-materialized.png',
+    ];
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -62,7 +62,6 @@ class _CarousalWidgetState extends State<CarousalWidget> {
                 height: 200.h, // Height of the carousel
                 autoPlay: true, // Auto-play the carousel
                 enlargeCenterPage: false, // Enlarge the center image
-
                 aspectRatio: 1, // Aspect ratio of the images
                 autoPlayCurve: Curves.fastOutSlowIn, // Animation curve
                 enableInfiniteScroll: true, // Infinite scrolling

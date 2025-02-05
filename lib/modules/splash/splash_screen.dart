@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'package:simple_ui/models/user_model.dart';
 import 'dart:async';
-import 'package:simple_ui/modules/main_module/main_screen.dart';
+import 'package:simple_ui/modules/main_module/app_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,11 +26,18 @@ class _SplashScreenState extends State<SplashScreen>
     )..forward();
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
-
+    UserModel user = UserModel(
+        id: '1',
+        name: 'honey bansal',
+        email: 'savage@gmail.com',
+        role: UserRole.recycler);
     // Navigate to the home screen after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => AppScreen()),
+        MaterialPageRoute(
+            builder: (_) => AppScreen(
+                  user: user,
+                )),
       );
     });
   }
