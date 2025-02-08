@@ -22,132 +22,243 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// class MainScreen extends StatefulWidget {
-//   @override
-//   _MainScreenState createState() => _MainScreenState();
-// }
+// import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
 
-// class _MainScreenState extends State<MainScreen> {
-//   int _selectedIndex = 2;
+// void main() => runApp(MyApp());
 
-//   // Footer Tab Index Mapping
-//   final List<Widget> _tabContents = [
-//     Center(
-//       child: Text(
-//         'Categories Tab',
-//         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//       ),
-//     ),
-//     Center(
-//       child: Text(
-//         'Create Order Tab',
-//         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//       ),
-//     ),
-//     HomePage(),
-//     Center(
-//       child: Text(
-//         'Notifications Tab',
-//         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//       ),
-//     ),
-//   ];
-
-//   void _onTabSelected(int index) {
-//     setState(() {
-//       _selectedIndex = index;
-//     });
-//   }
-
+// class MyApp extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: PreferredSize(
-//         preferredSize: Size.fromHeight(60),
-//         child: Header(),
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
 //       ),
-//       body: _tabContents[_selectedIndex],
-//       bottomNavigationBar: BottomNavigationBar(
-//         currentIndex: _selectedIndex,
-//         onTap: _onTabSelected,
-//         type: BottomNavigationBarType.fixed,
-//         items: [
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.category),
-//             label: 'Categories',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.add_circle),
-//             label: 'Create Order',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.home),
-//             label: 'Home',
-//           ),
-//           BottomNavigationBarItem(
-//             icon: Icon(Icons.notifications),
-//             label: 'Notifications',
-//           ),
-//         ],
+//       home: Scaffold(
+//         body: SafeArea(
+//           child: MyHomePage(),
+//         ),
 //       ),
 //     );
 //   }
 // }
 
-// class HomePage extends StatelessWidget {
+// const kWhite = Colors.white;
+
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   final _items = <Order>[
+//     Order(
+//       id: 'id-1',
+//       date: DateTime.now(),
+//       number: 12,
+//       intemNo: 20,
+//       orderTotal: 20000,
+//       status: OrderStatus.inProgress,
+//     ),
+//     Order(
+//       id: 'id-2',
+//       date: DateTime.now().subtract(Duration(days: 10)),
+//       number: 10,
+//       intemNo: 2,
+//       orderTotal: 5000,
+//       status: OrderStatus.delivered,
+//     ),
+//   ];
+//   DateFormat dateFormate = DateFormat.yMd();
+
 //   @override
 //   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Expanded(
-//           flex: 2,
-//           child: CarouselWithSlider(),
-//         ),
-//         Expanded(
-//           flex: 3,
-//           child: Center(
+//     return ListView.separated(
+//       separatorBuilder: (context, index) => Divider(
+//         indent: 10.0,
+//         endIndent: 10.0,
+//         color: Colors.black,
+//       ),
+//       itemCount: _items.length,
+//       itemBuilder: (context, index) {
+//         var item = _items[index];
+
+//         return Dismissible(
+//           direction: DismissDirection.startToEnd,
+//           key: Key(item.id),
+//           onDismissed: (dir) {
+//             setState(() => _items.removeAt(index));
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(
+//                 content: Text(dir == DismissDirection.startToEnd
+//                     ? '$item removed.'
+//                     : '$item liked.'),
+//                 action: SnackBarAction(
+//                   label: 'UNDO',
+//                   onPressed: () {
+//                     setState(() => _items.insert(index, item));
+//                   },
+//                 ),
+//               ),
+//             );
+//           },
+//           background: Container(
+//             color: Colors.red,
+//             padding: EdgeInsets.all(10),
 //             child: Column(
 //               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     print('Sell your E-Waste button pressed');
-//                   },
-//                   child: Text('Sell your E-Waste'),
-//                   style: ElevatedButton.styleFrom(
-//                     minimumSize: Size(200, 50),
-//                   ),
+//               children: <Widget>[
+//                 Icon(
+//                   Icons.time_to_leave,
+//                   color: kWhite,
 //                 ),
-//                 SizedBox(height: 20),
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     print('View E-Waste Around You button pressed');
-//                   },
-//                   child: Text('View E-Waste Around You'),
-//                   style: ElevatedButton.styleFrom(
-//                     minimumSize: Size(200, 50),
-//                   ),
+//                 SizedBox(
+//                   height: 10,
 //                 ),
-//                 SizedBox(height: 20),
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => OpenStreetMapPage(),
-//                       ),
-//                     );
-//                   },
-//                   child: Text('Open Map'),
-//                   style: ElevatedButton.styleFrom(
-//                     minimumSize: Size(200, 50),
-//                   ),
-//                 ),
+//                 Text(
+//                   'Cancel \n Order',
+//                   style: TextStyle(color: kWhite),
+//                 )
 //               ],
 //             ),
+//             alignment: Alignment.centerLeft,
 //           ),
+//           child: ListTile(
+//             title: Container(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: <Widget>[
+//                   Row(
+//                     mainAxisSize: MainAxisSize.max,
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: <Widget>[
+//                       Text(
+//                         'Order No: ${item.number}',
+//                       ),
+//                       Text('items no: ${item.intemNo}'),
+//                     ],
+//                   ),
+//                   SizedBox(
+//                     height: 20,
+//                   ),
+//                   Row(
+//                     mainAxisSize: MainAxisSize.max,
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: <Widget>[
+//                       Text(
+//                         'Order Total: ${item.orderTotal}',
+//                       ),
+//                       Text(dateFormate.format(item.date)),
+//                     ],
+//                   ),
+//                   SizedBox(
+//                     height: 20,
+//                   ),
+//                   StatusBar(
+//                     status: item.status,
+//                   )
+//                 ],
+//               ),
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+// class StatusBar extends StatelessWidget {
+//   const StatusBar({Key? key, required this.status}) : super(key: key);
+
+//   final OrderStatus status;
+//   final List<String> titles = const [
+//     'waiting',
+//     'in progress',
+//     'delivering',
+//     'delivered'
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     var checkedCount = _getCheckedCount(status);
+//     var elements = List<bool>.generate(4, (i) => i < checkedCount);
+
+//     return Column(
+//       children: <Widget>[
+//         Stack(
+//           children: [
+//             Positioned(
+//               top: 10,
+//               left: 10,
+//               right: 10,
+
+//               child: Container(
+//                 height: 4,
+//                 color: Colors.black38,
+//               ),
+//             ),
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: elements
+//                   .asMap()
+//                   .map((index, isChecked) => MapEntry(
+//                         index,
+//                         Column(
+//                           children: <Widget>[
+//                             Container(
+//                               decoration: BoxDecoration(
+//                                 shape: BoxShape.circle,
+//                                 color: Colors.deepOrange,
+//                               ),
+//                               alignment: Alignment.center,
+//                               width: 20,
+//                               height: 20,
+//                               child: isChecked ? Icon(Icons.check) : null,
+//                             ),
+//                             Text(titles[index])
+//                           ],
+//                         ),
+//                       ))
+//                   .values
+//                   .toList(),
+//             ),
+//           ],
 //         ),
 //       ],
 //     );
 //   }
+
+//   _getCheckedCount(OrderStatus status) {
+//     switch (status) {
+//       case OrderStatus.waiting:
+//         return 1;
+//       case OrderStatus.inProgress:
+//         return 2;
+//       case OrderStatus.deliviring:
+//         return 3;
+//       case OrderStatus.delivered:
+//         return 4;
+//     }
+//   }
 // }
+
+// class Order {
+//   final String id;
+//   final int number;
+//   final int intemNo;
+//   final int orderTotal;
+//   final DateTime date;
+//   final OrderStatus status;
+
+//   Order({
+//     required this.id,
+//     required this.number,
+//     required this.intemNo,
+//     required this.orderTotal,
+//     required this.date,
+//     required this.status,
+//   });
+// }
+
+// enum OrderStatus { waiting, inProgress, deliviring, delivered }

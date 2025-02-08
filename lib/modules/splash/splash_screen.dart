@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
         id: '1',
         name: 'honey bansal',
         email: 'savage@gmail.com',
-        role: UserRole.recycler);
+        role: UserRole.seller);
     // Navigate to the home screen after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(

@@ -1,18 +1,29 @@
 import 'package:get/get.dart';
 import 'package:simple_ui/models/order_model.dart';
 
-class OrderController extends GetxController {
-  var orders = <Order>[
-    Order(eid: "EWAS0000001", orderStatus: "Pending", assignee: "Alice"),
-    Order(eid: "EWAS0000002", orderStatus: "Delivered", assignee: "Bob"),
-    Order(
+class AllOrderController extends GetxController {
+  var orders = <OrderModel>[
+    OrderModel(
+      eid: "EWAS0000003",
+      firstName: "Alice",
+      lastName: "Brown",
+      address: "789 Pine Ave, TX",
+      assignee: "Charlie",
+      emailId: "alice.brown@example.com",
+      orderStatus: "Shipped",
+      orderDate: DateTime(2024, 1, 30),
+      orderDetails: "Order contains electronic gadgets.",
+    ),
+    OrderModel(eid: "EWAS0000001"),
+    OrderModel(eid: "EWAS0000002", orderStatus: "Delivered", assignee: "Bob"),
+    OrderModel(
         eid: "EWAS0000003",
         orderStatus: "Shipped",
         assignee: "CharlieCharlieCharlieCharlieCharlieCharlie"),
-    Order(eid: "EWAS0000002", orderStatus: "Delivered", assignee: "Bob"),
+    OrderModel(eid: "EWAS0000002", orderStatus: "Delivered", assignee: "Bob"),
   ].obs;
 
-  var filteredOrders = <Order>[].obs;
+  var filteredOrders = <OrderModel>[].obs;
   var searchId = ''.obs;
   var searchAssignee = ''.obs;
   var selectedStatus = ''.obs;

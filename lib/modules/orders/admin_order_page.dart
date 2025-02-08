@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
-import 'package:simple_ui/modules/orders/order_controller.dart';
+import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 // Admin Order Screen with Sidebar Filters
 class AdminOrderScreen extends StatelessWidget {
-  final OrderController orderController = Get.put(OrderController());
+  final AllOrderController orderController = Get.put(AllOrderController());
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,7 @@ class AdminOrderScreen extends StatelessWidget {
                       ),
                       DataColumn(
                           label: Container(
-                        constraints: BoxConstraints(minWidth: size.width * 0.2),
+                        constraints: BoxConstraints(minWidth: size.width * 0.3),
                         child: BricolageText(
                             text: "Order ID",
                             style: TextStyle(
@@ -94,48 +96,59 @@ class AdminOrderScreen extends StatelessWidget {
                         .entries
                         .map((entry) {
                       int index = entry.key + 1; // Index starts from 1
-                      Order order = entry.value;
+                      OrderModel order = entry.value;
                       return DataRow(cells: [
-                        DataCell(BricolageText(
-                          text: index.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15.sp, fontWeight: FontWeight.w500),
-                        )),
-                        DataCell(BricolageText(
-                          text: order.eid ?? "",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 15.sp, fontWeight: FontWeight.w500),
-                        )),
                         DataCell(
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(order.orderStatus!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: BricolageText(
-                              text: order.orderStatus!,
+                            BricolageText(
+                              text: index.toString(),
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                        DataCell(SizedBox(
-                          width: 130.w,
-                          child: BricolageText(
-                            text: order.assignee!,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 15.sp, fontWeight: FontWeight.w500),
-                          ),
-                        )),
+                                  fontSize: 15.sp, fontWeight: FontWeight.w500),
+                            ), onTap: () {
+                          showOrderDetailScreen(context, entry.key);
+                        }),
+                        DataCell(
+                            BricolageText(
+                              text: order.eid ?? "",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 15.sp, fontWeight: FontWeight.w500),
+                            ), onTap: () {
+                          showOrderDetailScreen(context, entry.key);
+                        }),
+                        DataCell(
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: getStatusColor(order.orderStatus ?? ""),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: BricolageText(
+                                text: order.orderStatus ?? "No Order",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ), onTap: () {
+                          showOrderDetailScreen(context, entry.key);
+                        }),
+                        DataCell(
+                            SizedBox(
+                              width: 130.w,
+                              child: BricolageText(
+                                text: order.assignee ?? "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ), onTap: () {
+                          showOrderDetailScreen(context, entry.key);
+                        }),
                       ]);
                     }).toList(),
                   ),
@@ -146,18 +159,5 @@ class AdminOrderScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case "Pending":
-        return Colors.orange;
-      case "Shipped":
-        return Colors.blue;
-      case "Delivered":
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
   }
 }

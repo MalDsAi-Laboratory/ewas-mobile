@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
+import 'package:simple_ui/modules/locate_recyclers/locate_recylers.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
@@ -22,7 +23,7 @@ class HeroCarousal extends StatelessWidget {
         SizedBox(height: 16.h),
         InkWell(
           onTap: () {
-            Get.to(() => CategoriesPage());
+            Get.to(() => OpenStreetMapPage());
           },
           child: Container(
             decoration: BoxDecoration(

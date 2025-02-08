@@ -6,7 +6,7 @@ import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/admin_home_screen.dart';
 import 'package:simple_ui/modules/home/delivery_home_screen.dart';
 import 'package:simple_ui/modules/home/recycler_home_screen.dart';
-import 'package:simple_ui/modules/home/seller_screen.dart';
+import 'package:simple_ui/modules/home/seller_home_screen.dart';
 import 'package:simple_ui/modules/orders/admin_order_page.dart';
 import 'package:simple_ui/modules/orders/all_order_page.dart';
 

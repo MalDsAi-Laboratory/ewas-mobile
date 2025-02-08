@@ -1,15 +1,15 @@
-class Order {
+class OrderModel {
   final String? eid;
-  final String? firstName;
-  final String? lastName;
-  final String? address;
-  final String? assignee;
-  final String? emailId;
-  final String? orderStatus;
-  final DateTime? orderDate;
-  final String? orderDetails;
+  String? firstName;
+  String? lastName;
+  String? address;
+  String? assignee;
+  String? emailId;
+  String? orderStatus;
+  DateTime? orderDate;
+  String? orderDetails;
 
-  Order({
+  OrderModel({
     this.eid,
     this.firstName,
     this.lastName,

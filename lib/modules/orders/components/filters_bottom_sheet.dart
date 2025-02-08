@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:simple_ui/modules/orders/order_controller.dart';
+import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/dropdown_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
@@ -33,7 +34,7 @@ class OrderFiltersWidget extends StatelessWidget {
       child: Container(
         width: MediaQuery.sizeOf(context).width,
         padding: const EdgeInsets.all(12.0),
-        child: GetBuilder<OrderController>(builder: (orderController) {
+        child: GetBuilder<AllOrderController>(builder: (orderController) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -83,7 +84,13 @@ class OrderFiltersWidget extends StatelessWidget {
                 value: orderController.selectedStatus.value.isEmpty
                     ? "All"
                     : orderController.selectedStatus.value,
-                items: ["All", "Pending", "Shipped", "Delivered"],
+                items: [
+                  "All",
+                  OrderStatus.orderPlaced,
+                  OrderStatus.preparing,
+                  OrderStatus.onTheWay,
+                  OrderStatus.delivered
+                ],
                 onChanged: (value) {
                   orderController.selectedStatus.value = value ?? '';
                   orderController.filterOrders();
