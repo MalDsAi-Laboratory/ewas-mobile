@@ -1,16 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:simple_ui/modules/categories/categories.dart';
-import 'package:simple_ui/modules/locate_recyclers/locate_recylers.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HeroCarousal extends StatelessWidget {
   final String title;
   final List<String> imgList;
-  const HeroCarousal({super.key, required this.title, required this.imgList});
+  final void Function()? onTap;
+  const HeroCarousal(
+      {super.key, required this.title, required this.imgList, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,7 @@ class HeroCarousal extends StatelessWidget {
         ),
         SizedBox(height: 16.h),
         InkWell(
-          onTap: () {
-            Get.to(() => OpenStreetMapPage());
-          },
+          onTap: onTap ?? null,
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -152,12 +150,9 @@ class _CarousalWidgetState extends State<CarousalWidget> {
                   builder: (BuildContext context) {
                     return Container(
                       width: MediaQuery.of(context).size.width,
-                      // margin: EdgeInsets.symmetric(horizontal: 5.0.w),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(item),
-                          fit: BoxFit.cover,
-                        ),
+                      child: CachedNetworkImage(
+                        imageUrl: item,
+                        fit: BoxFit.cover,
                       ),
                     );
                   },

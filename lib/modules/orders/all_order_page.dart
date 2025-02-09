@@ -3,57 +3,14 @@
 // import 'package:get/get.dart';
 // import 'package:intl/intl.dart';
 // import 'package:simple_ui/models/order_model.dart';
+// import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 // import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 // // Order Model
 
-// // Order Controller using GetX
-// class OrderController extends GetxController {
-//   var orders = <Order>[
-//     Order(
-//       eid: "EWAS0000001",
-//       firstName: "John",
-//       lastName: "Doe",
-//       address: "123 Main Street, NY",
-//       assignee: "Alice",
-//       emailId: "john.doe@example.com",
-//       orderStatus: "Pending",
-//       orderDate: DateTime(2024, 2, 1),
-//       orderDetails: "Order contains electronic gadgets.",
-//     ),
-//     Order(
-//       eid: "EWAS0000002",
-//       firstName: "Jane",
-//       lastName: "Smith",
-//       address: "456 Elm Street, CA",
-//       assignee: "Bob",
-//       emailId: "jane.smith@example.com",
-//       orderStatus: "Delivered",
-//       orderDate: DateTime(2024, 1, 28),
-//       orderDetails: "Order contains electronic gadgets.",
-//     ),
-//     Order(
-//       eid: "EWAS0000003",
-//       firstName: "Alice",
-//       lastName: "Brown",
-//       address: "789 Pine Ave, TX",
-//       assignee: "Charlie",
-//       emailId: "alice.brown@example.com",
-//       orderStatus: "Shipped",
-//       orderDate: DateTime(2024, 1, 30),
-//       orderDetails: "Order contains electronic gadgets.",
-//     ),
-//   ].obs;
-
-//   List<Order> get ongoingOrders =>
-//       orders.where((order) => order.orderStatus != "Delivered").toList();
-//   List<Order> get completedOrders =>
-//       orders.where((order) => order.orderStatus == "Delivered").toList();
-// }
-
 // // Order Screen with Tabs
 // class OrderScreen extends StatelessWidget {
-//   final OrderController orderController = Get.put(OrderController());
+//   final AllOrderController orderController = Get.put(AllOrderController());
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -106,7 +63,7 @@
 // // Order List Widget
 // class OrderList extends StatelessWidget {
 //   final String orderType;
-//   final OrderController orderController = Get.find();
+//   final AllOrderController orderController = Get.find();
 
 //   OrderList({required this.orderType});
 

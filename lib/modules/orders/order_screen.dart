@@ -57,7 +57,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
       final userRole = mainScreenController.user!.role;
 
       return Container(
-        height: size.height - 110.h,
+        // height: size.height - 110.h,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         width: size.width,
         child: SingleChildScrollView(
@@ -327,8 +327,9 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                                       color: const Color.fromARGB(
                                           255, 124, 124, 124)),
                                 ),
+                                SizedBox(height: 30.h),
+                                OrderStatusTimeline(currentStep: 2),
                                 SizedBox(height: 20.h),
-                                OrderStatusTimeline(currentStep: 2)
                               ],
                             )
                         ],

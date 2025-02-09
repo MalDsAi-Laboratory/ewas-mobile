@@ -119,19 +119,22 @@ class TextandIconButton extends StatelessWidget {
   final IconData iconData;
   final VoidCallback onTap;
   final bool isBtnActive;
-
+  final bool? iconInFront;
+  final double? height;
   const TextandIconButton({
     super.key,
     required this.buttonText,
     required this.onTap,
     required this.iconData,
     this.isBtnActive = false,
+    this.iconInFront = true,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45.w,
+      height: height ?? 45.w,
       decoration: BoxDecoration(
         gradient: RadialGradient(
           colors: isBtnActive
@@ -148,7 +151,7 @@ class TextandIconButton extends StatelessWidget {
       child: Center(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             backgroundColor:
                 Colors.transparent, // Make the button itself transparent
             shadowColor: const Color.fromARGB(
@@ -162,14 +165,20 @@ class TextandIconButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  iconData,
-                  size: 25.r,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: 10.w,
-                ),
+                iconInFront!
+                    ? Row(
+                        children: [
+                          Icon(
+                            iconData,
+                            size: 25.r,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 10.w,
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
                 BricolageText(
                   text: buttonText,
                   style: TextStyle(
@@ -179,6 +188,20 @@ class TextandIconButton extends StatelessWidget {
                           : const Color.fromARGB(255, 135, 135, 135),
                       fontWeight: FontWeight.bold),
                 ),
+                !iconInFront!
+                    ? Row(
+                        children: [
+                          SizedBox(
+                            width: 10.w,
+                          ),
+                          Icon(
+                            iconData,
+                            size: 25.r,
+                            color: Colors.white,
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
               ],
             ),
           ),
