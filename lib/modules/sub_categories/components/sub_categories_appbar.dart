@@ -56,5 +56,5 @@ class SubCategoriesAppBar extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 24.h);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 34.h);
 }

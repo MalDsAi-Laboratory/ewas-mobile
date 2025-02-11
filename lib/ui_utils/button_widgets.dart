@@ -69,7 +69,7 @@ class RadialGradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45.w,
+      height: 50.w,
       width: MediaQuery.sizeOf(context).width - 35.w,
       decoration: BoxDecoration(
         gradient: RadialGradient(

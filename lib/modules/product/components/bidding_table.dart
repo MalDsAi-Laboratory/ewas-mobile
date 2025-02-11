@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,6 +13,8 @@ class BiddingTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    const int userId = 3; // User ID to be highlighted
+
     return Container(
       width: size.width,
       decoration: BoxDecoration(
@@ -20,10 +24,32 @@ class BiddingTableWidget extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: GetBuilder<ProductController>(builder: (controller) {
-          // Sort the list by priceTag in descending order
-          List<BiddingModel> sortedBids = List.from(controller.biddingList)
-            ..sort((a, b) => (b.priceTag ?? 0).compareTo(a.priceTag ?? 0));
+          // Create a list to hold both the bid and its index
+          List<Map<String, dynamic>> indexedBids = [];
 
+          // Separate the user's row from the rest
+          BiddingModel? userBid;
+          // List<BiddingModel> otherBids = [];
+
+          // log('myBidindex: ${userBid!.toJson()}');
+
+          // Sort the remaining bids by priceTag in descending order
+          controller.biddingList
+              .sort((a, b) => (b.priceTag ?? 0).compareTo(a.priceTag ?? 0));
+          // Add the sorted bids with their index
+          for (int i = 0; i < controller.biddingList.length; i++) {
+            indexedBids.add({
+              "bid": controller.biddingList[i],
+              "index": i + 1
+            }); // i + 1 to start index from 1
+          }
+          int myIndex = indexedBids.indexWhere(
+              (bid) => bid['bid'].recycler == "Safe Energy Recycle");
+          userBid = indexedBids[myIndex]['bid'];
+          indexedBids.removeAt(myIndex);
+
+          // Add the user's bid at the top if found
+          indexedBids.insert(0, {"bid": userBid, "index": myIndex + 1});
           return DataTable(
             columnSpacing: size.width * 0.06,
             border:
@@ -51,40 +77,51 @@ class BiddingTableWidget extends StatelessWidget {
                 ),
               ),
             ],
-            rows: sortedBids.asMap().entries.map((entry) {
-              int index = entry.key + 1; // Index starts from 1
-              BiddingModel bidding = entry.value;
-              return DataRow(cells: [
-                DataCell(BricolageText(
-                  text: index.toString(),
-                  textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
-                )),
-                DataCell(SizedBox(
-                  width: 200.w,
-                  child: BricolageText(
-                    text: bidding.recycler ?? "",
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.ellipsis,
+            rows: indexedBids.map((entry) {
+              int index = entry['index']; // Index starts from 1
+              BiddingModel bidding = entry['bid'];
+              bool isUser = bidding.recycler == "Safe Energy Recycle";
+
+              return DataRow(
+                color: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    return isUser
+                        ? const Color.fromARGB(255, 33, 243, 65)
+                            .withOpacity(0.2)
+                        : null;
+                  },
+                ),
+                cells: [
+                  DataCell(BricolageText(
+                    text: index.toString(),
+                    textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
-                  ),
-                )),
-                DataCell(Padding(
-                  padding: EdgeInsets.only(left: 8.w),
-                  child: BricolageText(
-                    text: bidding.priceTag != null
-                        ? bidding.priceTag.toString()
-                        : "0",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.left,
-                    style:
-                        TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
-                  ),
-                )),
-              ]);
+                  )),
+                  DataCell(SizedBox(
+                    width: 200.w,
+                    child: BricolageText(
+                      text: bidding.recycler ?? "",
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.w500),
+                    ),
+                  )),
+                  DataCell(Padding(
+                    padding: EdgeInsets.only(left: 8.w),
+                    child: BricolageText(
+                      text: bidding.priceTag != null
+                          ? bidding.priceTag.toString()
+                          : "0",
+                      maxLines: 2,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.w500),
+                    ),
+                  )),
+                ],
+              );
             }).toList(),
           );
         }),

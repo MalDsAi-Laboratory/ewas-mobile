@@ -19,6 +19,7 @@ class MainScreenController extends GetxController {
   bool isSettingUpApp = true;
 
   final List<Widget> pages = [
+    // SellerHomePage(),
     CategoriesPage(
       isAccessFromBottomTab: true,
     ),

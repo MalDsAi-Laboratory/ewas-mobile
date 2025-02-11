@@ -27,6 +27,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    Get.delete<CategoriesController>(force: true);
+  }
+
+  @override
   Widget build(BuildContext context) {
     CategoriesController controller = Get.find<CategoriesController>();
     return Scaffold(
@@ -34,34 +40,42 @@ class _CategoriesPageState extends State<CategoriesPage> {
       appBar: CategoriesAppBar(
         isAccessFromBottomTab: widget.isAccessFromBottomTab,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // Keep content at the top
-              children: [
-                // Categories Grid
-                Obx(() => GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.w,
-                          mainAxisSpacing: 16.h,
-                          childAspectRatio: 0.8),
-                      itemCount: controller.filteredCategories.length,
-                      itemBuilder: (context, index) {
-                        return CategoryCard(
-                            category: controller.filteredCategories[index]);
-                      },
-                    )),
-                SizedBox(height: 20.h),
-              ],
-            ),
-          ),
+      body: Obx(
+        () => SafeArea(
+          child: controller.isCategoriesLoading.value
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment:
+                          MainAxisAlignment.start, // Keep content at the top
+                      children: [
+                        // Categories Grid
+                        Obx(() => GridView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 16.w,
+                                      mainAxisSpacing: 16.h,
+                                      childAspectRatio: 0.8),
+                              itemCount: controller.filteredCategories.length,
+                              itemBuilder: (context, index) {
+                                return CategoryCard(
+                                    category:
+                                        controller.filteredCategories[index]);
+                              },
+                            )),
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  ),
+                ),
         ),
       ),
     );
@@ -70,7 +84,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
 // Widget to display each category card
 class CategoryCard extends StatelessWidget {
-  final Category category;
+  final CategoryModel category;
   const CategoryCard({required this.category});
 
   @override
@@ -98,7 +112,7 @@ class CategoryCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0.w),
               child: BricolageText(
-                text: category.title,
+                text: category.category ?? "",
                 softWrap: true,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -110,16 +124,16 @@ class CategoryCard extends StatelessWidget {
               height: 15.h,
             ),
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
-                child: Image.network(
-                  category.imageUrl,
-                  fit: BoxFit.cover,
+              child: Padding(
+                padding: EdgeInsets.all(8.0.r),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25.r),
+                  child: Image.network(
+                    category.imagePath ?? "",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 8.h,
             )
           ],
         ),

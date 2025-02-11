@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:simple_ui/models/category_model.dart';
+import 'package:simple_ui/models/sub_category_model.dart';
+import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/sub_categories/components/sub_categories_appbar.dart';
-import 'package:simple_ui/modules/sub_categories/sub_categories_controller.dart';
 import 'package:simple_ui/modules/submit_item/submit_item.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class SubCategoriesPage extends StatelessWidget {
+class SubCategoriesPage extends StatefulWidget {
   final bool? isAccessFromBottomTab;
   const SubCategoriesPage({
     Key? key,
     this.isAccessFromBottomTab = false,
   }) : super(key: key);
+
+  @override
+  State<SubCategoriesPage> createState() => _SubCategoriesPageState();
+}
+
+class _SubCategoriesPageState extends State<SubCategoriesPage> {
+  @override
+  void initState() {
+    super.initState();
+    Get.find<CategoriesController>().fetchSubCategories();
+  }
+
+  @override
+  void dispose() {
+    Get.find<CategoriesController>().isSubCategoriesLoading.value = true;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final SubCategoriesController controller =
-        Get.put(SubCategoriesController());
+    final CategoriesController controller = Get.find<CategoriesController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -24,30 +41,12 @@ class SubCategoriesPage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // Keep content at the top
-              children: [
-                // Categories Grid
-                Obx(() => GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.w,
-                          mainAxisSpacing: 16.h,
-                          childAspectRatio: 0.8),
-                      itemCount: controller.allCategories.length,
-                      itemBuilder: (context, index) {
-                        return SubCategoryCard(
-                            category: controller.allCategories[index]);
-                      },
-                    )),
-                SizedBox(height: 20.h),
-              ],
-            ),
+          child: Obx(
+            () => controller.isSubCategoriesLoading.value
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : CategoriesMainComponent(),
           ),
         ),
       ),
@@ -55,9 +54,46 @@ class SubCategoriesPage extends StatelessWidget {
   }
 }
 
+class CategoriesMainComponent extends StatelessWidget {
+  const CategoriesMainComponent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final CategoriesController controller = Get.find<CategoriesController>();
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // Categories Grid
+          Obx(() => GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.w,
+                    mainAxisSpacing: 16.h,
+                    childAspectRatio: 0.8),
+                itemCount: controller
+                    .allSubCategories[controller.selectedCategory!.category!]!
+                    .length,
+                itemBuilder: (context, index) {
+                  return SubCategoryCard(
+                      category: controller.allSubCategories[
+                          controller.selectedCategory!.category!]![index]);
+                },
+              )),
+          SizedBox(height: 20.h),
+        ],
+      ),
+    );
+  }
+}
+
 // Widget to display each category card
 class SubCategoryCard extends StatelessWidget {
-  final Category category;
+  final SubCategoryModel category;
 
   const SubCategoryCard({required this.category});
 
@@ -84,7 +120,7 @@ class SubCategoryCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0.w),
               child: BricolageText(
-                text: category.title,
+                text: category.productName ?? "",
                 softWrap: true,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -101,7 +137,7 @@ class SubCategoryCard extends StatelessWidget {
                 child: Image.network(
                   // height: 160.h,
                   // width: 160.h,
-                  category.imageUrl,
+                  category.imagePath ?? "",
                   fit: BoxFit.contain,
                 ),
               ),
