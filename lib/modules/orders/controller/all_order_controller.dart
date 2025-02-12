@@ -27,6 +27,7 @@ class AllOrderController extends GetxController {
   var searchId = ''.obs;
   var searchAssignee = ''.obs;
   var selectedStatus = ''.obs;
+  int filterCount = 0;
 
   @override
   void onInit() {
@@ -35,6 +36,20 @@ class AllOrderController extends GetxController {
   }
 
   void filterOrders() {
+    if (searchId.value.isNotEmpty) {
+      filterCount = 1;
+    } else {
+      if (searchAssignee.isNotEmpty) {
+        filterCount = 1;
+      } else {
+        if (selectedStatus.isNotEmpty) {
+          filterCount = 1;
+        } else {
+          filterCount = filterCount > 0 ? filterCount - 1 : filterCount;
+        }
+      }
+    }
+    update();
     filteredOrders.assignAll(
       orders.where((order) {
         return (searchId.isEmpty ||
@@ -56,6 +71,8 @@ class AllOrderController extends GetxController {
     searchId.value = '';
     searchAssignee.value = '';
     selectedStatus.value = '';
+    filterCount = 0;
+    update();
     filterOrders();
   }
 }

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/dropdown_widgets.dart';
@@ -12,7 +14,7 @@ showFilterBottomSheet(context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    // showDragHandle: true,
+    showDragHandle: true,
     backgroundColor: Colors.white,
     sheetAnimationStyle: AnimationStyle(
       curve: Curves.easeInOut,
@@ -33,14 +35,11 @@ class OrderFiltersWidget extends StatelessWidget {
       ),
       child: Container(
         width: MediaQuery.sizeOf(context).width,
-        padding: const EdgeInsets.all(12.0),
+        padding: EdgeInsets.only(bottom: 12.h, left: 12.w, right: 12.w),
         child: GetBuilder<AllOrderController>(builder: (orderController) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 10.h,
-              ),
               Row(
                 children: [
                   SizedBox(
@@ -64,20 +63,26 @@ class OrderFiltersWidget extends StatelessWidget {
                 icon: Icons.search,
                 onChanged: (value) {
                   orderController.searchId.value = value;
+
                   orderController.filterOrders();
                 },
               ),
-              SizedBox(height: 20.h),
-              _buildFilterField(
-                label: "Filter by Assignee",
-                hintText: "eg. Rahul",
-                initialValue: orderController.searchAssignee.value,
-                icon: Icons.person,
-                onChanged: (value) {
-                  orderController.searchAssignee.value = value;
-                  orderController.filterOrders();
-                },
-              ),
+              (Get.find<MainScreenController>().user!.role == UserRole.admin ||
+                      Get.find<MainScreenController>().user!.role ==
+                          UserRole.deliveryAgent)
+                  ? Column(children: [
+                      SizedBox(height: 20.h),
+                      _buildFilterField(
+                          label: "Filter by Assignee",
+                          hintText: "eg. Rahul",
+                          initialValue: orderController.searchAssignee.value,
+                          icon: Icons.person,
+                          onChanged: (value) {
+                            orderController.searchAssignee.value = value;
+                            orderController.filterOrders();
+                          })
+                    ])
+                  : SizedBox(),
               SizedBox(height: 20.h),
               _buildDropdownFilter(
                 label: "Filter by Status",

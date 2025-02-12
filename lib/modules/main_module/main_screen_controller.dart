@@ -81,7 +81,6 @@ class MainScreenController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     pages = getRoleBasedScreen(user!);
     isSettingUpApp = false;

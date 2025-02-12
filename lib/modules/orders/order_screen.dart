@@ -57,7 +57,7 @@ class _OrderScreenState extends State<OrderScreen> {
       final userRole = mainScreenController.user!.role;
 
       return Container(
-        // height: size.height - 110.h,
+        height: size.height - 110.h,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         width: size.width,
         child: SingleChildScrollView(
@@ -331,7 +331,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                 OrderStatusTimeline(currentStep: 2),
                                 SizedBox(height: 20.h),
                               ],
-                            )
+                            ),
                         ],
                       ),
               ],
