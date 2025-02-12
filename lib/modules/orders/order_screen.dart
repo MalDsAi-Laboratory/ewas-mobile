@@ -25,19 +25,19 @@ void showOrderDetailScreen(context, orderIndex) {
       ),
       backgroundColor: Colors.white,
       builder: (context) {
-        return AdminOrderScreen(orderIndex: orderIndex);
+        return OrderScreen(orderIndex: orderIndex);
       });
 }
 
-class AdminOrderScreen extends StatefulWidget {
+class OrderScreen extends StatefulWidget {
   final int orderIndex;
-  const AdminOrderScreen({super.key, required this.orderIndex});
+  const OrderScreen({super.key, required this.orderIndex});
 
   @override
-  _AdminOrderScreenState createState() => _AdminOrderScreenState();
+  _OrderScreenState createState() => _OrderScreenState();
 }
 
-class _AdminOrderScreenState extends State<AdminOrderScreen> {
+class _OrderScreenState extends State<OrderScreen> {
   bool isEditing = false;
 
   @override

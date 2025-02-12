@@ -5,8 +5,6 @@ import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
 import 'package:simple_ui/modules/product/all_product_screen.dart';
-import 'package:simple_ui/modules/product/product_bidding_screen.dart';
-import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class RecyclerHomePage extends StatelessWidget {
   @override

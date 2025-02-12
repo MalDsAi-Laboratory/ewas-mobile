@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/auth/login_page.dart';
+import 'package:simple_ui/modules/cart/cart_page.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/admin_home_screen.dart';
 import 'package:simple_ui/modules/home/delivery_home_screen.dart';
@@ -18,7 +19,7 @@ class MainScreenController extends GetxController {
   /// isSettingUpApp: Processing the role based setup of app
   bool isSettingUpApp = true;
 
-  final List<Widget> pages = [
+  List<Widget> pages = [
     // SellerHomePage(),
     CategoriesPage(
       isAccessFromBottomTab: true,
@@ -26,7 +27,8 @@ class MainScreenController extends GetxController {
     // OrderScreen(),
     AdminOrderScreen(),
     SellerHomePage(),
-    SellerHomePage(),
+    // SellerHomePage(),
+    CartPage()
   ];
 
   void changePage(int index) {
@@ -37,13 +39,41 @@ class MainScreenController extends GetxController {
   getRoleBasedScreen(UserModel user) {
     switch (user.role) {
       case UserRole.admin:
-        return AdminHomePage();
+        return [
+          CategoriesPage(
+            isAccessFromBottomTab: true,
+          ),
+          AdminOrderScreen(),
+          AdminHomePage(),
+          CartPage()
+        ];
       case UserRole.deliveryAgent:
-        return DeliveryHomePage();
+        return [
+          CategoriesPage(
+            isAccessFromBottomTab: true,
+          ),
+          AdminOrderScreen(),
+          DeliveryHomePage(),
+          CartPage()
+        ];
       case UserRole.seller:
-        return SellerHomePage();
+        return [
+          CategoriesPage(
+            isAccessFromBottomTab: true,
+          ),
+          AllOrderScreen(),
+          SellerHomePage(),
+          CartPage()
+        ];
       case UserRole.recycler:
-        return RecyclerHomePage();
+        return [
+          CategoriesPage(
+            isAccessFromBottomTab: true,
+          ),
+          AllOrderScreen(),
+          RecyclerHomePage(),
+          CartPage()
+        ];
       default:
         return LoginPage();
     }
@@ -53,7 +83,7 @@ class MainScreenController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    pages[2] = getRoleBasedScreen(user!);
+    pages = getRoleBasedScreen(user!);
     isSettingUpApp = false;
     update();
   }

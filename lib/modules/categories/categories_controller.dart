@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/category_model.dart';
 import 'package:simple_ui/models/sub_category_model.dart';
-import 'package:simple_ui/services/apis/product_catalogue_apis/product_catalogue_api.dart';
+import 'package:simple_ui/services/apis/product_catalogue/product_catalogue_api.dart';
 
 class CategoriesController extends GetxController {
   var allCategories = <CategoryModel>[].obs;
@@ -21,6 +21,11 @@ class CategoriesController extends GetxController {
 
   setSelectedCategory(selectedCategory) {
     this.selectedCategory = selectedCategory;
+    update();
+  }
+
+  setSelectedSubCategory(selectedSubCategory) {
+    this.selectedSubCategory = selectedSubCategory;
     update();
   }
 

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -125,10 +123,9 @@ class SubmitItemPage extends StatelessWidget {
                   ],
                 ),
                 GetBuilder<SubmitItemController>(builder: (controller) {
-                  log("dfd ${controller.volumeController.text}");
                   return RadialGradientButton(
                     buttonText: 'Submit',
-                    onTap: () {},
+                    onTap: controller.submitProduct,
                     isBtnActive:
                         controller.volumeController.text.trim().isNotEmpty &&
                             controller.images.isNotEmpty,

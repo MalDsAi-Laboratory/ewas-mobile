@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:retry/retry.dart';
-import 'package:simple_ui/services/apis/product_catalogue_apis/product_catalogue_api_services.dart';
+import 'package:simple_ui/services/apis/product_catalogue/product_catalogue_api_services.dart';
 
 Dio dio =
     ProductCatalogueDioSingleton.instance; // Create an instance of DioSingleton

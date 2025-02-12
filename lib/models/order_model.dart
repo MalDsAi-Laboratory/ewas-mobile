@@ -20,4 +20,35 @@ class OrderModel {
     this.orderDate,
     this.orderDetails,
   });
+
+  // Convert JSON to OrderModel
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    return OrderModel(
+      eid: json['eid'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      address: json['address'],
+      assignee: json['assignee'],
+      emailId: json['emailId'],
+      orderStatus: json['orderStatus'],
+      orderDate:
+          json['orderDate'] != null ? DateTime.parse(json['orderDate']) : null,
+      orderDetails: json['orderDetails'],
+    );
+  }
+
+  // Convert OrderModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'eid': eid,
+      'firstName': firstName,
+      'lastName': lastName,
+      'address': address,
+      'assignee': assignee,
+      'emailId': emailId,
+      'orderStatus': orderStatus,
+      'orderDate': orderDate?.toIso8601String(),
+      'orderDetails': orderDetails,
+    };
+  }
 }

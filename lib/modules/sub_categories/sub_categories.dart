@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -101,6 +102,7 @@ class SubCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        Get.find<CategoriesController>().setSelectedSubCategory(category);
         Get.to(() => SubmitItemPage());
       },
       overlayColor:
@@ -129,21 +131,19 @@ class SubCategoryCard extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 15.h,
+              height: 10.h,
             ),
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
-                child: Image.network(
-                  // height: 160.h,
-                  // width: 160.h,
-                  category.imagePath ?? "",
-                  fit: BoxFit.contain,
+              child: Padding(
+                padding: EdgeInsets.all(8.0.r),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25.r),
+                  child: CachedNetworkImage(
+                    imageUrl: category.imagePath ?? "",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 8.h,
             )
           ],
         ),
