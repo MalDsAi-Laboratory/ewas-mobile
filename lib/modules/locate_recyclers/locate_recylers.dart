@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,26 +26,26 @@ class _OpenStreetMapPageState extends State<OpenStreetMapPage> {
   double _zoom = 10.0; // Default zoom level
   final MapController _mapController = MapController();
   final List<Recycler> recyclers = [
-    Recycler(
-      name: "Green Earth Recycler",
-      address: "123 Eco Street, New Delhi",
-      contact: "+91 9876543210",
-      location: LatLng(
-        28.6901247,
-        77.1344339,
-      ),
-    ),
+    // Recycler(
+    //   name: "Green Earth Recycler",
+    //   address: "123 Eco Street, New Delhi",
+    //   contact: "+91 9876543210",
+    //   location: LatLng(
+    //     28.6901247,
+    //     77.1344339,
+    //   ),
+    // ),
     Recycler(
       name: "Recycle Hub",
       address: "456 Clean Road, New Delhi",
       contact: "+91 8765432109",
-      location: LatLng(28.694020, 77.114437),
+      location: LatLng(37.428541, -122.130557),
     ),
     Recycler(
       name: "Eco Waste Solutions",
       address: "789 Green Lane, New Delhi",
       contact: "+91 7654321098",
-      location: LatLng(28.687660, 77.145465),
+      location: LatLng(37.384326, -122.075663),
     ),
   ];
 
@@ -112,134 +113,151 @@ class _OpenStreetMapPageState extends State<OpenStreetMapPage> {
     }
   }
 
-  void _showRecyclerDetails(Recycler recycler) {
-    setState(() {
-      _selectedRecycler = recycler;
-      _getRoute(recycler.location);
-    });
+  // void _showRecyclerDetails(Recycler recycler) {
+  //   setState(() {
+  //     _selectedRecycler = recycler;
+  //     _getRoute(recycler.location);
+  //   });
 
-    // showModalBottomSheet(
-    //   context: context,
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    //   ),
-    //   builder: (context) => );
+  // }
+
+  void _recenterView() {
+    if (_currentLocation != null) {
+      _mapController.move(_currentLocation!, 10);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          leading: AppBarButton(),
-          title: BricolageText(
-            text: 'Locate Recyclers',
-            style: TextStyle(fontSize: 20.sp),
-          )),
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.r)),
-                    height: 1.sh * 0.85,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.r),
-                      child: FlutterMap(
-                        mapController: _mapController,
-                        options: MapOptions(
-                          initialCenter: _currentLocation ?? LatLng(0, 0),
-                          initialZoom: _zoom,
-                          minZoom: 5.0,
+          : Stack(
+              children: [
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: _currentLocation ?? LatLng(0, 0),
+                    initialZoom: _zoom,
+                    keepAlive: true,
+                    minZoom: 5.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: ['a', 'b', 'c'],
+                    ),
+                    // 🟢 Add Circle Layer for User Location Radius
+                    if (_currentLocation != null)
+                      CircleLayer(
+                        circles: [
+                          CircleMarker(
+                            point: _currentLocation!,
+                            radius:
+                                _calculateRadius(), // Dynamically calculated
+                            color: Colors.green.withOpacity(0.3),
+                            borderColor: Colors.green,
+                            borderStrokeWidth: 2,
+                          ),
+                        ],
+                      ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: _currentLocation!,
+                          width: 80.0,
+                          height: 80.0,
+                          child: Icon(Icons.location_pin,
+                              color: Colors.red, size: 40),
                         ),
+                        ...recyclers.map((recycler) {
+                          return Marker(
+                            point: recycler.location,
+                            width: 80.0,
+                            height: 80.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                // _showRecyclerDetails(recycler);
+                              },
+                              child: Icon(Icons.recycling,
+                                  color: Colors.blue, size: 40),
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                    if (_routeCoordinates.isNotEmpty)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: _routeCoordinates,
+                            color: Colors.blue,
+                            strokeWidth: 5.0,
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+                Positioned(
+                  top: 0,
+                  child: SafeArea(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16.h),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      width: 1.sw,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          TileLayer(
-                            urlTemplate:
-                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c'],
+                          AppBarButton(
+                            bgColor: const Color.fromARGB(212, 255, 255, 255),
                           ),
-                          // 🟢 Add Circle Layer for User Location Radius
-                          if (_currentLocation != null)
-                            CircleLayer(
-                              circles: [
-                                CircleMarker(
-                                  point: _currentLocation!,
-                                  radius:
-                                      _calculateRadius(), // Dynamically calculated
-                                  color: Colors.green.withOpacity(0.3),
-                                  borderColor: Colors.green,
-                                  borderStrokeWidth: 2,
-                                ),
-                              ],
-                            ),
-                          MarkerLayer(
-                            markers: [
-                              Marker(
-                                point: _currentLocation!,
-                                width: 80.0,
-                                height: 80.0,
-                                child: Icon(Icons.location_pin,
-                                    color: Colors.red, size: 40),
-                              ),
-                              ...recyclers.map((recycler) {
-                                return Marker(
-                                  point: recycler.location,
-                                  width: 80.0,
-                                  height: 80.0,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _showRecyclerDetails(recycler);
-                                    },
-                                    child: Icon(Icons.recycling,
-                                        color: Colors.blue, size: 40),
-                                  ),
-                                );
-                              }).toList(),
-                            ],
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(212, 255, 255, 255),
+                                borderRadius: BorderRadius.circular(100.r)),
+                            child: BricolageText(
+                                text:
+                                    '${recyclers.length} recyclers around you'),
                           ),
-                          if (_routeCoordinates.isNotEmpty)
-                            PolylineLayer(
-                              polylines: [
-                                Polyline(
-                                  points: _routeCoordinates,
-                                  color: Colors.blue,
-                                  strokeWidth: 5.0,
-                                ),
-                              ],
-                            ),
+                          AppBarButton(
+                            iconData: CupertinoIcons.refresh_thin,
+                            bgColor: const Color.fromARGB(212, 255, 255, 255),
+                            onTap: () {
+                              _recenterView();
+                            },
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Builder(builder: (context) {
-                        Size size = MediaQuery.of(context).size;
-                        double minChildSize = 260.h / size.height;
-                        return DraggableScrollableSheet(
-                            expand: false,
-                            shouldCloseOnMinExtent: false,
-                            initialChildSize: 0.9,
-                            minChildSize: minChildSize,
-                            maxChildSize: 0.9,
-                            builder: (context, scrollController) {
-                              return SingleChildScrollView(
-                                controller: scrollController,
-                              );
-                            });
-                      }))
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }
 }
 
+// Align(
+//                     alignment: Alignment.bottomCenter,
+//                     child: Builder(builder: (context) {
+//                       Size size = MediaQuery.of(context).size;
+//                       double minChildSize = 260.h / size.height;
+//                       return DraggableScrollableSheet(
+//                           expand: false,
+//                           shouldCloseOnMinExtent: false,
+//                           initialChildSize: 0.9,
+//                           minChildSize: minChildSize,
+//                           maxChildSize: 0.9,
+//                           builder: (context, scrollController) {
+//                             return SingleChildScrollView(
+//                               controller: scrollController,
+//                             );
+//                           });
+//                     }))
 // import 'dart:convert';
 // import 'package:easy_debounce/easy_debounce.dart';
 // import 'package:flutter/material.dart';

@@ -27,11 +27,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     controller.clearState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    Get.delete<CategoriesController>(force: true);
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   Get.delete<CategoriesController>(force: true);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +68,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               itemCount: controller.filteredCategories.length,
                               itemBuilder: (context, index) {
                                 return CategoryCard(
+                                    isAccessFromBottomTab:
+                                        widget.isAccessFromBottomTab,
                                     category:
                                         controller.filteredCategories[index]);
                               },
@@ -86,7 +88,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
 // Widget to display each category card
 class CategoryCard extends StatelessWidget {
   final CategoryModel category;
-  const CategoryCard({required this.category});
+  final bool? isAccessFromBottomTab;
+
+  const CategoryCard({
+    required this.category,
+    this.isAccessFromBottomTab = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +103,9 @@ class CategoryCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(25.r),
       onTap: () {
         Get.find<CategoriesController>().setSelectedCategory(category);
-        Get.to(() => SubCategoriesPage());
+        Get.to(() => SubCategoriesPage(
+              isAccessFromBottomTab: isAccessFromBottomTab,
+            ));
       },
       child: Card(
         color: Colors.white,

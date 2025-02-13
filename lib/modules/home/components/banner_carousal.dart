@@ -12,7 +12,7 @@ class BannerCarousal extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(() => CategoriesPage());
+        // Get.to(() => CategoriesPage());
       },
       child: Container(
         decoration: BoxDecoration(

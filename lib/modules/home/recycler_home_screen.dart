@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
@@ -36,6 +37,9 @@ class RecyclerHomePage extends StatelessWidget {
                           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
                           'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
                         ],
+                        onTap: () {
+                          Get.to(() => CategoriesPage());
+                        },
                       ),
                       SizedBox(
                         height: 16.h,

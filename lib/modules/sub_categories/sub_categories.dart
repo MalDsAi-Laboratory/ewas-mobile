@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/sub_category_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
+import 'package:simple_ui/modules/locate_recyclers/locate_recylers.dart';
 import 'package:simple_ui/modules/sub_categories/components/sub_categories_appbar.dart';
 import 'package:simple_ui/modules/submit_item/submit_item.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
@@ -47,7 +48,9 @@ class _SubCategoriesPageState extends State<SubCategoriesPage> {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : CategoriesMainComponent(),
+                : CategoriesMainComponent(
+                    isAccessFromBottomTab: widget.isAccessFromBottomTab,
+                  ),
           ),
         ),
       ),
@@ -56,7 +59,10 @@ class _SubCategoriesPageState extends State<SubCategoriesPage> {
 }
 
 class CategoriesMainComponent extends StatelessWidget {
-  const CategoriesMainComponent({super.key});
+  final bool? isAccessFromBottomTab;
+
+  const CategoriesMainComponent(
+      {super.key, this.isAccessFromBottomTab = false});
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +87,7 @@ class CategoriesMainComponent extends StatelessWidget {
                     .length,
                 itemBuilder: (context, index) {
                   return SubCategoryCard(
+                      isAccessFromBottomTab: isAccessFromBottomTab,
                       category: controller.allSubCategories[
                           controller.selectedCategory!.category!]![index]);
                 },
@@ -94,16 +101,20 @@ class CategoriesMainComponent extends StatelessWidget {
 
 // Widget to display each category card
 class SubCategoryCard extends StatelessWidget {
+  final bool? isAccessFromBottomTab;
+
   final SubCategoryModel category;
 
-  const SubCategoryCard({required this.category});
+  const SubCategoryCard(
+      {required this.category, this.isAccessFromBottomTab = false});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Get.find<CategoriesController>().setSelectedSubCategory(category);
-        Get.to(() => SubmitItemPage());
+        Get.to(() =>
+            isAccessFromBottomTab! ? OpenStreetMapPage() : SubmitItemPage());
       },
       overlayColor:
           WidgetStateProperty.all(const Color.fromARGB(0, 92, 92, 92)),

@@ -100,5 +100,5 @@ class CategoriesAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 110.h);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 113.h);
 }

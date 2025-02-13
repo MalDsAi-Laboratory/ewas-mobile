@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -27,12 +25,6 @@ class BiddingTableWidget extends StatelessWidget {
           // Create a list to hold both the bid and its index
           List<Map<String, dynamic>> indexedBids = [];
 
-          // Separate the user's row from the rest
-          BiddingModel? userBid;
-          // List<BiddingModel> otherBids = [];
-
-          // log('myBidindex: ${userBid!.toJson()}');
-
           // Sort the remaining bids by priceTag in descending order
           controller.biddingList
               .sort((a, b) => (b.priceTag ?? 0).compareTo(a.priceTag ?? 0));
@@ -45,11 +37,6 @@ class BiddingTableWidget extends StatelessWidget {
           }
           int myIndex = indexedBids.indexWhere(
               (bid) => bid['bid'].recycler == "Safe Energy Recycle");
-          userBid = indexedBids[myIndex]['bid'];
-          indexedBids.removeAt(myIndex);
-
-          // Add the user's bid at the top if found
-          indexedBids.insert(0, {"bid": userBid, "index": myIndex + 1});
           return DataTable(
             columnSpacing: size.width * 0.06,
             border:
