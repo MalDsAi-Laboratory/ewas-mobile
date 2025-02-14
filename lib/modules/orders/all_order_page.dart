@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:simple_ui/modules/orders/components/all_order_page_components.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
-import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class AllOrderScreen extends StatelessWidget {
@@ -95,82 +94,18 @@ class OrderList extends StatelessWidget {
                             width: 0.3.w),
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
+                              color: const Color.fromARGB(59, 158, 158, 158),
                               blurRadius: 8.r,
                               offset: Offset(0, 2.0.h)),
                         ]),
                     margin: EdgeInsets.symmetric(vertical: 10.h),
                     child: Padding(
                       padding: EdgeInsets.all(12.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BricolageText(
-                              text: "ID: ${order.eid}",
-                              style: TextStyle(fontSize: 14.sp)),
-                          SizedBox(height: 10.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    BricolageText(
-                                      text: "Status",
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: const Color.fromARGB(
-                                            255, 101, 101, 101),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    BricolageText(
-                                      textAlign: TextAlign.left,
-                                      text: "${order.orderStatus}",
-                                      style: TextStyle(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: getStatusColor(
-                                              order.orderStatus ?? "")),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                width: 1.w, // Thin vertical line
-                                height: 40.h, // Adjust height as needed
-                                color: const Color.fromARGB(
-                                    255, 226, 226, 226), // Divider color
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 8.w), // Space around divider
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    BricolageText(
-                                      text: "Order Date",
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: const Color.fromARGB(
-                                            255, 101, 101, 101),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    BricolageText(
-                                      text:
-                                          "${DateFormat.yMMMd().format(order.orderDate ?? DateTime.now())}",
-                                      style: TextStyle(fontSize: 15.sp),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.h),
-                        ],
-                      ),
+                      child: order.productImagePath != null
+                          ? OrderItemWidget(order: order)
+                          : NoImageItemWidget(
+                              order: order,
+                            ),
                     ),
                   ),
                 );

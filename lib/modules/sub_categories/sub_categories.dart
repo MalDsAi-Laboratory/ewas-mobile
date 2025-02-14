@@ -114,7 +114,7 @@ class SubCategoryCard extends StatelessWidget {
       onTap: () {
         Get.find<CategoriesController>().setSelectedSubCategory(category);
         Get.to(() =>
-            isAccessFromBottomTab! ? OpenStreetMapPage() : SubmitItemPage());
+            isAccessFromBottomTab! ? LocateRecyclers() : SubmitItemPage());
       },
       overlayColor:
           WidgetStateProperty.all(const Color.fromARGB(0, 92, 92, 92)),

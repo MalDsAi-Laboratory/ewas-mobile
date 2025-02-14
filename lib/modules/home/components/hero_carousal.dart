@@ -9,8 +9,13 @@ class HeroCarousal extends StatelessWidget {
   final String title;
   final List<String> imgList;
   final void Function()? onTap;
+  final bool autoPlay;
   const HeroCarousal(
-      {super.key, required this.title, required this.imgList, this.onTap});
+      {super.key,
+      required this.title,
+      required this.imgList,
+      this.onTap,
+      required this.autoPlay});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +45,7 @@ class HeroCarousal extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CarousalWidget(
+                  autoPlay: autoPlay,
                   imgList: imgList,
                 ),
                 Container(
@@ -103,87 +109,48 @@ class HeroCarousal extends StatelessWidget {
   }
 }
 
-class CarousalWidget extends StatefulWidget {
+class CarousalWidget extends StatelessWidget {
   final List<String> imgList;
-  CarousalWidget({Key? key, required this.imgList}) : super(key: key);
-  @override
-  _CarousalWidgetState createState() => _CarousalWidgetState();
-}
-
-class _CarousalWidgetState extends State<CarousalWidget> {
-  int _currentIndex = 0; // Track the current index of the carousel
-
+  final bool autoPlay;
+  CarousalWidget({super.key, required this.imgList, required this.autoPlay});
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255), // Background color
-            borderRadius: BorderRadius.circular(25.r), // Rounded corners
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25.r),
-                topRight: Radius.circular(25.r)),
-            child: CarouselSlider(
-              options: CarouselOptions(
-                height: 200.h, // Height of the carousel
-                autoPlay: true, // Auto-play the carousel
-                enlargeCenterPage: false, // Enlarge the center image
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 255, 255, 255), // Background color
+        borderRadius: BorderRadius.circular(25.r), // Rounded corners
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25.r), topRight: Radius.circular(25.r)),
+        child: CarouselSlider(
+          options: CarouselOptions(
+            height: 200.h, // Height of the carousel
+            autoPlay: autoPlay, // Auto-play the carousel
+            enlargeCenterPage: false, // Enlarge the center image
 
-                aspectRatio: 1, // Aspect ratio of the images
-                autoPlayCurve: Curves.fastOutSlowIn, // Animation curve
-                enableInfiniteScroll: true, // Infinite scrolling
-                autoPlayAnimationDuration:
-                    Duration(milliseconds: 800), // Animation duration
-                viewportFraction: 1, // Fraction of the viewport to show
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentIndex = index; // Update the current index
-                  });
-                },
-              ),
-              items: widget.imgList.map((item) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: CachedNetworkImage(
-                        imageUrl: item,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
+            aspectRatio: 1, // Aspect ratio of the images
+            autoPlayCurve: Curves.fastOutSlowIn, // Animation curve
+            enableInfiniteScroll: true, // Infinite scrolling
+            autoPlayAnimationDuration:
+                Duration(milliseconds: 800), // Animation duration
+            viewportFraction: 1, // Fraction of the viewport to show
+          ),
+          items: imgList.map((item) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: CachedNetworkImage(
+                    imageUrl: item,
+                    fit: BoxFit.cover,
+                  ),
                 );
-              }).toList(),
-            ),
-          ),
+              },
+            );
+          }).toList(),
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 16.0.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.imgList.map((url) {
-              int index = widget.imgList.indexOf(url);
-              return Container(
-                width: _currentIndex == index ? 16.0.w : 5.0.w,
-                height: 5.w,
-                margin: EdgeInsets.symmetric(horizontal: 4.0.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.r),
-                  color: _currentIndex == index
-                      ? const Color.fromARGB(
-                          255, 255, 255, 255) // Active dot color
-                      : const Color.fromARGB(
-                          213, 158, 158, 158), // Inactive dot color
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

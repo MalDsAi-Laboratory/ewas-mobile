@@ -30,7 +30,7 @@ class AppBarButton extends StatelessWidget {
                 },
             borderRadius: BorderRadius.circular(100),
             overlayColor:
-                WidgetStateProperty.all(const Color.fromARGB(255, 76, 76, 76)),
+                WidgetStateProperty.all(const Color.fromARGB(255, 0, 0, 0)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: Container(
@@ -205,6 +205,42 @@ class TextandIconButton extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomIconButton extends StatelessWidget {
+  final VoidCallback? onTap;
+  final Color? iconColor;
+  final Color? bgColor;
+  final IconData? iconData;
+  const CustomIconButton(
+      {super.key,
+      this.onTap,
+      this.bgColor = const Color.fromARGB(255, 248, 248, 248),
+      this.iconColor = const Color.fromARGB(255, 0, 0, 0),
+      this.iconData = Icons.arrow_back});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38.w,
+      width: 38.w,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+            surfaceTintColor: Colors.white,
+            elevation: 0,
+            backgroundColor: bgColor,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(100.r),
+            )),
+        child: Icon(
+          iconData,
+          color: iconColor,
         ),
       ),
     );

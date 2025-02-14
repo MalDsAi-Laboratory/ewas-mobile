@@ -49,7 +49,7 @@ class FeatureCards extends StatelessWidget {
                   height: 30.h,
                 ),
                 onTap: () {
-                  Get.to(() => OpenStreetMapPage());
+                  Get.to(() => LocateRecyclers());
                 },
               ),
             ],

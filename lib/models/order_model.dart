@@ -8,6 +8,7 @@ class OrderModel {
   String? orderStatus;
   DateTime? orderDate;
   String? orderDetails;
+  String? productImagePath;
 
   OrderModel({
     this.eid,
@@ -19,6 +20,7 @@ class OrderModel {
     this.orderStatus,
     this.orderDate,
     this.orderDetails,
+    this.productImagePath,
   });
 
   // Convert JSON to OrderModel
