@@ -7,13 +7,14 @@ class DropDownWidget extends StatelessWidget {
   final void Function(dynamic)? onChanged;
   final List<DropdownMenuItem<dynamic>> dropDownItems;
   final String fieldName;
-
+  final Widget? icon;
   const DropDownWidget(
       {super.key,
       required this.value,
       this.fieldName = "",
       this.onChanged,
-      required this.dropDownItems});
+      required this.dropDownItems,
+      this.icon});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,10 +45,25 @@ class DropDownWidget extends StatelessWidget {
               dropdownColor: const Color.fromARGB(255, 255, 255, 255),
               focusColor: const Color.fromARGB(255, 180, 253, 182),
               decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.monitor_heart_outlined,
-                  size: 25.r,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.r),
+                  borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 214, 214, 214),
+                    width: 1.0,
+                  ),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.r),
+                  borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 230, 230, 230),
+                    width: 1.0,
+                  ),
+                ),
+                prefixIcon: icon ??
+                    Icon(
+                      Icons.monitor_heart_outlined,
+                      size: 25.r,
+                    ),
                 contentPadding:
                     EdgeInsets.only(left: 15.w, right: 15.w, bottom: 7.h),
                 hoverColor: Colors.black,

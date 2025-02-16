@@ -28,3 +28,31 @@ class BricolageText extends StatelessWidget {
     );
   }
 }
+
+class InterText extends StatelessWidget {
+  final String text;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final TextOverflow? overflow;
+  final int? maxLines;
+  final bool? softWrap;
+  const InterText(
+      {super.key,
+      required this.text,
+      this.textAlign = TextAlign.center,
+      this.style = const TextStyle(),
+      this.overflow = TextOverflow.visible,
+      this.maxLines,
+      this.softWrap = true});
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      overflow: overflow,
+      softWrap: softWrap,
+      maxLines: maxLines,
+      textAlign: textAlign,
+      style: GoogleFonts.inter(textStyle: style),
+    );
+  }
+}

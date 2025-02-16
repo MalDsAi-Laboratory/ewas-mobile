@@ -2,7 +2,7 @@ class UserModel {
   final String id;
   final String name;
   final String email;
-  final UserRole role;
+  final String role;
 
   UserModel({
     required this.id,
@@ -27,12 +27,17 @@ class UserModel {
       id: json['id'],
       name: json['name'],
       email: json['email'],
-      role: UserRole.values.firstWhere(
-        (e) => e.toString().split('.').last == json['role'],
-        orElse: () => UserRole.seller, // Default role
-      ),
+      role: json['role'], // Default role
     );
   }
 }
 
-enum UserRole { admin, deliveryAgent, seller, recycler }
+// enum UserRole { admin, deliveryAgent, seller, recycler }
+
+class UserRole {
+  static const String admin = "admin";
+  static const String deliveryAgent = "delivery user";
+  static const String recycler = "recycler";
+  static const String seller = "seller";
+  static const String generalUser = "user";
+}

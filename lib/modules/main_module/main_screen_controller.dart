@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
-import 'package:simple_ui/modules/auth/login_page.dart';
 import 'package:simple_ui/modules/cart/cart_page.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/admin_home_screen.dart';
@@ -75,7 +74,7 @@ class MainScreenController extends GetxController {
           CartPage()
         ];
       default:
-        return LoginPage();
+        return CartPage();
     }
   }
 
