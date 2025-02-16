@@ -71,7 +71,7 @@ class MainScreenController extends GetxController {
           ),
           AllOrderScreen(),
           RecyclerHomePage(),
-          CartPage()
+          CartPage(),
         ];
       default:
         return CartPage();
