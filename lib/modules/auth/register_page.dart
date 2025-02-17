@@ -124,50 +124,41 @@ class _AuthScreenState extends State<AuthScreen>
       color: const Color.fromARGB(255, 249, 249, 249),
       child: Column(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                children: [
-                  SizedBox(height: 4.h),
-                  CustomTextFieldWithLightBorder(
-                    height: 55.h,
-                    hintText: "Enter your email / mobile number",
-                    icon: Icon(
-                      Icons.person_3_outlined,
-                      size: 25.r,
-                      color: Colors.grey,
-                    ),
-                    keyboardType: TextInputType.text,
-                  ),
-                  SizedBox(height: 20.h),
-                  PasswordField(
-                    height: 55.h,
-                    textInputAction: TextInputAction.done,
-                    width: MediaQuery.sizeOf(context).width,
-                    hintText: "Password",
-                    onChanged: (val) {
-                      controller.password.value = val;
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                  Column(
-                    children: [
-                      RadialGradientButton(
-                          buttonText: 'Login', onTap: () {}, isBtnActive: true),
-                      SizedBox(height: 20.h),
-                      InterText(
-                        text:
-                            "By signing in, you agree to terms and conditions",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                      ),
-                      SizedBox(height: 20.h),
-                    ],
-                  ),
-                ],
-              ),
+          SizedBox(height: 4.h),
+          CustomTextFieldWithLightBorder(
+            height: 55.h,
+            hintText: "Enter your email / mobile number",
+            icon: Icon(
+              Icons.person_3_outlined,
+              size: 25.r,
+              color: Colors.grey,
             ),
+            keyboardType: TextInputType.text,
+          ),
+          SizedBox(height: 20.h),
+          PasswordField(
+            height: 55.h,
+            textInputAction: TextInputAction.done,
+            width: MediaQuery.sizeOf(context).width,
+            hintText: "Password",
+            onChanged: (val) {
+              controller.password.value = val;
+            },
+          ),
+          SizedBox(height: 20.h),
+          Spacer(),
+          Column(
+            children: [
+              RadialGradientButton(
+                  buttonText: 'Login', onTap: () {}, isBtnActive: true),
+              SizedBox(height: 20.h),
+              InterText(
+                text: "By signing in, you agree to terms and conditions",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+              ),
+              SizedBox(height: 20.h),
+            ],
           ),
         ],
       ),
@@ -310,7 +301,7 @@ class _AuthScreenState extends State<AuthScreen>
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(color: Colors.black)),
                     ),
-                    items: ["Seller", "Recycler", "Delivery Agent"].map((role) {
+                    items: ["Seller", "Recycler"].map((role) {
                       return DropdownMenuItem(value: role, child: Text(role));
                     }).toList(),
                     onChanged: (value) {},
