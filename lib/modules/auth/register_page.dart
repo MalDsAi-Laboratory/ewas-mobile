@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:simple_ui/modules/auth/auth_controller.dart';
+import 'package:simple_ui/modules/auth/components/map_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
@@ -166,6 +168,7 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   Widget buildRegisterTab() {
+    AuthController controller = Get.find<AuthController>();
     return Container(
       padding: EdgeInsets.all(16.w),
       color: const Color.fromARGB(255, 251, 251, 251),
@@ -306,6 +309,46 @@ class _AuthScreenState extends State<AuthScreen>
                     }).toList(),
                     onChanged: (value) {},
                     hint: Text("Select Role"),
+                  ),
+                  SizedBox(height: 20.h),
+                  Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final result = await Get.to(() => MapScreen());
+
+                          if (result != null) {
+                            controller.setLocation(
+                              LatLng(result['lat'], result['lon']),
+                              result['address'],
+                            );
+                          }
+                        },
+                        child: Obx(() => Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 14, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.location_on, color: Colors.blue),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      controller.selectedAddress.value.isEmpty
+                                          ? "Tap to select location"
+                                          : controller.selectedAddress.value,
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20.h),
                   Row(
