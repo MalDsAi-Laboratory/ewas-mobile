@@ -27,12 +27,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     controller.clearState();
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   Get.delete<CategoriesController>(force: true);
-  // }
-
   @override
   Widget build(BuildContext context) {
     CategoriesController controller = Get.find<CategoriesController>();

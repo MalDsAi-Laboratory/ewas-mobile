@@ -120,15 +120,22 @@ class SubmitItemPage extends StatelessWidget {
                   ImagePickerWidget()
                 ],
               ),
-              GetBuilder<SubmitItemController>(builder: (controller) {
-                return RadialGradientButton(
-                  buttonText: 'Submit',
-                  onTap: controller.submitProduct,
-                  isBtnActive:
-                      controller.volumeController.text.trim().isNotEmpty &&
-                          controller.images.isNotEmpty,
-                );
-              })
+              Column(
+                children: [
+                  GetBuilder<SubmitItemController>(builder: (controller) {
+                    return RadialGradientButton(
+                      buttonText: 'Submit',
+                      onTap: controller.submitProduct,
+                      isBtnActive:
+                          controller.volumeController.text.trim().isNotEmpty &&
+                              controller.images.isNotEmpty,
+                    );
+                  }),
+                  SizedBox(
+                    height: 20.h,
+                  )
+                ],
+              ),
             ],
           ),
         ),
