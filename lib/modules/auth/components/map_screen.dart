@@ -6,9 +6,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:simple_ui/modules/auth/auth_controller.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
+import 'package:simple_ui/ui_utils/button_widgets.dart';
+import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -22,6 +25,7 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   bool _showSearchResults = false;
   final AuthController locationController = Get.find<AuthController>();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +36,53 @@ class _MapScreenState extends State<MapScreen> {
         }
       });
     });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    print('serviceEnabled ${serviceEnabled}');
+
+    // Check and request permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse ||
+          permission != LocationPermission.always) {
+        // Handle the case where permission is not granted
+        return;
+      }
+    }
+
+    // Get the current position (latitude and longitude)
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // Set the location controller values
+    final currentLatLng = LatLng(position.latitude, position.longitude);
+    locationController.setLocation(currentLatLng, '');
+
+    // Move the map to the current location
+    _mapController.move(currentLatLng, 15);
+
+    // Fetch the address for the current location
+    final address = await _getAddressFromLatLng(currentLatLng);
+    locationController.setLocation(currentLatLng, address);
+  }
+
+  Future<String> _getAddressFromLatLng(LatLng latLng) async {
+    final response = await http.get(Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['display_name'] ?? 'Unknown Location';
+    } else {
+      return 'Address not found';
+    }
   }
 
   Future<void> _searchAddress(String query) async {
@@ -137,47 +188,62 @@ class _MapScreenState extends State<MapScreen> {
 
             /// Floating Search Bar with Glassmorphism
             Positioned(
-              top: 60,
-              left: 20,
-              right: 20,
-              child: GestureDetector(
-                onTap: _onSearchFieldTap, // Recenter to last confirmed location
-                child: Material(
-                  elevation: 10,
-                  borderRadius: BorderRadius.circular(30),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                        )
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.search, color: Colors.grey),
-                        hintText: "Search location...",
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              top: 60.h,
+              left: 20.w,
+              right: 20.w,
+              child: Row(
+                children: [
+                  AppBarButton(),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  GestureDetector(
+                    onTap:
+                        _onSearchFieldTap, // Recenter to last confirmed location
+                    child: Material(
+                      elevation: 10,
+                      borderRadius: BorderRadius.circular(30.r),
+                      child: Container(
+                        width: 1.sw * 0.77,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(30.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                            )
+                          ],
+                        ),
+                        child: TextFormField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                              size: 25.r,
+                            ),
+                            hintText: "Search location...",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20.w, vertical: 5.h),
+                          ),
+                          onChanged: (value) => _searchAddress(value),
+                        ),
                       ),
-                      onChanged: (value) => _searchAddress(value),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
 
             /// Suggestions List
             if (_showSearchResults)
               Positioned(
-                top: 120,
-                left: 20,
-                right: 20,
+                top: 140.h,
+                left: 20.w,
+                right: 20.w,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.95),
@@ -194,7 +260,12 @@ class _MapScreenState extends State<MapScreen> {
                           return ListTile(
                             leading: Icon(Icons.location_pin,
                                 color: AppColors.primaryColor),
-                            title: Text(_searchResults[index]['display_name']),
+                            title: InterText(
+                                text: _searchResults[index]['display_name'],
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                )),
                             onTap: () =>
                                 _onSuggestionTap(_searchResults[index]),
                           );
@@ -204,64 +275,103 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-
-            /// Floating Confirm Button
-            Positioned(
-              bottom: 40,
-              left: 20,
-              right: 20,
-              child: AnimatedOpacity(
-                opacity:
-                    locationController.selectedLatLng.value != null ? 1.0 : 0.0,
-                duration: Duration(milliseconds: 300),
-                child: SizedBox(
-                  height: 50,
-                  child: FloatingActionButton.extended(
-                    backgroundColor: AppColors.primaryColor,
-                    onPressed: _onConfirmLocation,
-                    icon: Icon(Icons.check, color: Colors.white),
-                    label: Text("Confirm Location",
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ),
-              ),
-            ),
-
-            /// Bottom Sheet for Selected Address
             if (locationController.selectedAddress.isNotEmpty)
               Positioned(
-                bottom: 100,
-                left: 20,
-                right: 20,
+                bottom: 85.h,
+                left: 20.w,
+                right: 20.w,
                 child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12.r),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.95),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15.r),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
+                        blurRadius: 10.r,
                       )
                     ],
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.redAccent),
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.redAccent,
+                        size: 25.r,
+                      ),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          locationController.selectedAddress.value,
+                        child: InterText(
+                          textAlign: TextAlign.left,
+                          text: locationController.selectedAddress.value,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600),
+                              fontSize: 14.sp, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+
+            /// Floating Confirm Button
+            Positioned(
+              bottom: 25.h,
+              left: 10.w,
+              right: 10.w,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 50.h,
+                    child: FloatingActionButton.extended(
+                      heroTag: "userCurrentLocation",
+                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      onPressed: _getCurrentLocation,
+                      icon: Icon(
+                        Icons.location_pin,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        size: 25.r,
+                      ),
+                      label: InterText(
+                          text: 'Use Current Location',
+                          style: TextStyle(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 14.sp)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  AnimatedOpacity(
+                    opacity: locationController.selectedLatLng.value != null
+                        ? 1.0
+                        : 0.0,
+                    duration: Duration(milliseconds: 300),
+                    child: SizedBox(
+                      height: 50.h,
+                      child: FloatingActionButton.extended(
+                        heroTag: "confirmLocation",
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: _onConfirmLocation,
+                        icon: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 25.r,
+                        ),
+                        label: InterText(
+                            text: 'Confirm',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                                fontSize: 14.sp)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

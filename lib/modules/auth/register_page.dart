@@ -93,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen>
                         fontWeight: FontWeight.w500)),
               )
             ])),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             TabBar(
               controller: _tabController,
               labelColor: Colors.green,
@@ -264,7 +264,7 @@ class _AuthScreenState extends State<AuthScreen>
                     elevation: 0,
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
+                        fontSize: 15.sp,
                         color: const Color.fromARGB(255, 0, 0, 0)),
                     dropdownColor: const Color.fromARGB(255, 255, 255, 255),
                     focusColor: const Color.fromARGB(255, 180, 253, 182),
@@ -286,16 +286,18 @@ class _AuthScreenState extends State<AuthScreen>
                       contentPadding:
                           EdgeInsets.only(left: 15.w, right: 15.w, bottom: 7.h),
                       prefixIcon: Icon(
-                        Icons.monitor_heart_outlined,
+                        Icons.person_3_outlined,
                         size: 25.r,
                         color: Colors.grey,
                       ),
                       hintStyle: TextStyle(
                           fontWeight: FontWeight.normal,
-                          fontSize: 14.sp,
+                          fontSize: 15.sp,
                           color: Colors.black),
                       hoverColor: Colors.black,
                       focusColor: Colors.black,
+                      fillColor: Colors.white,
+                      filled: true,
                       labelStyle: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 14.sp,
@@ -326,22 +328,29 @@ class _AuthScreenState extends State<AuthScreen>
                         },
                         child: Obx(() => Container(
                               padding: EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
+                                  vertical: 14.h, horizontal: 16.w),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
+                                border: Border.all(
+                                    color: Color.fromARGB(255, 230, 230, 230)),
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.location_on, color: Colors.blue),
-                                  SizedBox(width: 10),
+                                  Icon(
+                                    Icons.location_on,
+                                    color: AppColors.primaryColor,
+                                    size: 25.r,
+                                  ),
+                                  SizedBox(width: 10.w),
                                   Expanded(
-                                    child: Text(
-                                      controller.selectedAddress.value.isEmpty
+                                    child: InterText(
+                                      text: controller
+                                              .selectedAddress.value.isEmpty
                                           ? "Tap to select location"
                                           : controller.selectedAddress.value,
-                                      style: TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(fontSize: 15.sp),
                                     ),
                                   ),
                                 ],
