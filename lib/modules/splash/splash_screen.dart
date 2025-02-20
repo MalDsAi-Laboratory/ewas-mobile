@@ -27,10 +27,15 @@ class _SplashScreenState extends State<SplashScreen>
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
     UserModel user = UserModel(
-        id: '1',
-        name: 'honey bansal',
+        userId: 'savageSystem@2025',
+        firstName: 'savage',
+        lastLogin: DateTime.now().toUtc().toIso8601String(),
+        password: 'bitByte',
+        phoneNumber: '010101011',
         email: 'savage@gmail.com',
-        role: UserRole.seller);
+        roles: [UserRole.seller],
+        address: 'system bit 01',
+        lastName: 'system');
     // Navigate to the home screen after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(

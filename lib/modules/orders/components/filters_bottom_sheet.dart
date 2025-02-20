@@ -67,8 +67,9 @@ class OrderFiltersWidget extends StatelessWidget {
                   orderController.filterOrders();
                 },
               ),
-              (Get.find<MainScreenController>().user!.role == UserRole.admin ||
-                      Get.find<MainScreenController>().user!.role ==
+              (Get.find<MainScreenController>().user!.roles![0] ==
+                          UserRole.admin ||
+                      Get.find<MainScreenController>().user!.roles![0] ==
                           UserRole.deliveryAgent)
                   ? Column(children: [
                       SizedBox(height: 20.h),

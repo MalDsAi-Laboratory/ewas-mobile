@@ -54,7 +54,7 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
     return GetBuilder<MainScreenController>(builder: (mainScreenController) {
-      final userRole = mainScreenController.user!.role;
+      final userRole = mainScreenController.user!.roles![0];
 
       return Container(
         height: size.height - 110.h,
@@ -363,8 +363,8 @@ class EditableField extends StatelessWidget {
         ),
         SizedBox(height: 5.h),
         CustomTextField(
-          controller: controller,
           icon: icon,
+          controller: controller,
           onChanged: (val) {
             Get.find<AllOrderController>().update();
           },

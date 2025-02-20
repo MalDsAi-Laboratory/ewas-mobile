@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           return GetMaterialApp(
             title: 'ScrapIt',
             debugShowCheckedModeBanner: false,
-            home: SplashScreen(),
+            home: AuthScreen(),
           );
         });
   }

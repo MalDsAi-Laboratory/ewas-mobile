@@ -3,10 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
+import 'package:simple_ui/modules/product/product_bidding_screen.dart';
+import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'dart:io';
+import "package:dio/dio.dart" as dio;
+import 'package:simple_ui/ui_utils/app_snackbars.dart';
 
 class SubmitItemController extends GetxController {
   var volumeController = TextEditingController();
@@ -14,7 +20,7 @@ class SubmitItemController extends GetxController {
   final ImagePicker _picker = ImagePicker();
   var images = <File>[];
 
-  Future<void> submitProduct() async {
+  Future<void> submitProduct(context) async {
     if (volumeController.text.isEmpty) {
       Get.snackbar("Error", "Please enter volume details");
       return;
@@ -26,7 +32,21 @@ class SubmitItemController extends GetxController {
     try {
       // Create order
       String? orderId = await createOrder();
-      print("orderId $orderId");
+      if (orderId == null) {
+        AppSnackBars.showErrorSnackBar("Error", "Failed to create order");
+      } else {
+        bool response = await createInventory(orderId);
+        if (!response) {
+          AppSnackBars.showErrorSnackBar("Error", "Failed to create inventory");
+        } else {
+          await productImageUpload(orderId);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          AppSnackBars.showSuccessSnackBar("Success",
+              "Product listed for auction!\nYou can view your product for auction from orders screen.");
+        }
+      }
       // Save Images
       // Create Inventory
       // final CachedCartList cachedCartList = CachedCartList();
@@ -56,12 +76,74 @@ class SubmitItemController extends GetxController {
       //       Get.find<CategoriesController>().selectedSubCategory!.productName ??
       //           "",
       // ));
-
-      Get.snackbar("Success",
-          "Product added to cart successfully!\nYou can place your product for auction from cart.");
     } catch (e) {
       log("error in submitProduct $e");
       Get.snackbar("Error", "Failed to add product to cart: $e");
+    }
+  }
+
+  Future<void> productImageUpload(String orderId) async {
+    try {
+      // Filter non-null images
+      List<File> validImages =
+          images.where((image) => image.path.isNotEmpty).toList();
+
+      // Create a list of upload tasks
+      List<Future<Map<String, dynamic>>> uploadTasks = [];
+
+      for (int i = 0; i < validImages.length; i++) {
+        File imageFile = validImages[i];
+
+        uploadTasks.add(uploadInventoryImageApi(
+          imageForm: dio.FormData.fromMap({
+            "file": await dio.MultipartFile.fromFile(imageFile.path,
+                filename: imageFile.path.split('/').last),
+          }),
+          index: i + 1, // Assuming index starts from 1
+          orderId: orderId,
+        ));
+      }
+
+      // Run all uploads in parallel
+      List<Map<String, dynamic>> responses = await Future.wait(uploadTasks);
+
+      // Log all responses
+      for (var response in responses) {
+        log("Image upload response: $response");
+      }
+    } catch (e) {
+      log("Error in productImageUpload: $e");
+    }
+  }
+
+  Future<bool> createInventory(String orderId) async {
+    try {
+      InventoryModel inventoryModel = InventoryModel(
+          orderId: orderId,
+          category: Get.find<CategoriesController>().selectedCategory!.category,
+          materialType:
+              Get.find<CategoriesController>().selectedSubCategory!.category,
+          productName:
+              Get.find<CategoriesController>().selectedSubCategory!.productName,
+          volume: volumeController.text,
+          dateAndTime: DateTime.now().toUtc().toIso8601String(),
+          productId: "123",
+          imgPath1: "string",
+          imgPath2: "string",
+          imgPath3: "string",
+          imgPath4: "string",
+          imgPath5: "string");
+      log('inventoryModel ${inventoryModel.toJson()}');
+      Map<String, dynamic> response =
+          await createInventoryApi(data: inventoryModel);
+      if (response['status']) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      log("error in createInventory $e");
+      return false;
     }
   }
 

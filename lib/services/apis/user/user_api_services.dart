@@ -13,12 +13,12 @@ class ErrorModel {
 var failedApis = [];
 var handlers = [];
 
-class OrderDioSingleton {
+class UserDioSingleton {
   static Dio? _dio;
   static Dio get instance {
     if (_dio == null) {
       final baseOptions = BaseOptions(
-        baseUrl: orderBaseUrl!, // Replace with your API base URL
+        baseUrl: userBaseUrl!, // Replace with your API base URL
         connectTimeout: const Duration(
             minutes: 1), // Adjust the timeout as needed (milliseconds)
         receiveTimeout: const Duration(

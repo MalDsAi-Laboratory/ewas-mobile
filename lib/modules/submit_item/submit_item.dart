@@ -125,7 +125,9 @@ class SubmitItemPage extends StatelessWidget {
                   GetBuilder<SubmitItemController>(builder: (controller) {
                     return RadialGradientButton(
                       buttonText: 'Submit',
-                      onTap: controller.submitProduct,
+                      onTap: () {
+                        controller.submitProduct(context);
+                      },
                       isBtnActive:
                           controller.volumeController.text.trim().isNotEmpty &&
                               controller.images.isNotEmpty,

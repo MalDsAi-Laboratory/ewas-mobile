@@ -36,7 +36,7 @@ class MainScreenController extends GetxController {
   }
 
   getRoleBasedScreen(UserModel user) {
-    switch (user.role) {
+    switch (user.roles![0]) {
       case UserRole.admin:
         return [
           CategoriesPage(

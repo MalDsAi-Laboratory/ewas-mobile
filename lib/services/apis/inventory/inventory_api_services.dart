@@ -18,7 +18,7 @@ class InventoryDioSingleton {
   static Dio get instance {
     if (_dio == null) {
       final baseOptions = BaseOptions(
-        baseUrl: orderBaseUrl!, // Replace with your API base URL
+        baseUrl: inventoryBaseUrl!, // Replace with your API base URL
         connectTimeout: const Duration(
             minutes: 1), // Adjust the timeout as needed (milliseconds)
         receiveTimeout: const Duration(

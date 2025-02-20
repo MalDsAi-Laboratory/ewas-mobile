@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:retry/retry.dart';
-import 'package:simple_ui/models/order_model.dart';
-import 'package:simple_ui/services/apis/order/order_api_services.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/services/apis/user/user_api_services.dart';
 
-Dio dio = OrderDioSingleton.instance; // Create an instance of DioSingleton
+Dio dio = UserDioSingleton.instance; // Create an instance of DioSingleton
 
 enum OrderAPIPath { createOrder }
 
@@ -14,12 +14,12 @@ extension OrderAPIPathExtension on OrderAPIPath {
   String get path {
     switch (this) {
       case OrderAPIPath.createOrder:
-        return "/user";
+        return "/add";
     }
   }
 }
 
-Future<Map<String, dynamic>> createOrderApi({OrderModel? data}) async {
+Future<Map<String, dynamic>> createUserApi({UserModel? data}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(OrderAPIPath.createOrder.path,
