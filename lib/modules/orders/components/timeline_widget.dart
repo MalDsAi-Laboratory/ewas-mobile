@@ -27,12 +27,12 @@ class OrderStatusTimeline extends StatelessWidget {
         internalPadding: 0,
         showLoadingAnimation: false,
         disableScroll: true,
-        stepRadius: 8,
+        stepRadius: 10.r,
         showStepBorder: false,
         steps: [
           EasyStep(
             customStep: CircleAvatar(
-              radius: 12,
+              radius: 8,
               backgroundColor: 2 >= 1 ? AppColors.primaryColor : Colors.white,
               child: 2 >= 1
                   ? Icon(

@@ -23,7 +23,7 @@ class OrderController extends GetxController {
     nameController.text =
         "${currentOrder?.firstName} ${currentOrder?.lastName}";
     addressController.text = currentOrder?.address ?? "";
-    emailController.text = currentOrder?.emailId ?? "";
+    emailController.text = currentOrder?.userId ?? "";
     assigneeController.text = currentOrder?.assignee ?? "";
     orderDetailsController.text = currentOrder?.orderDetails ?? "";
     orderStatus = currentOrder?.orderStatus ?? 'Order Placed';
@@ -40,7 +40,7 @@ class OrderController extends GetxController {
         lastName: nameController.text.split(' ')[1],
         address: addressController.text,
         assignee: assigneeController.text,
-        emailId: emailController.text,
+        userId: emailController.text,
         orderStatus: orderStatus,
         orderDate: orderDate,
         orderDetails: orderDetailsController.text,

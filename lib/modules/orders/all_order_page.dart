@@ -8,56 +8,64 @@ import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class AllOrderScreen extends StatelessWidget {
+class AllOrderScreen extends StatefulWidget {
+  @override
+  State<AllOrderScreen> createState() => _AllOrderScreenState();
+}
+
+class _AllOrderScreenState extends State<AllOrderScreen> {
   final AllOrderController orderController = Get.put(AllOrderController());
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Get.delete<AllOrderController>(force: true);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          actions: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: GetBuilder<AllOrderController>(builder: (orderController) {
-                return Badge(
-                  isLabelVisible:
-                      orderController.filterCount == 0 ? false : true,
-                  smallSize: 10,
-                  backgroundColor: AppColors.primaryColor,
-                  child: SizedBox(
-                    width: 30.r,
-                    height: 30.r,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        showFilterBottomSheet(context);
-                      },
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                      label: Icon(
-                        Icons.filter_list_outlined,
-                        color: Colors.black,
-                        size: 25.r,
-                      ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: GetBuilder<AllOrderController>(builder: (orderController) {
+              return Badge(
+                isLabelVisible: orderController.filterCount == 0 ? false : true,
+                smallSize: 10,
+                backgroundColor: AppColors.primaryColor,
+                child: SizedBox(
+                  width: 30.r,
+                  height: 30.r,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      showFilterBottomSheet(context);
+                    },
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    label: Icon(
+                      Icons.filter_list_outlined,
+                      color: Colors.black,
+                      size: 25.r,
                     ),
                   ),
-                );
-              }),
-            ),
-          ],
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          title: BricolageText(
-            text: "My Orders",
-            style: TextStyle(fontSize: 20.sp, color: Colors.black87),
+                ),
+              );
+            }),
           ),
+        ],
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        title: BricolageText(
+          text: "My Orders",
+          style: TextStyle(fontSize: 20.sp, color: Colors.black87),
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: OrderList(orderType: "Ongoing"),
-          ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: OrderList(orderType: "Ongoing"),
         ),
       ),
     );

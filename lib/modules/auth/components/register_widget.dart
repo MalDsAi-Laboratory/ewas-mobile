@@ -30,6 +30,7 @@ class RegisterWidget extends StatelessWidget {
                   CustomTextFieldWithLightBorder(
                     height: 55.h,
                     hintText: "eg: Rakesh123",
+                    initialValue: controller.userId.value,
                     icon: Icon(
                       Icons.person_3_outlined,
                       size: 25.r,
@@ -45,8 +46,8 @@ class RegisterWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CustomTextFieldWithLightBorder(
-                          height: 55.h,
                           hintText: "First Name",
+                          initialValue: controller.firstName.value,
                           icon: Icon(
                             Icons.person_3_outlined,
                             size: 25.r,
@@ -61,6 +62,7 @@ class RegisterWidget extends StatelessWidget {
                       Expanded(
                         child: CustomTextFieldWithLightBorder(
                           height: 55.h,
+                          initialValue: controller.lastName.value,
                           hintText: "Last Name",
                           icon: Icon(
                             Icons.person_3_outlined,
@@ -77,6 +79,7 @@ class RegisterWidget extends StatelessWidget {
                   SizedBox(height: 20.h),
                   CustomTextFieldWithLightBorder(
                     height: 55.h,
+                    initialValue: controller.mobileNumber.value,
                     hintText: "Mobile Number",
                     icon: Icon(
                       Icons.ring_volume_sharp,
@@ -90,6 +93,7 @@ class RegisterWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 20.h),
                   CustomTextFieldWithLightBorder(
+                    initialValue: controller.email.value,
                     height: 55.h,
                     hintText: "Email (Optional)",
                     onChanged: (val) {
@@ -105,6 +109,7 @@ class RegisterWidget extends StatelessWidget {
                   SizedBox(height: 20.h),
                   PasswordField(
                     height: 55.h,
+                    initialValue: controller.password.value,
                     textInputAction: TextInputAction.done,
                     width: MediaQuery.sizeOf(context).width,
                     hintText: "Password",
@@ -115,6 +120,7 @@ class RegisterWidget extends StatelessWidget {
                   SizedBox(height: 20.h),
                   ConfirmPasswordField(
                     height: 55.h,
+                    initialValue: controller.confirmPassword.value,
                     textInputAction: TextInputAction.done,
                     width: MediaQuery.sizeOf(context).width,
                     hintText: "Confirm Password",
@@ -182,7 +188,7 @@ class RegisterWidget extends StatelessWidget {
                       return DropdownMenuItem(value: role, child: Text(role));
                     }).toList(),
                     onChanged: (value) {},
-                    hint: Text("Select Role"),
+                    value: controller.userRole.value,
                   ),
                   SizedBox(height: 20.h),
                   Column(

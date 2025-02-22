@@ -4,7 +4,7 @@ class OrderModel {
   String? lastName;
   String? address;
   String? assignee;
-  String? emailId;
+  String? userId;
   String? orderStatus;
   DateTime? orderDate;
   String? orderDetails;
@@ -16,7 +16,7 @@ class OrderModel {
     this.lastName,
     this.address,
     this.assignee,
-    this.emailId,
+    this.userId,
     this.orderStatus,
     this.orderDate,
     this.orderDetails,
@@ -31,7 +31,7 @@ class OrderModel {
       lastName: json['lastName'],
       address: json['address'],
       assignee: json['assignee'],
-      emailId: json['emailId'],
+      userId: json['userId'],
       orderStatus: json['orderStatus'],
       orderDate:
           json['orderDate'] != null ? DateTime.parse(json['orderDate']) : null,
@@ -47,7 +47,7 @@ class OrderModel {
       'lastName': lastName,
       'address': address,
       'assignee': assignee,
-      'emailId': emailId,
+      'userId': userId,
       'orderStatus': orderStatus,
       'orderDate': orderDate?.toIso8601String(),
       'orderDetails': orderDetails,

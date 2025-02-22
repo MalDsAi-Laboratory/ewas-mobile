@@ -155,7 +155,7 @@ class SubmitItemController extends GetxController {
         lastName: "Doe",
         address: "123 Main St, Anytown, USA",
         assignee: null,
-        emailId: "W0K5W@example.com",
+        userId: "W0K5W@example.com",
         orderStatus: OrderStatus.orderPlaced,
         orderDate: DateTime.now(),
         orderDetails: "Order details",

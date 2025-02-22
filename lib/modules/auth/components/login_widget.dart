@@ -21,6 +21,9 @@ class LoginWidget extends StatelessWidget {
           CustomTextFieldWithLightBorder(
             height: 55.h,
             hintText: "Enter your email / mobile number",
+            onChanged: (val) {
+              controller.email.value = val;
+            },
             icon: Icon(
               Icons.person_3_outlined,
               size: 25.r,

@@ -62,7 +62,7 @@ Future<Map<String, dynamic>> createUserApi({UserModel? data}) async {
       'status': false,
       "statusCode":
           0, // You can set a default status code or handle differently
-      "data": e.toString(),
+      "data": "Something went wrong",
     };
   }
 }

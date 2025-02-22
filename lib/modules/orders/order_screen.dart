@@ -143,14 +143,13 @@ class _OrderScreenState extends State<OrderScreen> {
                           userRole == UserRole.admin && isEditing
                               ? EditableField(
                                   controller: orderController.emailController,
-                                  label: "Email",
+                                  label: "User Id",
                                   icon: Icon(Icons.email_outlined, size: 25.r),
                                 )
                               : OrderDetailItemWidget(
-                                  title: "Email",
-                                  value:
-                                      orderController.currentOrder?.emailId ??
-                                          ""),
+                                  title: "User Id",
+                                  value: orderController.currentOrder?.userId ??
+                                      ""),
 
                           SizedBox(height: 10.h),
 

@@ -266,7 +266,6 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
               )
             : SizedBox(),
         SizedBox(
-          height: height ?? 45.h,
           width: width,
           child: TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -276,6 +275,10 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
               controller: controller,
               cursorWidth: 1,
               initialValue: initialValue,
+              validator: validator ??
+                  (str) {
+                    return null;
+                  },
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
               decoration: InputDecoration(
                   prefixIcon: icon,
@@ -328,6 +331,7 @@ class PasswordField extends StatelessWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final double? height;
+  final String? initialValue;
   const PasswordField({
     super.key,
     required this.width,
@@ -336,6 +340,7 @@ class PasswordField extends StatelessWidget {
     this.hintText,
     this.validator,
     this.height = 45,
+    this.initialValue,
   });
 
   @override
@@ -343,13 +348,13 @@ class PasswordField extends StatelessWidget {
     AuthController controller = Get.find<AuthController>();
     return Container(
         width: width,
-        height: height,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(
               Radius.circular(15.w),
             ),
             color: Colors.white),
         child: Obx(() => TextFormField(
+            initialValue: initialValue ?? "",
             autovalidateMode: AutovalidateMode.onUserInteraction,
             cursorColor: Colors.black,
             onChanged: onChanged,
@@ -418,6 +423,7 @@ class ConfirmPasswordField extends StatelessWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final double? height;
+  final String? initialValue;
   const ConfirmPasswordField({
     super.key,
     required this.width,
@@ -426,6 +432,7 @@ class ConfirmPasswordField extends StatelessWidget {
     this.hintText,
     this.validator,
     this.height = 45,
+    this.initialValue,
   });
 
   @override
@@ -434,7 +441,6 @@ class ConfirmPasswordField extends StatelessWidget {
 
     return Container(
         width: width,
-        height: height,
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(
               Radius.circular(15),
@@ -444,6 +450,7 @@ class ConfirmPasswordField extends StatelessWidget {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             cursorColor: Colors.black,
             onChanged: onChanged,
+            initialValue: initialValue ?? "",
             cursorWidth: 1,
             obscureText: controller.isConfirmObscure.value,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),

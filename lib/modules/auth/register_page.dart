@@ -15,25 +15,26 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
   bool agreeToTerms = false;
 
   @override
   void initState() {
     super.initState();
-    Get.put(AuthController());
+    AuthController controller = Get.put(AuthController());
 
-    _tabController = TabController(length: 2, vsync: this);
+    controller.tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    Get.find<AuthController>().tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    AuthController controller = Get.find<AuthController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset:
@@ -93,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen>
             ])),
             SizedBox(height: 20.h),
             TabBar(
-              controller: _tabController,
+              controller: controller.tabController,
               labelColor: Colors.green,
               unselectedLabelColor: Colors.grey,
               indicatorColor: Colors.green,
@@ -104,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen>
             ),
             Expanded(
               child: TabBarView(
-                controller: _tabController,
+                controller: controller.tabController,
                 children: [
                   LoginWidget(),
                   RegisterWidget(),
