@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 
 class AllOrderController extends GetxController {
@@ -33,9 +35,11 @@ class AllOrderController extends GetxController {
   var searchId = ''.obs;
   var searchAssignee = ''.obs;
   var selectedStatus = ''.obs;
-  int filterCount = 0;
+  RxInt filterCount = 0.obs;
   RxBool isOrdersLoading = true.obs;
   RxInt pageNumber = 0.obs;
+  RxBool isInventoryLoading = true.obs;
+  RxMap<String, InventoryModel> inventoryMap = <String, InventoryModel>{}.obs;
 
   void _fetchOrders() async {
     if (orders.isEmpty) {
@@ -62,19 +66,44 @@ class AllOrderController extends GetxController {
       }
     }
     filteredOrders.assignAll(orders);
+    _fetchInventory();
+  }
+
+  void _fetchInventory() async {
+    try {
+      List<Future<Map<String, dynamic>?>> futures = orders.map((order) {
+        return getInventoryByIdApi(orderId: order.eid.toString());
+      }).toList();
+
+      List<Map<String, dynamic>?> responses = await Future.wait(futures);
+
+      for (var i = 0; i < responses.length; i++) {
+        if (responses[i]?['status'] == true) {
+          inventoryMap[orders[i].eid.toString()] =
+              InventoryModel.fromJson(responses[i]!['data']);
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        log('Error occurred in fetch inventory: $e');
+      }
+    } finally {
+      isInventoryLoading.value = false;
+    }
   }
 
   void filterOrders() {
     if (searchId.value.isNotEmpty) {
-      filterCount = 1;
+      filterCount.value = 1;
     } else {
       if (searchAssignee.isNotEmpty) {
-        filterCount = 1;
+        filterCount.value = 1;
       } else {
         if (selectedStatus.isNotEmpty) {
-          filterCount = 1;
+          filterCount.value = 1;
         } else {
-          filterCount = filterCount > 0 ? filterCount - 1 : filterCount;
+          filterCount.value =
+              filterCount.value > 0 ? filterCount.value - 1 : filterCount.value;
         }
       }
     }
@@ -100,7 +129,7 @@ class AllOrderController extends GetxController {
     searchId.value = '';
     searchAssignee.value = '';
     selectedStatus.value = '';
-    filterCount = 0;
+    filterCount.value = 0;
     update();
     filterOrders();
   }

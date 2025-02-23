@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 
@@ -9,6 +10,9 @@ class OrderController extends GetxController {
 
   /// manage the selected order
   OrderModel? currentOrder;
+
+  /// manage the current inventory
+  InventoryModel? currentInventory;
 
   /// admin rights to edit order summary
   final TextEditingController nameController = TextEditingController();

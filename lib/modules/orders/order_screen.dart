@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/components/order_product_components.dart';
 import 'package:simple_ui/modules/orders/components/timeline_widget.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/controller/order_controller.dart';
@@ -46,6 +47,8 @@ class _OrderScreenState extends State<OrderScreen> {
     OrderController orderController = Get.put((OrderController()));
     orderController.currentOrder =
         Get.find<AllOrderController>().orders[widget.orderIndex];
+    orderController.currentInventory = Get.find<AllOrderController>()
+        .inventoryMap[orderController.currentOrder!.eid ?? ""];
     orderController.update();
     orderController.initializeEditOrderData();
   }
@@ -58,7 +61,6 @@ class _OrderScreenState extends State<OrderScreen> {
 
       return Container(
         height: size.height - 110.h,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
         width: size.width,
         child: SingleChildScrollView(
           padding: EdgeInsets.only(
@@ -69,31 +71,34 @@ class _OrderScreenState extends State<OrderScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// Header with Edit button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BricolageText(
-                      text: "Order summary",
-                      style: TextStyle(
-                          fontSize: 22.sp, fontWeight: FontWeight.w600),
-                    ),
-                    if (userRole == UserRole.admin ||
-                        userRole == UserRole.deliveryAgent)
-                      IconButton(
-                        onPressed: () {
-                          orderController
-                              .updateCurrentOrderSummary(widget.orderIndex);
-                          setState(() {
-                            isEditing = !isEditing;
-                          });
-                        },
-                        icon: Icon(
-                          isEditing ? Icons.check : Icons.edit_note,
-                          size: 28.r,
-                          color: const Color.fromARGB(255, 103, 103, 103),
-                        ),
-                      )
-                  ],
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BricolageText(
+                        text: "Order summary",
+                        style: TextStyle(
+                            fontSize: 20.sp, fontWeight: FontWeight.bold),
+                      ),
+                      if (userRole == UserRole.admin ||
+                          userRole == UserRole.deliveryAgent)
+                        IconButton(
+                          onPressed: () {
+                            orderController
+                                .updateCurrentOrderSummary(widget.orderIndex);
+                            setState(() {
+                              isEditing = !isEditing;
+                            });
+                          },
+                          icon: Icon(
+                            isEditing ? Icons.check : Icons.edit_note,
+                            size: 28.r,
+                            color: const Color.fromARGB(255, 103, 103, 103),
+                          ),
+                        )
+                    ],
+                  ),
                 ),
                 orderController.isLoadingCurrentOrder
                     ? SizedBox(
@@ -105,232 +110,286 @@ class _OrderScreenState extends State<OrderScreen> {
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 30.h),
-
-                          /// Order Details
-                          OrderDetailItemWidget(
-                              title: "Order ID",
-                              value: orderController.currentOrder?.eid ?? ""),
-                          SizedBox(height: 10.h),
-
-                          userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller: orderController.nameController,
-                                  label: "Name",
-                                  icon: Icon(Icons.person, size: 25.r),
-                                )
-                              : OrderDetailItemWidget(
-                                  title: "Name",
-                                  value:
-                                      "${orderController.currentOrder?.firstName} ${orderController.currentOrder?.lastName}"),
-
-                          SizedBox(height: 10.h),
-
-                          userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller: orderController.addressController,
-                                  label: "Address",
-                                  icon: Icon(Icons.location_on, size: 25.r),
-                                )
-                              : OrderDetailItemWidget(
-                                  title: "Address",
-                                  value:
-                                      orderController.currentOrder?.address ??
-                                          ""),
-
-                          SizedBox(height: 10.h),
-
-                          userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller: orderController.emailController,
-                                  label: "User Id",
-                                  icon: Icon(Icons.email_outlined, size: 25.r),
-                                )
-                              : OrderDetailItemWidget(
-                                  title: "User Id",
-                                  value: orderController.currentOrder?.userId ??
-                                      ""),
-
-                          SizedBox(height: 10.h),
-
-                          InkWell(
-                            overlayColor:
-                                WidgetStateProperty.all(Colors.transparent),
-                            onTap: userRole == UserRole.admin && isEditing
-                                ? () async {
-                                    DateTime? pickedDate =
-                                        await datePicker(context);
-                                    try {
-                                      if (pickedDate != null) {
-                                        orderController.orderDate = pickedDate;
-                                        orderController.update();
-                                      }
-                                    } catch (e) {}
-                                  }
-                                : null,
-                            child: OrderDetailItemWidget(
-                              title: "Date",
-                              value: DateFormat.yMMMd().format(
-                                  orderController.currentOrder?.orderDate ??
-                                      DateTime.now()),
+                          SizedBox(height: 15.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: OrderProductComponent(
+                                inventoryModel:
+                                    orderController.currentInventory!),
+                          ),
+                          SizedBox(height: 20.h),
+                          Container(
+                            height: 30.h,
+                            color: const Color.fromARGB(255, 241, 241, 241),
+                          ),
+                          SizedBox(height: 15.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: BricolageText(
+                              text: "Order Details",
+                              style: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.bold),
                             ),
                           ),
-
-                          SizedBox(height: 10.h),
-
-                          userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller:
-                                      orderController.assigneeController,
-                                  label: "Assignee",
-                                  icon: Icon(Icons.person_2, size: 25.r),
-                                )
-                              : OrderDetailItemWidget(
-                                  title: "Assignee",
-                                  value:
-                                      orderController.currentOrder?.assignee ??
-                                          ""),
-
-                          /// Status (Editable for Admin & Delivery Agent)
-                          if (userRole == UserRole.admin ||
-                              userRole == UserRole.deliveryAgent)
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    BricolageText(
-                                      text: 'Status',
-                                      style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: const Color.fromARGB(
-                                              255, 124, 124, 124)),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    isEditing
-                                        ? SizedBox(
-                                            width: 200.w,
-                                            child: DropDownWidget(
-                                              value: orderController
-                                                      .currentOrder
-                                                      ?.orderStatus ??
-                                                  OrderStatus.orderPlaced,
-                                              dropDownItems: [
-                                                OrderStatus.orderPlaced,
-                                                OrderStatus.preparing,
-                                                OrderStatus.onTheWay,
-                                                OrderStatus.delivered
-                                              ]
-                                                  .map((status) =>
-                                                      DropdownMenuItem(
-                                                        value: status,
-                                                        child: Text(status),
-                                                      ))
-                                                  .toList(),
-                                              onChanged: (newStatus) {
-                                                orderController.orderStatus =
-                                                    newStatus;
-                                                orderController.update();
-                                              },
-                                            ),
-                                          )
-                                        : Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: getStatusColor(
-                                                  orderController.currentOrder!
-                                                          .orderStatus ??
-                                                      ""),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: BricolageText(
-                                              text: orderController
-                                                      .currentOrder!
-                                                      .orderStatus ??
-                                                  "No Order",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                                Divider(
-                                  color:
-                                      const Color.fromARGB(255, 227, 227, 227),
-                                )
-                              ],
-                            ),
-
-                          SizedBox(height: 10.h),
-
-                          userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller:
-                                      orderController.orderDetailsController,
-                                  label: "Order Details",
-                                  icon: Icon(Icons.description_outlined,
-                                      size: 25.r),
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    BricolageText(
-                                      text: "Order Details",
-                                      style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: const Color.fromARGB(
-                                              255, 124, 124, 124)),
-                                    ),
-                                    (orderController.currentOrder
-                                                    ?.orderDetails !=
-                                                null &&
-                                            orderController.currentOrder!
-                                                .orderDetails!.isNotEmpty)
-                                        ? Column(
-                                            children: [
-                                              SizedBox(height: 8.h),
-                                              BricolageText(
-                                                text: orderController
-                                                        .currentOrder
-                                                        ?.orderDetails ??
-                                                    "",
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              )
-                                            ],
-                                          )
-                                        : SizedBox(),
-                                  ],
-                                ),
-                          if (userRole == UserRole.seller ||
-                              userRole == UserRole.recycler)
-                            Column(
+                          SizedBox(height: 15.h),
+                          Container(
+                            height: 0.4.h,
+                            color: const Color.fromARGB(255, 201, 201, 201),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Divider(
-                                  color:
-                                      const Color.fromARGB(255, 227, 227, 227),
+                                SizedBox(height: 10.h),
+
+                                /// Order Details
+                                OrderDetailItemWidget(
+                                    title: "Order ID",
+                                    value: orderController.currentOrder?.eid ??
+                                        ""),
+                                SizedBox(height: 10.h),
+
+                                userRole == UserRole.admin && isEditing
+                                    ? EditableField(
+                                        controller:
+                                            orderController.nameController,
+                                        label: "Name",
+                                        icon: Icon(Icons.person, size: 25.r),
+                                      )
+                                    : OrderDetailItemWidget(
+                                        title: "Name",
+                                        value:
+                                            "${orderController.currentOrder?.firstName} ${orderController.currentOrder?.lastName}"),
+
+                                SizedBox(height: 10.h),
+
+                                userRole == UserRole.admin && isEditing
+                                    ? EditableField(
+                                        controller:
+                                            orderController.addressController,
+                                        label: "Address",
+                                        icon:
+                                            Icon(Icons.location_on, size: 25.r),
+                                      )
+                                    : OrderDetailItemWidget(
+                                        title: "Address",
+                                        value: orderController
+                                                .currentOrder?.address ??
+                                            ""),
+
+                                SizedBox(height: 10.h),
+
+                                userRole == UserRole.admin && isEditing
+                                    ? EditableField(
+                                        controller:
+                                            orderController.emailController,
+                                        label: "User Id",
+                                        icon: Icon(Icons.email_outlined,
+                                            size: 25.r),
+                                      )
+                                    : OrderDetailItemWidget(
+                                        title: "User Id",
+                                        value: orderController
+                                                .currentOrder?.userId ??
+                                            ""),
+
+                                SizedBox(height: 10.h),
+
+                                InkWell(
+                                  overlayColor: WidgetStateProperty.all(
+                                      Colors.transparent),
+                                  onTap: userRole == UserRole.admin && isEditing
+                                      ? () async {
+                                          DateTime? pickedDate =
+                                              await datePicker(context);
+                                          try {
+                                            if (pickedDate != null) {
+                                              orderController.orderDate =
+                                                  pickedDate;
+                                              orderController.update();
+                                            }
+                                          } catch (e) {}
+                                        }
+                                      : null,
+                                  child: OrderDetailItemWidget(
+                                    title: "Date",
+                                    value: DateFormat.yMMMd().format(
+                                        orderController
+                                                .currentOrder?.orderDate ??
+                                            DateTime.now()),
+                                  ),
                                 ),
-                                BricolageText(
-                                  text: "Status",
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: const Color.fromARGB(
-                                          255, 124, 124, 124)),
-                                ),
-                                SizedBox(height: 30.h),
-                                OrderStatusTimeline(currentStep: 2),
-                                SizedBox(height: 20.h),
+
+                                SizedBox(height: 10.h),
+
+                                userRole == UserRole.admin && isEditing
+                                    ? EditableField(
+                                        controller:
+                                            orderController.assigneeController,
+                                        label: "Assignee",
+                                        icon: Icon(Icons.person_2, size: 25.r),
+                                      )
+                                    : orderController.currentOrder?.assignee !=
+                                            null
+                                        ? OrderDetailItemWidget(
+                                            title: "Assignee",
+                                            value: orderController
+                                                    .currentOrder?.assignee ??
+                                                "")
+                                        : SizedBox(),
+
+                                /// Status (Editable for Admin & Delivery Agent)
+                                if (userRole == UserRole.admin ||
+                                    userRole == UserRole.deliveryAgent)
+                                  Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          BricolageText(
+                                            text: 'Status',
+                                            style: TextStyle(
+                                                fontSize: 16.sp,
+                                                color: const Color.fromARGB(
+                                                    255, 124, 124, 124)),
+                                          ),
+                                          SizedBox(height: 8.h),
+                                          isEditing
+                                              ? SizedBox(
+                                                  width: 200.w,
+                                                  child: DropDownWidget(
+                                                    value: orderController
+                                                            .currentOrder
+                                                            ?.orderStatus ??
+                                                        OrderStatus.orderPlaced,
+                                                    dropDownItems: [
+                                                      OrderStatus.orderPlaced,
+                                                      OrderStatus.preparing,
+                                                      OrderStatus.onTheWay,
+                                                      OrderStatus.delivered
+                                                    ]
+                                                        .map((status) =>
+                                                            DropdownMenuItem(
+                                                              value: status,
+                                                              child:
+                                                                  Text(status),
+                                                            ))
+                                                        .toList(),
+                                                    onChanged: (newStatus) {
+                                                      orderController
+                                                              .orderStatus =
+                                                          newStatus;
+                                                      orderController.update();
+                                                    },
+                                                  ),
+                                                )
+                                              : Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: getStatusColor(
+                                                        orderController
+                                                                .currentOrder!
+                                                                .orderStatus ??
+                                                            ""),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: BricolageText(
+                                                    text: orderController
+                                                            .currentOrder!
+                                                            .orderStatus ??
+                                                        "No Order",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                ),
+                                        ],
+                                      ),
+                                      Divider(
+                                        color: const Color.fromARGB(
+                                            255, 227, 227, 227),
+                                      )
+                                    ],
+                                  ),
+
+                                userRole == UserRole.admin && isEditing
+                                    ? EditableField(
+                                        controller: orderController
+                                            .orderDetailsController,
+                                        label: "Order Details",
+                                        icon: Icon(Icons.description_outlined,
+                                            size: 25.r),
+                                      )
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          BricolageText(
+                                            text: "Order Details",
+                                            style: TextStyle(
+                                                fontSize: 13.sp,
+                                                fontWeight: FontWeight.w300,
+                                                color: const Color.fromARGB(
+                                                    255, 88, 88, 88)),
+                                          ),
+                                          (orderController.currentOrder
+                                                          ?.orderDetails !=
+                                                      null &&
+                                                  orderController.currentOrder!
+                                                      .orderDetails!.isNotEmpty)
+                                              ? Column(
+                                                  children: [
+                                                    SizedBox(height: 8.h),
+                                                    BricolageText(
+                                                      text: orderController
+                                                              .currentOrder
+                                                              ?.orderDetails ??
+                                                          "",
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          fontSize: 14.sp,
+                                                          fontWeight: FontWeight
+                                                              .normal),
+                                                    )
+                                                  ],
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                if (userRole == UserRole.seller ||
+                                    userRole == UserRole.recycler)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Divider(
+                                        color: const Color.fromARGB(
+                                            255, 227, 227, 227),
+                                      ),
+                                      BricolageText(
+                                        text: "Status",
+                                        style: TextStyle(
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w300,
+                                            color: const Color.fromARGB(
+                                                255, 88, 88, 88)),
+                                      ),
+                                      SizedBox(height: 30.h),
+                                      OrderStatusTimeline(currentStep: 2),
+                                      SizedBox(height: 20.h),
+                                    ],
+                                  ),
                               ],
                             ),
+                          ),
                         ],
                       ),
               ],
@@ -358,7 +417,7 @@ class EditableField extends StatelessWidget {
         BricolageText(
           text: label,
           style: TextStyle(
-              fontSize: 16.sp, color: const Color.fromARGB(255, 124, 124, 124)),
+              fontSize: 15.sp, color: const Color.fromARGB(255, 124, 124, 124)),
         ),
         SizedBox(height: 5.h),
         CustomTextField(
@@ -383,31 +442,34 @@ class OrderDetailItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            BricolageText(
-              text: title,
-              style: TextStyle(
-                  fontSize: 16.sp,
-                  color: const Color.fromARGB(255, 124, 124, 124)),
-            ),
-            SizedBox(
-              width: 16.w,
-            ),
-            Flexible(
-              child: BricolageText(
-                text: value,
-                textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
+        BricolageText(
+          text: title,
+          style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w300,
+              color: const Color.fromARGB(255, 88, 88, 88)),
         ),
-        Divider(
-          color: const Color.fromARGB(255, 227, 227, 227),
-        )
+        SizedBox(
+          height: 4.h,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              BricolageText(
+                text: value,
+                textAlign: TextAlign.left,
+                style:
+                    TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 8.h,
+        ),
       ],
     );
   }

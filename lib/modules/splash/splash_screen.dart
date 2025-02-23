@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/auth/register_page.dart';
 import 'dart:async';
 import 'package:simple_ui/modules/main_module/app_screen.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
@@ -41,25 +42,14 @@ class _SplashScreenState extends State<SplashScreen>
           Get.offAll(() => AppScreen(user: user));
         });
       } else {
-        UserModel user = UserModel(
-            userId: 'savageSystem@2025',
-            firstName: 'savage',
-            lastLogin: DateTime.now().toUtc().toIso8601String(),
-            password: 'bitByte',
-            phoneNumber: '010101011',
-            email: 'savage@gmail.com',
-            roles: [UserRole.seller],
-            address: 'system bit 01',
-            lastName: 'system');
-        // Navigate to the home screen after 2 seconds
         Future.delayed(const Duration(seconds: 2), () {
-          Get.offAll(() => AppScreen(user: user));
+          Get.offAll(() => AuthScreen());
         });
       }
     } catch (e) {
       // Navigate to the home screen after 2 seconds
       Future.delayed(const Duration(seconds: 2), () {
-        Get.offAll(() => SplashScreen());
+        Get.offAll(() => AuthScreen());
       });
     }
   }

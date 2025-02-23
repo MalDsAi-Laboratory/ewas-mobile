@@ -10,12 +10,14 @@ class HeroCarousal extends StatelessWidget {
   final List<String> imgList;
   final void Function()? onTap;
   final bool autoPlay;
+  final bool? showBottomWidget;
   const HeroCarousal(
       {super.key,
       required this.title,
       required this.imgList,
       this.onTap,
-      required this.autoPlay});
+      required this.autoPlay,
+      this.showBottomWidget = true});
 
   @override
   Widget build(BuildContext context) {
@@ -63,40 +65,43 @@ class HeroCarousal extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 18.sp, fontWeight: FontWeight.bold),
                       ),
-                      Row(
-                        children: [
-                          Row(children: [
-                            Icon(
-                              Icons.location_on_sharp,
-                              size: 15.r,
-                              color: AppColors.primaryColor,
-                            ),
-                            SizedBox(
-                              width: 5.w,
-                            ),
-                            BricolageText(
-                              text: "1 km - 10 km",
-                              style: TextStyle(fontSize: 13.sp),
+                      !showBottomWidget!
+                          ? SizedBox()
+                          : Row(
+                              children: [
+                                Row(children: [
+                                  Icon(
+                                    Icons.location_on_sharp,
+                                    size: 15.r,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: 5.w,
+                                  ),
+                                  BricolageText(
+                                    text: "1 km - 10 km",
+                                    style: TextStyle(fontSize: 13.sp),
+                                  )
+                                ]),
+                                SizedBox(
+                                  width: 10.w,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      shape: BoxShape.circle),
+                                  width: 3,
+                                  height: 3,
+                                ),
+                                SizedBox(
+                                  width: 10.w,
+                                ),
+                                BricolageText(
+                                  text: "7 Recyclers",
+                                  style: TextStyle(fontSize: 13.sp),
+                                )
+                              ],
                             )
-                          ]),
-                          SizedBox(
-                            width: 10.w,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.grey, shape: BoxShape.circle),
-                            width: 3,
-                            height: 3,
-                          ),
-                          SizedBox(
-                            width: 10.w,
-                          ),
-                          BricolageText(
-                            text: "7 Recyclers",
-                            style: TextStyle(fontSize: 13.sp),
-                          )
-                        ],
-                      )
                     ],
                   ),
                 )

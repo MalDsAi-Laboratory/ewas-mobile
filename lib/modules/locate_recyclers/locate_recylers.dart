@@ -157,32 +157,54 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                         ],
                       ),
                     MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: _currentLocation!,
+                      markers: recyclers.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        Recycler recycler = entry.value;
+                        return Marker(
+                          point: recycler.location,
                           width: 80.0,
                           height: 80.0,
-                          child: Icon(Icons.location_pin,
-                              color: Colors.red, size: 40),
-                        ),
-                        ...recyclers.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          Recycler recycler = entry.value;
-                          return Marker(
-                            point: recycler.location,
-                            width: 80.0,
-                            height: 80.0,
-                            child: GestureDetector(
-                              onTap: () => _selectRecycler(index),
-                              child: Icon(Icons.recycling,
+                          child: GestureDetector(
+                            onTap: () => _selectRecycler(index),
+                            child: Column(
+                              children: [
+                                // Floating Price Container
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: index == _selectedRecyclerIndex
+                                        ? Colors.green.withOpacity(
+                                            0.7) // Highlighted for selected recycler
+                                        : Colors.white
+                                            .withOpacity(0.7), // Default color
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    recycler.price,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(
+                                    height:
+                                        4), // Spacing between price and icon
+                                // Recycler Icon
+                                Icon(
+                                  Icons.recycling,
                                   color: index == _selectedRecyclerIndex
                                       ? Colors.green
                                       : Colors.blue,
-                                  size: 40),
+                                  size: 40,
+                                ),
+                              ],
                             ),
-                          );
-                        }).toList(),
-                      ],
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),

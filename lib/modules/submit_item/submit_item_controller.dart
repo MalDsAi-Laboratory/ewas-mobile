@@ -1,13 +1,13 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
-import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'dart:io';
@@ -45,37 +45,22 @@ class SubmitItemController extends GetxController {
           Navigator.pop(context);
           AppSnackBars.showSuccessSnackBar("Success",
               "Product listed for auction!\nYou can view your product for auction from orders screen.");
+          AllOrderController controller = Get.find<AllOrderController>();
+          try {
+            controller.isInventoryLoading.value = false;
+            Map<String, dynamic> response =
+                await getInventoryByIdApi(orderId: orderId);
+            if (response['status']) {
+              controller.inventoryMap[orderId] =
+                  InventoryModel.fromJson(response['data']);
+            }
+          } catch (e) {
+            log("error in getInventoryByIdApi $e");
+          } finally {
+            controller.isInventoryLoading.value = false;
+          }
         }
       }
-      // Save Images
-      // Create Inventory
-      // final CachedCartList cachedCartList = CachedCartList();
-      // List<ProductModel> cardProducts = await cachedCartList.getProducts();
-      // log("cardProducts ${cardProducts}");
-      // await cachedCartList.addProduct(
-      //     product: ProductModel(
-      //   productId: cardProducts.length + 1,
-      //   imagePath:
-      //       base64Encode(utf8.encode(images[0].readAsBytesSync().toString())),
-      //   imagePath2: images.length > 1
-      //       ? base64Encode(utf8.encode(images[1].readAsBytesSync().toString()))
-      //       : null,
-      //   imagePath3: images.length > 2
-      //       ? base64Encode(utf8.encode(images[2].readAsBytesSync().toString()))
-      //       : null,
-      //   imagePath4: images.length > 3
-      //       ? base64Encode(utf8.encode(images[3].readAsBytesSync().toString()))
-      //       : null,
-      //   imagePath5: images.length > 4
-      //       ? base64Encode(utf8.encode(images[4].readAsBytesSync().toString()))
-      //       : null,
-      //   category:
-      //       Get.find<CategoriesController>().selectedCategory!.category ?? "",
-      //   materialDetails: volumeController.text,
-      //   productName:
-      //       Get.find<CategoriesController>().selectedSubCategory!.productName ??
-      //           "",
-      // ));
     } catch (e) {
       log("error in submitProduct $e");
       Get.snackbar("Error", "Failed to add product to cart: $e");
@@ -149,19 +134,26 @@ class SubmitItemController extends GetxController {
 
   Future<String?> createOrder() async {
     try {
+      MainScreenController mainScreenController =
+          Get.find<MainScreenController>();
       OrderModel orderModel = OrderModel(
-        eid: "1",
-        firstName: "John",
-        lastName: "Doe",
-        address: "123 Main St, Anytown, USA",
+        firstName: mainScreenController.user!.firstName,
+        lastName: mainScreenController.user!.lastName,
+        address: mainScreenController.user!.address,
         assignee: null,
-        userId: "W0K5W@example.com",
+        userId: mainScreenController.user!.userId,
         orderStatus: OrderStatus.orderPlaced,
         orderDate: DateTime.now(),
         orderDetails: "Order details",
       );
       Map<String, dynamic> response = await createOrderApi(data: orderModel);
       if (response['status']) {
+        Get.find<AllOrderController>()
+            .orders
+            .add(OrderModel.fromJson(response['data']));
+        Get.find<AllOrderController>()
+            .filteredOrders
+            .add(OrderModel.fromJson(response['data']));
         return response['data']['eid'];
       }
     } catch (e) {

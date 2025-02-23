@@ -20,10 +20,11 @@ class LoginWidget extends StatelessWidget {
           SizedBox(height: 4.h),
           CustomTextFieldWithLightBorder(
             height: 55.h,
-            hintText: "Enter your email / mobile number",
+            hintText: "Enter your user id",
             onChanged: (val) {
-              controller.email.value = val;
+              controller.userId.value = val;
             },
+            initialValue: controller.userId.value,
             icon: Icon(
               Icons.person_3_outlined,
               size: 25.r,
@@ -36,6 +37,7 @@ class LoginWidget extends StatelessWidget {
             height: 55.h,
             textInputAction: TextInputAction.done,
             width: MediaQuery.sizeOf(context).width,
+            initialValue: controller.password.value,
             hintText: "Password",
             onChanged: (val) {
               controller.password.value = val;
@@ -46,7 +48,9 @@ class LoginWidget extends StatelessWidget {
           Column(
             children: [
               RadialGradientButton(
-                  buttonText: 'Login', onTap: () {}, isBtnActive: true),
+                  buttonText: 'Login',
+                  onTap: controller.loginUser,
+                  isBtnActive: true),
               SizedBox(height: 20.h),
               InterText(
                 text: "By signing in, you agree to terms and conditions",

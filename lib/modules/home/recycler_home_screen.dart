@@ -73,20 +73,6 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Column(
                     children: [
-                      // First Hero Carousel
-                      HeroCarousal(
-                        title: 'Sell your E-waste',
-                        imgList: [
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
-                          'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
-                        ],
-                        autoPlay: _isHero1AutoPlay,
-                        onTap: () {
-                          Get.to(() => CategoriesPage());
-                        },
-                      ),
-                      SizedBox(height: 16.h),
-
                       // Second Hero Carousel
                       HeroCarousal(
                         title: 'Find E-waste',
@@ -97,6 +83,20 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                         autoPlay: _isHero2AutoPlay,
                         onTap: () {
                           Get.to(() => AllProductScreen());
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      // First Hero Carousel
+                      HeroCarousal(
+                        title: 'Update your purchase prices',
+                        imgList: [
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
+                          'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
+                        ],
+                        autoPlay: _isHero1AutoPlay,
+                        showBottomWidget: false,
+                        onTap: () {
+                          Get.to(() => CategoriesPage());
                         },
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/app_screen.dart';
 import 'package:simple_ui/services/apis/user/user_apis.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
 import 'package:simple_ui/services/validation_field.dart';
@@ -23,6 +24,7 @@ class AuthController extends GetxController {
   var selectedLatLng = Rxn<LatLng>(); // Nullable LatLng
   var selectedAddress = "".obs;
   late TabController tabController;
+  RxBool isLoading = false.obs;
 
   checkIfAnyFieldIsEmpty() {
     if (userId.value.isEmpty ||
@@ -116,6 +118,39 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       log("error in registerUser $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void loginUser() async {
+    try {
+      Map<String, dynamic> response =
+          await getUserAccountPasswordApi(userId: userId.value);
+      if (response['status']) {
+        if (password.value.trim() == response['data']) {
+          Map<String, dynamic> response =
+              await getUserByUserIdApi(userId: userId.value);
+          if (response['status']) {
+            SecureStorageServices().setUserModel(response['data']);
+            clearFields();
+            Get.offAll(
+                () => AppScreen(user: UserModel.fromJson(response['data'])));
+            AppSnackBars.showSuccessSnackBar(
+                "Success", 'You have registered successfully.\nPlease login.');
+          } else {
+            AppSnackBars.showErrorSnackBar("Error", response['data']);
+          }
+        } else {
+          AppSnackBars.showErrorSnackBar("Error", "Invalid credentials");
+        }
+      } else {
+        AppSnackBars.showErrorSnackBar("Error", response['data']);
+      }
+    } catch (e) {
+      log("error in loginUser $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 }

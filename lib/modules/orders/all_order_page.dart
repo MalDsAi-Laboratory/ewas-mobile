@@ -8,31 +8,18 @@ import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class AllOrderScreen extends StatefulWidget {
-  @override
-  State<AllOrderScreen> createState() => _AllOrderScreenState();
-}
-
-class _AllOrderScreenState extends State<AllOrderScreen> {
-  final AllOrderController orderController = Get.put(AllOrderController());
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    Get.delete<AllOrderController>(force: true);
-  }
-
+class AllOrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AllOrderController orderController = Get.find<AllOrderController>();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: GetBuilder<AllOrderController>(builder: (orderController) {
-              return Badge(
+            child: Obx(
+              () => Badge(
                 isLabelVisible: orderController.filterCount == 0 ? false : true,
                 smallSize: 10,
                 backgroundColor: AppColors.primaryColor,
@@ -51,8 +38,8 @@ class _AllOrderScreenState extends State<AllOrderScreen> {
                     ),
                   ),
                 ),
-              );
-            }),
+              ),
+            ),
           ),
         ],
         backgroundColor: Colors.white,
@@ -82,43 +69,53 @@ class OrderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return orderController.filteredOrders.isEmpty
-          ? Center(child: Text("No $orderType Orders"))
-          : ListView.builder(
-              itemCount: orderController.filteredOrders.length,
-              itemBuilder: (context, index) {
-                final order = orderController.filteredOrders[index];
-                return InkWell(
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  onTap: () {
-                    showOrderDetailScreen(context, index);
+      return orderController.isOrdersLoading.value
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : orderController.filteredOrders.isEmpty
+              ? Center(child: Text("No $orderType Orders"))
+              : ListView.builder(
+                  itemCount: orderController.filteredOrders.length,
+                  itemBuilder: (context, index) {
+                    final order = orderController.filteredOrders[index];
+                    return InkWell(
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      onTap: () {
+                        showOrderDetailScreen(context, index);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 168, 168, 168),
+                                width: 0.3.w),
+                            boxShadow: [
+                              BoxShadow(
+                                  color:
+                                      const Color.fromARGB(59, 158, 158, 158),
+                                  blurRadius: 8.r,
+                                  offset: Offset(0, 2.0.h)),
+                            ]),
+                        margin: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Padding(
+                          padding: EdgeInsets.all(12.w),
+                          child: orderController.isInventoryLoading.value &&
+                                  !orderController.inventoryMap
+                                      .containsKey(order.eid.toString())
+                              ? OrderItemWidget(order: order)
+                              : orderController.inventoryMap
+                                      .containsKey(order.eid.toString())
+                                  ? OrderItemWidget(order: order)
+                                  : NoImageItemWidget(
+                                      order: order,
+                                    ),
+                        ),
+                      ),
+                    );
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(
-                            color: const Color.fromARGB(255, 168, 168, 168),
-                            width: 0.3.w),
-                        boxShadow: [
-                          BoxShadow(
-                              color: const Color.fromARGB(59, 158, 158, 158),
-                              blurRadius: 8.r,
-                              offset: Offset(0, 2.0.h)),
-                        ]),
-                    margin: EdgeInsets.symmetric(vertical: 10.h),
-                    child: Padding(
-                      padding: EdgeInsets.all(12.w),
-                      child: order.productImagePath != null
-                          ? OrderItemWidget(order: order)
-                          : NoImageItemWidget(
-                              order: order,
-                            ),
-                    ),
-                  ),
                 );
-              },
-            );
     });
   }
 }

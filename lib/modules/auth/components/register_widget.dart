@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/auth/auth_controller.dart';
 import 'package:simple_ui/modules/auth/components/map_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
@@ -184,10 +185,12 @@ class RegisterWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(color: Colors.black)),
                     ),
-                    items: ["Seller", "Recycler"].map((role) {
+                    items: [UserRole.seller, UserRole.recycler].map((role) {
                       return DropdownMenuItem(value: role, child: Text(role));
                     }).toList(),
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      controller.userRole.value = value!;
+                    },
                     value: controller.userRole.value,
                   ),
                   SizedBox(height: 20.h),

@@ -10,10 +10,10 @@ import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 // Admin Order Screen with Sidebar Filters
 class AdminOrderScreen extends StatelessWidget {
-  final AllOrderController orderController = Get.put(AllOrderController());
-
   @override
   Widget build(BuildContext context) {
+    final AllOrderController orderController = Get.put(AllOrderController());
+
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(
