@@ -1,22 +1,25 @@
 class BiddingModel {
-  int? orderId;
+  String? orderId;
   String? productCatalog;
-  int? volume;
-  String? recycler;
-  int? priceTag;
+  double? volume;
+  String? fullName;
+  String? bidder;
+  double? priceTag;
 
   BiddingModel(
       {this.orderId,
       this.productCatalog,
       this.volume,
-      this.recycler,
+      this.fullName,
+      this.bidder,
       this.priceTag});
 
   BiddingModel.fromJson(Map<String, dynamic> json) {
     orderId = json['orderId'];
     productCatalog = json['productCatalog'];
     volume = json['volume'];
-    recycler = json['recycler'];
+    fullName = json['fullName'];
+    bidder = json['bidder'];
     priceTag = json['priceTag'];
   }
 
@@ -25,7 +28,8 @@ class BiddingModel {
     data['orderId'] = this.orderId;
     data['productCatalog'] = this.productCatalog;
     data['volume'] = this.volume;
-    data['recycler'] = this.recycler;
+    data['fullName'] = this.fullName;
+    data['bidder'] = this.bidder;
     data['priceTag'] = this.priceTag;
     return data;
   }

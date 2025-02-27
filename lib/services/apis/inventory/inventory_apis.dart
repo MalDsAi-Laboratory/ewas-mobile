@@ -26,7 +26,7 @@ Future<Map<String, dynamic>> createInventoryApi({InventoryModel? data}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(InventoryAPIPath.createInventory.path,
-          data: jsonEncode(data!.toJson()),
+          data: data!.toJson(),
           options: Options(method: "POST", extra: {
             "requiresToken": false,
           })),

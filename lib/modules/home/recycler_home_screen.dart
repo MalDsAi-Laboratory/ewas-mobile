@@ -80,7 +80,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                           'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
                           'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
                         ],
-                        autoPlay: _isHero2AutoPlay,
+                        autoPlay: _isBannerAutoPlay,
                         onTap: () {
                           Get.to(() => AllProductScreen());
                         },

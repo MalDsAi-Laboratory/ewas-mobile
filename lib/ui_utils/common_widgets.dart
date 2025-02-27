@@ -73,3 +73,19 @@ datePicker(context) async {
       lastDate: DateTime(2101));
   return pickedDate;
 }
+
+class RetryWidget extends StatelessWidget {
+  final void Function()? onTap;
+  const RetryWidget({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: onTap ?? () {},
+        child: Icon(
+          Icons.refresh,
+          size: 25.r,
+          color: Colors.black,
+        ));
+  }
+}

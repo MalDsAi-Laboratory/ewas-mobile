@@ -11,6 +11,7 @@ class InventoryModel {
   String? imgPath4;
   String? imgPath5;
   String? dateAndTime;
+  String? units;
 
   InventoryModel(
       {this.productId,
@@ -24,7 +25,8 @@ class InventoryModel {
       this.imgPath3,
       this.imgPath4,
       this.imgPath5,
-      this.dateAndTime});
+      this.dateAndTime,
+      this.units});
 
   InventoryModel.fromJson(Map<String, dynamic> json) {
     productId = json['productId'];
@@ -49,8 +51,8 @@ class InventoryModel {
         ? "http://93.229.113.153:8080${json['imgPath5']}"
         : null;
     dateAndTime = json['dateAndTime'];
+    units = json['units'];
   }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['productId'] = this.productId;
@@ -59,22 +61,13 @@ class InventoryModel {
     data['category'] = this.category;
     data['materialType'] = this.materialType;
     data['productName'] = this.productName;
-    data['imgPath1'] = this.imgPath1 != null
-        ? "http://93.229.113.153:8080$this.imgPath1"
-        : null;
-    data['imgPath2'] = this.imgPath2 != null
-        ? "http://93.229.113.153:8080$this.imgPath2"
-        : null;
-    data['imgPath3'] = this.imgPath3 != null
-        ? "http://93.229.113.153:8080$this.imgPath3"
-        : null;
-    data['imgPath4'] = this.imgPath4 != null
-        ? "http://93.229.113.153:8080$this.imgPath4"
-        : null;
-    data['imgPath5'] = this.imgPath5 != null
-        ? "http://93.229.113.153:8080$this.imgPath5"
-        : null;
+    data['imgPath1'] = this.imgPath1;
+    data['imgPath2'] = this.imgPath2;
+    data['imgPath3'] = this.imgPath3;
+    data['imgPath4'] = this.imgPath4;
+    data['imgPath5'] = this.imgPath5;
     data['dateAndTime'] = this.dateAndTime;
+    data['units'] = this.units;
     return data;
   }
 }

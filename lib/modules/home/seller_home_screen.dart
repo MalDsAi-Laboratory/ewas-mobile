@@ -5,28 +5,69 @@ import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
+import 'package:simple_ui/modules/seller_items/seller_items.dart';
 
-class SellerHomePage extends StatelessWidget {
+class SellerHomePage extends StatefulWidget {
+  @override
+  State<SellerHomePage> createState() => _SellerHomePageState();
+}
+
+class _SellerHomePageState extends State<SellerHomePage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isBannerAutoPlay = true;
+  bool _isHero1AutoPlay = false;
+  bool _isHero2AutoPlay = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double currentScroll = _scrollController.position.pixels;
+
+    setState(() {
+      if (currentScroll < maxScroll * 0.50) {
+        _isBannerAutoPlay = true;
+        _isHero1AutoPlay = false;
+        _isHero2AutoPlay = false;
+      } else if (currentScroll < maxScroll * 0.90) {
+        _isBannerAutoPlay = false;
+        _isHero1AutoPlay = true;
+        _isHero2AutoPlay = false;
+      } else {
+        _isBannerAutoPlay = false;
+        _isHero1AutoPlay = false;
+        _isHero2AutoPlay = true;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               children: [
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
                 HomeAppbar(),
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
                 // Carousel Section
                 BannerCarousal(
-                  autoPlay: true,
+                  autoPlay: _isBannerAutoPlay,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -34,7 +75,7 @@ class SellerHomePage extends StatelessWidget {
                     children: [
                       HeroCarousal(
                         title: 'Sell your E-waste',
-                        autoPlay: true,
+                        autoPlay: _isHero1AutoPlay,
                         onTap: () {
                           Get.to(() => CategoriesPage());
                         },
@@ -43,22 +84,23 @@ class SellerHomePage extends StatelessWidget {
                           'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
                         ],
                       ),
-                      // SizedBox(
-                      //   height: 16.h,
-                      // ),
-                      // HeroCarousal(
-                      //   title: 'Locate Recycler',
-                      //   imgList: [
-                      //     'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
-                      //     'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
-                      //   ],
-                      // ),
+                      SizedBox(height: 16.h),
+                      HeroCarousal(
+                        title: 'View your items',
+                        autoPlay: _isHero2AutoPlay,
+                        showBottomWidget: false,
+                        onTap: () {
+                          Get.to(() => SellerItemsScreen());
+                        },
+                        imgList: [
+                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
+                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                        ],
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
               ],
             ),
           ),

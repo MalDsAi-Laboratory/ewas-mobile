@@ -1,0 +1,72 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:retry/retry.dart';
+import 'package:simple_ui/services/apis/bidding/bidding_api_service.dart';
+
+Dio dio = BiddingDioSingleton.instance; // Create an instance of DioSingleton
+
+enum BiddingAPIPath { getAllBidding }
+
+extension BiddingAPIPathExtension on BiddingAPIPath {
+  String get path {
+    switch (this) {
+      case BiddingAPIPath.getAllBidding:
+        return "/";
+    }
+  }
+}
+
+Future<Map<String, dynamic>> getAllBiddingApi({String? orderId}) async {
+  try {
+    final response = await const RetryOptions(maxAttempts: 2).retry(
+      () => dio.request(
+        "/$orderId",
+        options: Options(
+          method: "GET",
+          extra: {
+            "requiresToken": false,
+          },
+        ),
+      ),
+      retryIf: (e) => e is DioException || e is SocketException,
+    );
+    final responseBody = response.data;
+    return {
+      "status": true,
+      "statusCode": response.statusCode,
+      "data": responseBody,
+    };
+  } catch (e) {
+    // FirebaseCrashlytics.instance.recordError(e, StackTrace.current);
+    if (e is DioException) {
+      // Handle DioError and access the response
+      final dioError = e;
+      final response = dioError.response;
+      if (response != null) {
+        log("response ${response.data}");
+        return {
+          "status": false,
+          "statusCode": response.statusCode ?? 0,
+          "data": response.data?['detail'].toString(),
+        };
+      }
+    }
+    // Handle SocketException for abrupt connection resets
+    Map<String, dynamic>? result = checkSocketException(e);
+    if (result != null) {
+      return result;
+    }
+    // Handle other exceptions here
+    if (kDebugMode) {
+      log('Error: $e');
+    }
+    return {
+      "status": false,
+      "statusCode":
+          0, // You can set a default status code or handle differently
+      "data": e.toString(),
+    };
+  }
+}

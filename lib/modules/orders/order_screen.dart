@@ -119,7 +119,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           ),
                           SizedBox(height: 20.h),
                           Container(
-                            height: 30.h,
+                            height: 15.h,
                             color: const Color.fromARGB(255, 241, 241, 241),
                           ),
                           SizedBox(height: 15.h),

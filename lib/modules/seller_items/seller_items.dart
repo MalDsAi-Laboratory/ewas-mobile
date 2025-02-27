@@ -4,22 +4,24 @@ import 'package:get/get.dart';
 import 'package:simple_ui/modules/orders/components/all_order_page_components.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
-import 'package:simple_ui/modules/orders/order_screen.dart';
+import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
+import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class AllOrderScreen extends StatefulWidget {
+class SellerItemsScreen extends StatefulWidget {
   @override
-  State<AllOrderScreen> createState() => _AllOrderScreenState();
+  State<SellerItemsScreen> createState() => _SellerItemsScreenState();
 }
 
-class _AllOrderScreenState extends State<AllOrderScreen> {
+class _SellerItemsScreenState extends State<SellerItemsScreen> {
   @override
   Widget build(BuildContext context) {
     AllOrderController orderController = Get.find<AllOrderController>();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: AppBarButton(),
         actions: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -94,7 +96,9 @@ class OrderList extends StatelessWidget {
                     return InkWell(
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       onTap: () {
-                        showOrderDetailScreen(context, index);
+                        Get.to(() => ProductBiddingScreen(
+                            productModel: orderController.inventoryMap[
+                                orderController.filteredOrders[index].eid!]!));
                       },
                       child: Container(
                         decoration: BoxDecoration(

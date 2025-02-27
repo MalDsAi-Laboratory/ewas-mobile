@@ -71,7 +71,7 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
   @override
   void initState() {
     super.initState();
-    _getUserLocation();
+
     _mapController.mapEventStream.listen((event) {
       if (event is MapEventMove) {
         setState(() {
@@ -79,6 +79,7 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
         });
       }
     });
+    _getUserLocation();
   }
 
   Future<void> _getUserLocation() async {
@@ -86,7 +87,13 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
     bool serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
-      if (!serviceEnabled) return;
+      if (!serviceEnabled) {
+        setState(() {
+          _currentLocation = LatLng(28.692635, 77.103316);
+          _zoom = 5;
+        });
+        return;
+      }
     }
     PermissionStatus permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {

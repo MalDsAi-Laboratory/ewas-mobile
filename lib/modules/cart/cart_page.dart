@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/product_model.dart';
 import 'package:simple_ui/modules/cart/cart_controller.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
@@ -78,7 +79,7 @@ class _CartPageState extends State<CartPage> {
 
 // Widget to display each category card
 class ProductItem extends StatelessWidget {
-  final ProductModel product;
+  final InventoryModel product;
   const ProductItem({required this.product});
 
   @override
@@ -109,7 +110,7 @@ class ProductItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: MemoryImage(
-                        base64Decode(product.imagePath ?? ""),
+                        base64Decode(product.imgPath1 ?? ""),
                       ),
                       fit: BoxFit.cover,
                     ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/bidding_model.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/product/product_controller.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
@@ -35,8 +37,10 @@ class BiddingTableWidget extends StatelessWidget {
               "index": i + 1
             }); // i + 1 to start index from 1
           }
-          int myIndex = indexedBids.indexWhere(
-              (bid) => bid['bid'].recycler == "Safe Energy Recycle");
+          print(
+              "indexedBids: ${indexedBids.map((bid) => bid['bid'].toJson())}");
+          // int myIndex = indexedBids.indexWhere(
+          //     (bid) => bid['bid'].recycler == "Safe Energy Recycle");
           return DataTable(
             columnSpacing: size.width * 0.06,
             border:
@@ -67,7 +71,12 @@ class BiddingTableWidget extends StatelessWidget {
             rows: indexedBids.map((entry) {
               int index = entry['index']; // Index starts from 1
               BiddingModel bidding = entry['bid'];
-              bool isUser = bidding.recycler == "Safe Energy Recycle";
+              MainScreenController mainScreenController =
+                  Get.find<MainScreenController>();
+              bool isUser = (mainScreenController.user!.roles![0] ==
+                      UserRole.recycler &&
+                  bidding.fullName ==
+                      "${mainScreenController.user!.firstName} ${mainScreenController.user!.lastName}");
 
               return DataRow(
                 color: WidgetStateProperty.resolveWith<Color?>(
@@ -88,7 +97,7 @@ class BiddingTableWidget extends StatelessWidget {
                   DataCell(SizedBox(
                     width: 200.w,
                     child: BricolageText(
-                      text: bidding.recycler ?? "",
+                      text: bidding.fullName ?? "",
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

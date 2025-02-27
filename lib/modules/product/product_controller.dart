@@ -1,58 +1,33 @@
 import 'package:get/get.dart';
 import 'package:simple_ui/models/bidding_model.dart';
-
-List<BiddingModel> dummyBids = [
-  BiddingModel(
-    orderId: 101,
-    productCatalog: "Plastic Bottles",
-    volume: 500,
-    recycler: "Green Recycle Ltd.",
-    priceTag: 2000,
-  ),
-  BiddingModel(
-    orderId: 102,
-    productCatalog: "E-Waste Circuit Boards",
-    volume: 300,
-    recycler: "EcoTech Recycling",
-    priceTag: 5000,
-  ),
-  BiddingModel(
-    orderId: 103,
-    productCatalog: "Used Laptop Batteries",
-    volume: 200,
-    recycler: "Safe Energy Recycle",
-    priceTag: 3500,
-  ),
-  BiddingModel(
-    orderId: 104,
-    productCatalog: "Scrap Aluminum Cans",
-    volume: 1000,
-    recycler: "Metal Recyclers Inc.",
-    priceTag: 1800,
-  ),
-  BiddingModel(
-    orderId: 105,
-    productCatalog: "Old Smartphones",
-    volume: 150,
-    recycler: "Urban E-Waste Solutions",
-    priceTag: 7500,
-  ),
-  BiddingModel(
-    orderId: 106,
-    productCatalog: "Discarded Wires & Cables",
-    volume: 400,
-    recycler: "Cable Green Recycling",
-    priceTag: 2700,
-  ),
-];
+import 'package:simple_ui/services/apis/bidding/bidding_apis.dart';
 
 class ProductController extends GetxController {
   List<BiddingModel> biddingList = [];
+  RxBool isLoading = true.obs;
 
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-    biddingList.assignAll(dummyBids);
+  void getBiddingDetails({String? orderId}) async {
+    try {
+      Map<String, dynamic> response = await getAllBiddingApi(orderId: orderId);
+      if (response['status']) {
+        List<BiddingModel> temp = [];
+        for (var i = 0; i < response['data'].length; i++) {
+          temp.add(BiddingModel.fromJson(response['data'][i]));
+        }
+        biddingList.assignAll(temp);
+      }
+    } catch (e) {
+      print("Error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Method to get the highest bid price
+  double? getHighestBidPrice() {
+    if (biddingList.isEmpty) return null;
+    return biddingList
+        .map((b) => b.priceTag ?? 0)
+        .reduce((a, b) => a > b ? a : b);
   }
 }

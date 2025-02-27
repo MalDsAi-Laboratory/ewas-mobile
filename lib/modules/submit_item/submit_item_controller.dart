@@ -104,21 +104,19 @@ class SubmitItemController extends GetxController {
   Future<bool> createInventory(String orderId) async {
     try {
       InventoryModel inventoryModel = InventoryModel(
-          orderId: orderId,
-          category: Get.find<CategoriesController>().selectedCategory!.category,
-          materialType:
-              Get.find<CategoriesController>().selectedSubCategory!.category,
-          productName:
-              Get.find<CategoriesController>().selectedSubCategory!.productName,
-          volume: volumeController.text,
-          dateAndTime: DateTime.now().toUtc().toIso8601String(),
-          productId: "123",
-          imgPath1: "string",
-          imgPath2: "string",
-          imgPath3: "string",
-          imgPath4: "string",
-          imgPath5: "string");
-      log('inventoryModel ${inventoryModel.toJson()}');
+        orderId: orderId,
+        category: Get.find<CategoriesController>().selectedCategory!.category,
+        materialType:
+            Get.find<CategoriesController>().selectedSubCategory!.category,
+        productName:
+            Get.find<CategoriesController>().selectedSubCategory!.productName,
+        volume: volumeController.text,
+        dateAndTime: DateTime.now().toUtc().toIso8601String(),
+        productId: Get.find<CategoriesController>()
+            .selectedSubCategory!
+            .productId
+            .toString(),
+      );
       Map<String, dynamic> response =
           await createInventoryApi(data: inventoryModel);
       if (response['status']) {

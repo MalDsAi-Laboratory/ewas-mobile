@@ -41,7 +41,7 @@ class AllOrderController extends GetxController {
   RxBool isInventoryLoading = true.obs;
   RxMap<String, InventoryModel> inventoryMap = <String, InventoryModel>{}.obs;
 
-  void _fetchOrders() async {
+  void fetchOrders() async {
     if (orders.isEmpty) {
       try {
         Map<String, dynamic>? response = await getAllOrdersApi(
@@ -137,6 +137,6 @@ class AllOrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _fetchOrders();
+    fetchOrders();
   }
 }

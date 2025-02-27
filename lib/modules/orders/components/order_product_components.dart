@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:simple_ui/models/inventory_model.dart';
@@ -13,8 +14,8 @@ class OrderProductComponent extends StatelessWidget {
       children: [
         ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
-            child: Image.network(
-              inventoryModel.imgPath1 ?? "",
+            child: CachedNetworkImage(
+              imageUrl: inventoryModel.imgPath1 ?? "",
               width: 80.w,
               height: 80.w,
               fit: BoxFit.cover,

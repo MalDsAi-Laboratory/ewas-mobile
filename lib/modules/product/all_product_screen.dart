@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:simple_ui/models/product_model.dart';
+import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/modules/product/all_product_controller.dart';
 import 'package:simple_ui/modules/product/components/all_product_appbar.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
@@ -57,7 +57,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
 
 // Widget to display each category card
 class ProductItem extends StatelessWidget {
-  final ProductModel product;
+  final InventoryModel product;
   const ProductItem({required this.product});
 
   @override
@@ -87,7 +87,7 @@ class ProductItem extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(15.r)),
                   child: CachedNetworkImage(
-                    imageUrl: product.imagePath ?? "",
+                    imageUrl: product.imgPath1 ?? "",
                     fit: BoxFit.cover,
                   ),
                 ),

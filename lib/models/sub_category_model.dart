@@ -1,17 +1,23 @@
 class SubCategoryModel {
+  int? productId;
   String? productName;
   String? category;
   String? materialDetails;
   String? imagePath;
 
   SubCategoryModel(
-      {this.productName, this.category, this.materialDetails, this.imagePath});
+      {this.productName,
+      this.category,
+      this.materialDetails,
+      this.imagePath,
+      this.productId});
 
   SubCategoryModel.fromJson(Map<String, dynamic> json) {
     productName = json['productName'];
     category = json['category'];
     materialDetails = json['materialDetails'];
     imagePath = "http://93.229.113.153:8080/" + json['imagePath'];
+    productId = json['productId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -20,6 +26,7 @@ class SubCategoryModel {
     data['category'] = this.category;
     data['materialDetails'] = this.materialDetails;
     data['imagePath'] = this.imagePath;
+    data['productId'] = this.productId;
     return data;
   }
 }
