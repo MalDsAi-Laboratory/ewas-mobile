@@ -266,9 +266,23 @@ class _OrderScreenState extends State<OrderScreen> {
                                                         OrderStatus.orderPlaced,
                                                     dropDownItems: [
                                                       OrderStatus.orderPlaced,
-                                                      OrderStatus.preparing,
-                                                      OrderStatus.onTheWay,
-                                                      OrderStatus.delivered
+                                                      OrderStatus
+                                                          .biddingStarted,
+                                                      OrderStatus
+                                                          .biddingInProgress,
+                                                      OrderStatus
+                                                          .biddingCompleted,
+                                                      OrderStatus
+                                                          .biddingRejected,
+                                                      OrderStatus
+                                                          .awaitingForPick,
+                                                      OrderStatus.completed,
+                                                      OrderStatus
+                                                          .deliveredForRecycle,
+                                                      OrderStatus
+                                                          .deliveredToWarehouse,
+                                                      OrderStatus
+                                                          .orderCollected,
                                                     ]
                                                         .map((status) =>
                                                             DropdownMenuItem(
@@ -383,7 +397,10 @@ class _OrderScreenState extends State<OrderScreen> {
                                                 255, 88, 88, 88)),
                                       ),
                                       SizedBox(height: 30.h),
-                                      OrderStatusTimeline(currentStep: 2),
+                                      OrderStatusTimeline(
+                                          currentStatus:
+                                              orderController.orderStatus ??
+                                                  "Order Placed"),
                                       SizedBox(height: 20.h),
                                     ],
                                   ),

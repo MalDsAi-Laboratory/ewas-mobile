@@ -5,7 +5,7 @@ import 'package:simple_ui/services/apis/bidding/bidding_apis.dart';
 class ProductController extends GetxController {
   List<BiddingModel> biddingList = [];
   RxBool isLoading = true.obs;
-
+  Rx<DateTime?> inputDatetime = null.obs;
   void getBiddingDetails({String? orderId}) async {
     try {
       Map<String, dynamic> response = await getAllBiddingApi(orderId: orderId);

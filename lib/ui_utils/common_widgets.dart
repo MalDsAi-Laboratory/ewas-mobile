@@ -53,12 +53,24 @@ Color getStatusColor(String status) {
   switch (status) {
     case OrderStatus.orderPlaced:
       return Colors.orange;
-    case OrderStatus.preparing:
-      return const Color.fromARGB(255, 119, 0, 255);
-    case OrderStatus.onTheWay:
-      return Colors.blue;
-    case OrderStatus.delivered:
+    case OrderStatus.biddingStarted:
+      return Colors.blueGrey;
+    case OrderStatus.biddingInProgress:
+      return Colors.purple;
+    case OrderStatus.biddingCompleted:
+      return Colors.teal;
+    case OrderStatus.awaitingForPick:
+      return Colors.amber;
+    case OrderStatus.orderCollected:
+      return Colors.cyan;
+    case OrderStatus.deliveredToWarehouse:
+      return Colors.indigo;
+    case OrderStatus.deliveredForRecycle:
       return Colors.green;
+    case OrderStatus.biddingRejected:
+      return Colors.red;
+    case OrderStatus.completed:
+      return Colors.blue;
     default:
       return Colors.grey;
   }

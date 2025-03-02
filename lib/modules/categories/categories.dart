@@ -23,7 +23,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   @override
   void initState() {
     super.initState();
-    CategoriesController controller = Get.put(CategoriesController());
+    CategoriesController controller = Get.find<CategoriesController>();
     controller.clearState();
   }
 

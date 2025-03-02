@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,7 @@ import 'package:simple_ui/modules/product/components/bidding_table.dart';
 import 'package:simple_ui/modules/product/components/timer_widget.dart';
 import 'package:simple_ui/modules/product/product_controller.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
@@ -21,46 +21,13 @@ class ProductBiddingScreen extends StatefulWidget {
 }
 
 class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
-  late Timer _timer;
-  int _hours = 12;
-  int _minutes = 45;
-  int _seconds = 31;
-
   @override
   void initState() {
     super.initState();
     var controller = Get.put(ProductController());
-    controller.getBiddingDetails(orderId: widget.productModel.orderId);
-    startTimer();
-  }
-
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds > 0) {
-          _seconds--;
-        } else {
-          if (_minutes > 0) {
-            _minutes--;
-            _seconds = 59;
-          } else {
-            if (_hours > 0) {
-              _hours--;
-              _minutes = 59;
-              _seconds = 59;
-            } else {
-              _timer.cancel();
-            }
-          }
-        }
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
+    controller.getBiddingDetails(
+      orderId: widget.productModel.orderId,
+    );
   }
 
   @override
@@ -79,7 +46,7 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
           child: Obx(
             () => productController.isLoading.value
                 ? Center(
-                    child: CircularProgressIndicator(),
+                    child: AppLoadingWidget(),
                   )
                 : SingleChildScrollView(
                     child: Column(
@@ -125,11 +92,12 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                             fontWeight: FontWeight.w400),
                                       ),
                                       TimerWidget(
-                                          inputTime: DateTime.now().subtract(
-                                              const Duration(hours: 1)))
-                                      // TimerWidget(
-                                      //     inputTime: DateTime.parse(
-                                      //         widget.productModel.dateAndTime!))
+                                          inputTime: DateTime.parse(widget
+                                                      .productModel
+                                                      .dateAndTime ??
+                                                  "")
+                                              .add(DateTime.now()
+                                                  .timeZoneOffset)),
                                     ],
                                   ),
                                 ),

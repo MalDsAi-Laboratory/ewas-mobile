@@ -248,12 +248,32 @@ class RegisterWidget extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      RadialGradientButton(
-                          buttonText: 'Sign Up',
-                          onTap: () {
-                            controller.registerUser();
-                          },
-                          isBtnActive: true),
+                      Obx(
+                        () => controller.isLoading.value
+                            ? RadialGradientButtonWithWidget(
+                                buttonChild: SizedBox(
+                                  width: 20.w,
+                                  height: 20.w,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                onTap: () {},
+                                isBtnActive: true)
+                            : RadialGradientButtonWithWidget(
+                                buttonChild: BricolageText(
+                                  text: "Sign up",
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () {
+                                  controller.registerUser();
+                                },
+                                isBtnActive: true),
+                      ),
                       SizedBox(height: 10.h),
                       InterText(
                         text:

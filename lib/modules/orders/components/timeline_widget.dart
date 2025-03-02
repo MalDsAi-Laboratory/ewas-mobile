@@ -1,19 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class OrderStatusTimeline extends StatelessWidget {
-  final int currentStep;
+class OrderStatusTimeline extends StatefulWidget {
+  final String currentStatus;
 
-  const OrderStatusTimeline({super.key, required this.currentStep});
+  const OrderStatusTimeline({super.key, required this.currentStatus});
+
+  @override
+  State<OrderStatusTimeline> createState() => _OrderStatusTimelineState();
+}
+
+class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
+  late List<String> orderFlow;
+
+  @override
+  void initState() {
+    super.initState();
+    _determineFlow();
+  }
+
+  void _determineFlow() {
+    // Select the flow based on the current status
+    if (widget.currentStatus == OrderStatus.biddingRejected) {
+      orderFlow = [
+        OrderStatus.orderPlaced,
+        OrderStatus.biddingStarted,
+        OrderStatus.biddingRejected,
+      ];
+    } else {
+      orderFlow = [
+        OrderStatus.orderPlaced,
+        OrderStatus.biddingStarted,
+        OrderStatus.biddingInProgress,
+        OrderStatus.biddingCompleted,
+        OrderStatus.awaitingForPick,
+        OrderStatus.orderCollected,
+        OrderStatus.deliveredToWarehouse,
+        OrderStatus.deliveredForRecycle,
+        OrderStatus.completed,
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: 100.h,
       child: EasyStepper(
-        activeStep: 2,
+        activeStep: orderFlow.indexOf(widget.currentStatus),
         lineStyle: LineStyle(
           lineLength: 70.w,
           lineSpace: 0,
@@ -22,83 +60,38 @@ class OrderStatusTimeline extends StatelessWidget {
           finishedLineColor: AppColors.primaryColor,
         ),
         activeStepTextColor: Colors.black87,
-        stepBorderRadius: 0,
         finishedStepTextColor: Colors.black87,
-        internalPadding: 0,
         showLoadingAnimation: false,
-        disableScroll: true,
+        disableScroll: false,
+        direction: Axis.horizontal,
         stepRadius: 10.r,
+        internalPadding: 60,
         showStepBorder: false,
-        steps: [
-          EasyStep(
-            customStep: CircleAvatar(
-              radius: 8,
-              backgroundColor: 2 >= 1 ? AppColors.primaryColor : Colors.white,
-              child: 2 >= 1
-                  ? Icon(
-                      Icons.check,
-                      size: 15.r,
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                    )
-                  : null,
-            ),
-            customTitle: BricolageText(
-              text: "Order Placed",
-              style: TextStyle(color: Colors.black87, fontSize: 13.sp),
-            ),
-          ),
-          EasyStep(
-            customStep: CircleAvatar(
-              radius: 12,
-              backgroundColor: 2 >= 2 ? AppColors.primaryColor : Colors.white,
-              child: 2 >= 2
-                  ? Icon(
-                      Icons.check,
-                      size: 15.r,
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                    )
-                  : null,
-            ),
-            customTitle: BricolageText(
-              text: "Preparing",
-              style: TextStyle(color: Colors.black87, fontSize: 13.sp),
-            ),
-          ),
-          EasyStep(
-            customStep: CircleAvatar(
-              radius: 12,
-              backgroundColor: 2 >= 3
-                  ? AppColors.primaryColor
-                  : const Color.fromARGB(255, 231, 231, 231),
-              child: Icon(
+        steps: orderFlow
+            .map((status) => _buildStep(status, orderFlow.indexOf(status)))
+            .toList(),
+      ),
+    );
+  }
+
+  EasyStep _buildStep(String title, int stepIndex) {
+    return EasyStep(
+      customStep: CircleAvatar(
+        radius: 12,
+        backgroundColor: stepIndex <= orderFlow.indexOf(widget.currentStatus)
+            ? AppColors.primaryColor
+            : const Color.fromARGB(255, 231, 231, 231),
+        child: stepIndex <= orderFlow.indexOf(widget.currentStatus)
+            ? Icon(
                 Icons.check,
                 size: 15.r,
-                color: const Color.fromARGB(255, 255, 255, 255),
-              ),
-            ),
-            customTitle: BricolageText(
-              text: "On Way",
-              style: TextStyle(color: Colors.black87, fontSize: 13.sp),
-            ),
-          ),
-          EasyStep(
-            customStep: CircleAvatar(
-              radius: 12,
-              backgroundColor: 2 >= 4
-                  ? AppColors.primaryColor
-                  : const Color.fromARGB(255, 231, 231, 231),
-              child: Icon(
-                Icons.check,
-                size: 15.r,
-                color: const Color.fromARGB(255, 255, 255, 255),
-              ),
-            ),
-            customTitle: BricolageText(
-              text: "Delivered",
-              style: TextStyle(color: Colors.black87, fontSize: 13.sp),
-            ),
-          ),
-        ],
+                color: Colors.white,
+              )
+            : null,
+      ),
+      customTitle: BricolageText(
+        text: title,
+        style: TextStyle(color: Colors.black87, fontSize: 13.sp),
       ),
     );
   }

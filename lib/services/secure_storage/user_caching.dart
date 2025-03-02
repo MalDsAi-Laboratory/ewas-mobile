@@ -9,6 +9,7 @@ class SecureStorageServices {
 
   // Storage keys
   final String _userModel = 'userModel';
+  final String _userLocation = 'userLocation';
 
   // User Mdoel
   Future<void> setUserModel(Map<String, dynamic> userModel) async {
@@ -20,6 +21,23 @@ class SecureStorageServices {
     if (userModelJson != null) {
       log("userModelJson is $userModelJson");
       return jsonDecode(userModelJson) as Map<String, dynamic>;
+    } else {
+      return null;
+    }
+  }
+
+  // User Location
+  Future<void> setUserLocation(Map<String, dynamic> userLocation) async {
+    await _secureStorage.write(
+        key: _userLocation, value: jsonEncode(userLocation));
+  }
+
+  Future<Map<String, dynamic>?> getUserLocation() async {
+    final String? userLocationJson =
+        await _secureStorage.read(key: _userLocation);
+    if (userLocationJson != null) {
+      log("userLocationJson is $userLocationJson");
+      return jsonDecode(userLocationJson) as Map<String, dynamic>;
     } else {
       return null;
     }

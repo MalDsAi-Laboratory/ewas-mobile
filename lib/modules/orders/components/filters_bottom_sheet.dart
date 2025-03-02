@@ -93,9 +93,15 @@ class OrderFiltersWidget extends StatelessWidget {
                 items: [
                   "All",
                   OrderStatus.orderPlaced,
-                  OrderStatus.preparing,
-                  OrderStatus.onTheWay,
-                  OrderStatus.delivered
+                  OrderStatus.biddingStarted,
+                  OrderStatus.biddingInProgress,
+                  OrderStatus.biddingCompleted,
+                  OrderStatus.biddingRejected,
+                  OrderStatus.awaitingForPick,
+                  OrderStatus.completed,
+                  OrderStatus.deliveredForRecycle,
+                  OrderStatus.deliveredToWarehouse,
+                  OrderStatus.orderCollected,
                 ],
                 onChanged: (value) {
                   orderController.selectedStatus.value = value ?? '';

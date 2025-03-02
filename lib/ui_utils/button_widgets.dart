@@ -114,6 +114,58 @@ class RadialGradientButton extends StatelessWidget {
   }
 }
 
+class RadialGradientButtonWithWidget extends StatelessWidget {
+  final Widget buttonChild;
+  final VoidCallback onTap;
+  final bool isBtnActive;
+
+  const RadialGradientButtonWithWidget({
+    super.key,
+    required this.buttonChild,
+    required this.onTap,
+    this.isBtnActive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50.w,
+      width: MediaQuery.sizeOf(context).width - 35.w,
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          colors: isBtnActive
+              ? [Color.fromRGBO(57, 225, 161, 1), AppColors.primaryColor]
+              : [
+                  const Color.fromARGB(255, 255, 255, 255),
+                  const Color.fromRGBO(224, 224, 224, 1.0),
+                ],
+          center: const Alignment(0, 0), // Center the gradient
+          radius: 2.r, // Stretch the gradient horizontally
+        ),
+        borderRadius: BorderRadius.circular(10.r), // Rounded corners
+      ),
+      child: Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
+            backgroundColor:
+                Colors.transparent, // Make the button itself transparent
+            shadowColor: const Color.fromARGB(
+                0, 238, 238, 238), // Remove default button shadow
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+          ),
+          onPressed: onTap,
+          child: Center(
+            child: buttonChild,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class TextandIconButton extends StatelessWidget {
   final String buttonText;
   final IconData iconData;

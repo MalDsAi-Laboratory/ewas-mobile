@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
 import 'package:simple_ui/modules/product/all_product_screen.dart';
+import 'package:simple_ui/modules/updatePrice/all_products_screen.dart';
+import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
 
 class RecyclerHomePage extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
   @override
   void initState() {
     super.initState();
+    Get.put(UpdatePriceController());
     _scrollController.addListener(_onScroll);
   }
 
@@ -80,7 +82,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                           'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
                           'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
                         ],
-                        autoPlay: _isBannerAutoPlay,
+                        autoPlay: _isHero1AutoPlay,
                         onTap: () {
                           Get.to(() => AllProductScreen());
                         },
@@ -93,10 +95,10 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
                           'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
                         ],
-                        autoPlay: _isHero1AutoPlay,
+                        autoPlay: _isHero2AutoPlay,
                         showBottomWidget: false,
                         onTap: () {
-                          Get.to(() => CategoriesPage());
+                          Get.to(() => UpdatePriceScreen());
                         },
                       ),
                     ],

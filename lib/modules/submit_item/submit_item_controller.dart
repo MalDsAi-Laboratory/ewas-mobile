@@ -13,12 +13,14 @@ import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'dart:io';
 import "package:dio/dio.dart" as dio;
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 
 class SubmitItemController extends GetxController {
   var volumeController = TextEditingController();
   bool isBtnActive = false;
   final ImagePicker _picker = ImagePicker();
   var images = <File>[];
+  bool isOrderCreated = true;
 
   Future<void> submitProduct(context) async {
     if (volumeController.text.isEmpty) {
@@ -30,19 +32,36 @@ class SubmitItemController extends GetxController {
       return;
     }
     try {
+      isOrderCreated = false;
+      update();
+      showLoadingDialog(context);
       // Create order
       String? orderId = await createOrder();
       if (orderId == null) {
+        isOrderCreated = true;
+        update();
+        Get.back();
+        print("createOrder failed");
+
         AppSnackBars.showErrorSnackBar("Error", "Failed to create order");
       } else {
         bool response = await createInventory(orderId);
         if (!response) {
+          isOrderCreated = true;
+          update();
+          Get.back();
+          print("createInventory failed");
+
           AppSnackBars.showErrorSnackBar("Error", "Failed to create inventory");
         } else {
-          await productImageUpload(orderId);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          await Future.wait([
+            updateOrderStatus(orderId: orderId),
+            productImageUpload(orderId),
+          ]);
+          Get.back();
+          Get.back();
+          Get.back();
+          Get.back();
           AppSnackBars.showSuccessSnackBar("Success",
               "Product listed for auction!\nYou can view your product for auction from orders screen.");
           AllOrderController controller = Get.find<AllOrderController>();
@@ -64,6 +83,11 @@ class SubmitItemController extends GetxController {
     } catch (e) {
       log("error in submitProduct $e");
       Get.snackbar("Error", "Failed to add product to cart: $e");
+    } finally {
+      print("finally");
+
+      isOrderCreated = true;
+      update();
     }
   }
 
@@ -111,7 +135,7 @@ class SubmitItemController extends GetxController {
         productName:
             Get.find<CategoriesController>().selectedSubCategory!.productName,
         volume: volumeController.text,
-        dateAndTime: DateTime.now().toUtc().toIso8601String(),
+        dateAndTime: DateTime.now().toIso8601String(),
         productId: Get.find<CategoriesController>()
             .selectedSubCategory!
             .productId
@@ -152,6 +176,39 @@ class SubmitItemController extends GetxController {
         Get.find<AllOrderController>()
             .filteredOrders
             .add(OrderModel.fromJson(response['data']));
+        return response['data']['eid'];
+      }
+    } catch (e) {
+      log("error in createOrder $e");
+    }
+    return null;
+  }
+
+  Future<String?> updateOrderStatus({required String orderId}) async {
+    try {
+      MainScreenController mainScreenController =
+          Get.find<MainScreenController>();
+      OrderModel orderModel = OrderModel(
+        eid: orderId,
+        firstName: mainScreenController.user!.firstName,
+        lastName: mainScreenController.user!.lastName,
+        address: mainScreenController.user!.address,
+        assignee: null,
+        userId: mainScreenController.user!.userId,
+        orderStatus: OrderStatus.biddingStarted,
+        orderDate: DateTime.now(),
+        orderDetails: "Order details",
+      );
+      Map<String, dynamic> response = await updateOrderApi(data: orderModel);
+      if (response['status']) {
+        Get.find<AllOrderController>()
+            .orders
+            .add(OrderModel.fromJson(response['data']));
+        int index = Get.find<AllOrderController>()
+            .filteredOrders
+            .indexWhere((element) => element.eid == orderId);
+        Get.find<AllOrderController>().filteredOrders[index] =
+            OrderModel.fromJson(response['data']);
         return response['data']['eid'];
       }
     } catch (e) {

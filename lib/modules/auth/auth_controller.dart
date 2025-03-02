@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:simple_ui/models/create_user_model.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/app_screen.dart';
+import 'package:simple_ui/services/apis/location/location_apis.dart';
 import 'package:simple_ui/services/apis/user/user_apis.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
 import 'package:simple_ui/services/validation_field.dart';
@@ -106,12 +108,27 @@ class AuthController extends GetxController {
       );
       Map<String, dynamic> response = await createUserApi(data: userModel);
       if (response['status']) {
-        tabController.animateTo(0);
-        SecureStorageServices().setUserModel(userModel.toJson());
-        clearFields();
-
-        AppSnackBars.showSuccessSnackBar(
-            "Success", 'You have registered successfully.\nPlease login.');
+        Map<String, dynamic> response = await createUser2Api(
+            data: CreateUserModel(
+                address: selectedAddress.value,
+                userid: userId.value,
+                location:
+                    "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
+                role: userRole.value));
+        if (response['status']) {
+          tabController.animateTo(0);
+          SecureStorageServices().setUserModel(userModel.toJson());
+          SecureStorageServices().setUserLocation({
+            "latitude": selectedLatLng.value!.latitude,
+            "longitude": selectedLatLng.value!.longitude
+          });
+          clearFields();
+          AppSnackBars.showSuccessSnackBar(
+              "Success", 'You have registered successfully.\nPlease login.');
+        } else {
+          log("error in registerUser ${response['data']}");
+          AppSnackBars.showErrorSnackBar("Error", response['data']);
+        }
       } else {
         log("error in registerUser ${response['data']}");
         AppSnackBars.showErrorSnackBar("Error", response['data']);

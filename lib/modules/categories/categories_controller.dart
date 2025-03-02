@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/category_model.dart';
 import 'package:simple_ui/models/sub_category_model.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
 import 'package:simple_ui/services/apis/product_catalogue/product_catalogue_api.dart';
 
 class CategoriesController extends GetxController {
@@ -18,7 +21,7 @@ class CategoriesController extends GetxController {
       <String, List<SubCategoryModel>>{}.obs;
   SubCategoryModel? selectedSubCategory;
   RxBool isSubCategoriesLoading = true.obs;
-
+  RxBool isFetchingAllSubCategories = true.obs;
   setSelectedCategory(selectedCategory) {
     this.selectedCategory = selectedCategory;
     update();
@@ -59,6 +62,10 @@ class CategoriesController extends GetxController {
       }
     }
     filteredCategories.assignAll(allCategories);
+    await fetchAllSubCategories();
+    if (Get.find<MainScreenController>().user?.roles?[0] == UserRole.recycler) {
+      Get.find<UpdatePriceController>().getProductsPricing();
+    }
   }
 
   void _filterCategories() {
@@ -91,6 +98,31 @@ class CategoriesController extends GetxController {
       }
     }
     isSubCategoriesLoading.value = false;
+  }
+
+  Future<void> fetchEachSubCategories(String category) async {
+    if (allSubCategories[category] == null) {
+      try {
+        Map<String, dynamic>? response =
+            await getProductsFromCategoryApi(category: category);
+        if (response['status'] == true) {
+          List<SubCategoryModel> categories = response['data']
+              .map<SubCategoryModel>((json) => SubCategoryModel.fromJson(json))
+              .toList();
+          allSubCategories[category] = categories;
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          log('Error occurred in fetch categories: $e');
+        }
+      }
+    }
+  }
+
+  Future<void> fetchAllSubCategories() async {
+    await Future.wait(allCategories
+        .map((category) => fetchEachSubCategories(category.category!)));
+    isFetchingAllSubCategories.value = false;
   }
 
   @override

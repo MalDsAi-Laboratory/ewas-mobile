@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/main_module/components/bottom_navbar.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
@@ -19,6 +20,7 @@ class _AppScreenState extends State<AppScreen> {
     super.initState();
     Get.put(MainScreenController(user: widget.user));
     Get.put(AllOrderController());
+    Get.put(CategoriesController());
   }
 
   @override

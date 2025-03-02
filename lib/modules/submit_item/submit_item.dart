@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/submit_item/components/image_widget.dart';
 import 'package:simple_ui/modules/submit_item/submit_item_controller.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SubmitItemPage extends StatelessWidget {
@@ -12,45 +14,67 @@ class SubmitItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(SubmitItemController());
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        leading: AppBarButton(),
-        title: BricolageText(
-          text: 'Sell your E-waste',
-          style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return GetBuilder<SubmitItemController>(
+        init: SubmitItemController(),
+        builder: (controller) {
+          print("isOrderCreated ${controller.isOrderCreated}");
+          return PopScope(
+            canPop: controller.isOrderCreated,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                leading: AppBarButton(),
+                title: BricolageText(
+                  text: 'Sell your E-waste',
+                  style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87),
+                ),
+              ),
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: SubmitItemComponent(),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}
+
+class SubmitItemComponent extends StatelessWidget {
+  const SubmitItemComponent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            BricolageText(
+              text: "Approximate volume of scrap",
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            GetBuilder<SubmitItemController>(builder: (controller) {
+              return Row(
                 children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  BricolageText(
-                    text: "Approximate volume of scrap",
-                    style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  GetBuilder<SubmitItemController>(builder: (controller) {
-                    return TextFormField(
+                  Expanded(
+                    child: TextFormField(
                       controller: controller.volumeController,
                       onChanged: (value) {
                         controller.update();
@@ -93,55 +117,87 @@ class SubmitItemPage extends StatelessWidget {
                         filled: true,
                         fillColor: Color.fromRGBO(244, 244, 244, 1.0),
                       ),
+                    ),
+                  ),
+                  GetBuilder<CategoriesController>(
+                      builder: (categoriesController) {
+                    return Row(
+                      children: [
+                        SizedBox(width: 10.w),
+                        Container(
+                          height: 50,
+                          child: Center(
+                            child: BricolageText(
+                                style: TextStyle(),
+                                text: categoriesController
+                                        .selectedSubCategory!.units ??
+                                    ""),
+                          ),
+                        )
+                      ],
                     );
                   }),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  BricolageText(
-                    text: "Image Upload*",
-                    style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87),
-                  ),
-                  BricolageText(
-                    text:
-                        "1. Upload images of your scrap justifying the volume.\n2. You can upload upto 5 images of your scrap.",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: const Color.fromARGB(221, 98, 98, 98)),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  ImagePickerWidget()
                 ],
-              ),
-              Column(
-                children: [
-                  GetBuilder<SubmitItemController>(builder: (controller) {
-                    return RadialGradientButton(
-                      buttonText: 'Submit',
-                      onTap: () {
-                        controller.submitProduct(context);
-                      },
-                      isBtnActive:
-                          controller.volumeController.text.trim().isNotEmpty &&
-                              controller.images.isNotEmpty,
-                    );
-                  }),
-                  SizedBox(
-                    height: 20.h,
-                  )
-                ],
-              ),
-            ],
-          ),
+              );
+            }),
+            SizedBox(
+              height: 20.h,
+            ),
+            BricolageText(
+              text: "Image Upload*",
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87),
+            ),
+            BricolageText(
+              text:
+                  "1. Upload images of your scrap justifying the volume.\n2. You can upload upto 5 images of your scrap.",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color.fromARGB(221, 98, 98, 98)),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            ImagePickerWidget()
+          ],
         ),
-      ),
+        Column(
+          children: [
+            GetBuilder<SubmitItemController>(builder: (controller) {
+              return RadialGradientButton(
+                buttonText: 'Submit',
+                onTap: () {
+                  controller.submitProduct(context);
+                },
+                isBtnActive:
+                    controller.volumeController.text.trim().isNotEmpty &&
+                        controller.images.isNotEmpty,
+              );
+            }),
+            SizedBox(
+              height: 20.h,
+            )
+          ],
+        ),
+      ],
     );
   }
+}
+
+showRestrictedLoadingDialog(context) {
+  showDialog(
+      barrierColor: const Color.fromARGB(64, 0, 0, 0),
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return GetBuilder<SubmitItemController>(builder: (controller) {
+          return PopScope(
+              canPop: controller.isOrderCreated,
+              child: Center(child: AppLoadingWidget()));
+        });
+      });
 }
