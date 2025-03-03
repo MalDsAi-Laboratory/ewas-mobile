@@ -1,11 +1,21 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/bidding_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/services/apis/bidding/bidding_apis.dart';
+import 'package:simple_ui/ui_utils/app_snackbars.dart';
 
 class ProductController extends GetxController {
   List<BiddingModel> biddingList = [];
   RxBool isLoading = true.obs;
-  Rx<DateTime?> inputDatetime = null.obs;
+  Rx<Duration> remainingDatetime = Duration().obs;
+  Rx<double> myPrice = 0.0.obs;
+  Rx<double> highestPrice = 0.0.obs;
+  TextEditingController biddingAmountController = TextEditingController();
+  RxBool isBiddingPlacing = false.obs;
   void getBiddingDetails({String? orderId}) async {
     try {
       Map<String, dynamic> response = await getAllBiddingApi(orderId: orderId);
@@ -15,6 +25,8 @@ class ProductController extends GetxController {
           temp.add(BiddingModel.fromJson(response['data'][i]));
         }
         biddingList.assignAll(temp);
+        checkAndUpdateMyPrice();
+        getHighestBidPrice();
       }
     } catch (e) {
       print("Error: $e");
@@ -23,11 +35,109 @@ class ProductController extends GetxController {
     }
   }
 
+  void setRemainingDuration(DateTime? inputDateTime) {
+    DateTime targetTime = inputDateTime!.add(const Duration(hours: 4));
+
+    // If targetTime is in the past, move it to the next available future time
+    if (targetTime.isBefore(DateTime.now())) {
+      remainingDatetime.value = Duration.zero;
+    } else {
+      remainingDatetime.value = targetTime.difference(DateTime.now());
+    }
+  }
+
+  void checkAndUpdateMyPrice() {
+    String currentUserId = Get.find<MainScreenController>().user?.userId ?? '';
+
+    // Find the current user's bid in the bidding list
+    BiddingModel? myBid = biddingList.firstWhereOrNull(
+      (bid) => bid.bidder == currentUserId,
+    );
+
+    // If the user is found in the bidding list, update myPrice
+    if (myBid != null) {
+      myPrice.value = myBid.priceTag ?? 0.0;
+    } else {
+      // If the user is not found, reset myPrice to 0.0
+      myPrice.value = 0.0;
+    }
+  }
+
   // Method to get the highest bid price
-  double? getHighestBidPrice() {
+  void getHighestBidPrice() {
     if (biddingList.isEmpty) return null;
-    return biddingList
-        .map((b) => b.priceTag ?? 0)
-        .reduce((a, b) => a > b ? a : b);
+    highestPrice.value =
+        biddingList.map((b) => b.priceTag ?? 0).reduce((a, b) => a > b ? a : b);
+  }
+
+  // handle place bid
+  void handlePlaceBid(
+      {required String orderId,
+      required String productName,
+      required double volume,
+      required BuildContext context}) async {
+    try {
+      String amount = biddingAmountController.text.trim();
+      if (amount.isEmpty || amount == "0") {
+        AppSnackBars.showNormalSnackBar("Oops", "Please enter bid amount");
+        return;
+      }
+      if (double.parse(amount) <= highestPrice.value) {
+        AppSnackBars.showNormalSnackBar(
+            "Oops", "Your bid should be higher than the current highest bid");
+        return;
+      }
+      isBiddingPlacing.value = true;
+      showRestrictedLoadingDialog(context);
+      BiddingModel model = BiddingModel(
+          bidder: Get.find<MainScreenController>().user?.userId,
+          priceTag: double.parse(biddingAmountController.text),
+          fullName:
+              "${Get.find<MainScreenController>().user?.firstName} ${Get.find<MainScreenController>().user?.lastName}",
+          orderId: orderId,
+          productCatalog: productName,
+          volume: volume);
+      // check if userId is already in bidding list
+      bool isUserAlreadyInBiddingList =
+          biddingList.any((bid) => bid.bidder == model.bidder);
+      Map<String, dynamic> response;
+      if (isUserAlreadyInBiddingList) {
+        response = await updateBiddingApi(data: model);
+      } else {
+        response = await createBiddingApi(data: model);
+      }
+
+      if (response['status']) {
+        if (myPrice == 0.0) {
+          biddingList.insert(0, model);
+        } else {
+          // update the current user entry in bidding list and then sort the list based on price
+          biddingList.removeWhere((bid) =>
+              bid.bidder == Get.find<MainScreenController>().user?.userId);
+          biddingList.insert(0, model);
+          biddingList
+              .sort((a, b) => (b.priceTag ?? 0).compareTo(a.priceTag ?? 0));
+        }
+        myPrice.value = double.parse(amount);
+        if (myPrice.value > highestPrice.value) {
+          highestPrice.value = myPrice.value;
+        }
+        biddingAmountController.clear();
+
+        Get.back();
+        AppSnackBars.showSuccessSnackBar("Success", "Bid placed successfully");
+      } else {
+        Get.back();
+
+        AppSnackBars.showNormalSnackBar("Oops", "Failed to place bid");
+      }
+    } catch (e) {
+      Get.back();
+
+      log("Error in processing place bid $e");
+      AppSnackBars.showNormalSnackBar("Oops", "Failed to place bid");
+    } finally {
+      isBiddingPlacing.value = false;
+    }
   }
 }

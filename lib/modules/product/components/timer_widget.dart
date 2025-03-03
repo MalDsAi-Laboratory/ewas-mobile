@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:simple_ui/modules/product/product_controller.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class TimerWidget extends StatefulWidget {
@@ -31,12 +33,7 @@ class _TimerWidgetState extends State<TimerWidget> {
 
     // If targetTime is in the past, move it to the next available future time
     if (targetTime.isBefore(DateTime.now())) {
-      // Calculate how many 4-hour periods have passed since the inputTime
-      final timeSinceInput = DateTime.now().difference(widget.inputTime);
-      final periodsToAdd = (timeSinceInput.inHours / 4).ceil();
-
-      // Add the required number of 4-hour periods to the original inputTime
-      targetTime = widget.inputTime.add(Duration(hours: 4 * periodsToAdd));
+      remainingTime = Duration.zero;
     }
 
     remainingTime = targetTime.difference(DateTime.now());
@@ -49,6 +46,7 @@ class _TimerWidgetState extends State<TimerWidget> {
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() {
           remainingTime = targetTime.difference(DateTime.now());
+          Get.find<ProductController>().remainingDatetime.value = remainingTime;
           if (remainingTime.isNegative) {
             remainingTime = Duration.zero;
             _timer?.cancel();

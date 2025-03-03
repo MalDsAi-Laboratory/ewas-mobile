@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:simple_ui/modules/product/all_product_controller.dart';
+import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
@@ -51,7 +51,7 @@ class AllProductsAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 20.h,
             ),
             // Search Bar
-            GetBuilder<AllProductController>(builder: (controller) {
+            GetBuilder<FindEwasteController>(builder: (controller) {
               return TextFormField(
                 controller: controller.searchController,
                 style: TextStyle(fontSize: 14.sp),

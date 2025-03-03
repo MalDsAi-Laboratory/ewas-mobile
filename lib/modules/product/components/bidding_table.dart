@@ -13,7 +13,6 @@ class BiddingTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-    const int userId = 3; // User ID to be highlighted
 
     return Container(
       width: size.width,
@@ -32,15 +31,9 @@ class BiddingTableWidget extends StatelessWidget {
               .sort((a, b) => (b.priceTag ?? 0).compareTo(a.priceTag ?? 0));
           // Add the sorted bids with their index
           for (int i = 0; i < controller.biddingList.length; i++) {
-            indexedBids.add({
-              "bid": controller.biddingList[i],
-              "index": i + 1
-            }); // i + 1 to start index from 1
+            indexedBids.add({"bid": controller.biddingList[i], "index": i + 1});
           }
-          print(
-              "indexedBids: ${indexedBids.map((bid) => bid['bid'].toJson())}");
-          // int myIndex = indexedBids.indexWhere(
-          //     (bid) => bid['bid'].recycler == "Safe Energy Recycle");
+
           return DataTable(
             columnSpacing: size.width * 0.06,
             border:
@@ -73,26 +66,31 @@ class BiddingTableWidget extends StatelessWidget {
               BiddingModel bidding = entry['bid'];
               MainScreenController mainScreenController =
                   Get.find<MainScreenController>();
-              bool isUser = (mainScreenController.user!.roles![0] ==
-                      UserRole.recycler &&
-                  bidding.fullName ==
-                      "${mainScreenController.user!.firstName} ${mainScreenController.user!.lastName}");
-
+              bool isUser =
+                  (mainScreenController.user!.roles![0] == UserRole.recycler &&
+                      bidding.bidder == mainScreenController.user?.userId);
+              bool isWinner = controller.remainingDatetime == Duration.zero
+                  ? bidding.priceTag == controller.highestPrice
+                  : false;
               return DataRow(
                 color: WidgetStateProperty.resolveWith<Color?>(
                   (Set<WidgetState> states) {
-                    return isUser
-                        ? const Color.fromARGB(255, 33, 243, 65)
-                            .withOpacity(0.2)
-                        : null;
+                    return isWinner
+                        ? const Color.fromARGB(255, 255, 237, 101)
+                        : isUser
+                            ? const Color.fromARGB(255, 33, 243, 65)
+                                .withOpacity(0.2)
+                            : null;
                   },
                 ),
                 cells: [
                   DataCell(BricolageText(
                     text: index.toString(),
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight:
+                            isWinner ? FontWeight.bold : FontWeight.w500),
                   )),
                   DataCell(SizedBox(
                     width: 200.w,
@@ -101,7 +99,9 @@ class BiddingTableWidget extends StatelessWidget {
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: 15.sp, fontWeight: FontWeight.w500),
+                          fontSize: 15.sp,
+                          fontWeight:
+                              isWinner ? FontWeight.bold : FontWeight.w500),
                     ),
                   )),
                   DataCell(Padding(
@@ -113,7 +113,9 @@ class BiddingTableWidget extends StatelessWidget {
                       maxLines: 2,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: 15.sp, fontWeight: FontWeight.w500),
+                          fontSize: 15.sp,
+                          fontWeight:
+                              isWinner ? FontWeight.bold : FontWeight.w500),
                     ),
                   )),
                 ],

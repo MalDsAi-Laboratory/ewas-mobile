@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
-import 'package:simple_ui/modules/product/all_product_screen.dart';
+import 'package:simple_ui/modules/product/find_ewaste_screen.dart';
 import 'package:simple_ui/modules/updatePrice/all_products_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
 
@@ -84,7 +84,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                         ],
                         autoPlay: _isHero1AutoPlay,
                         onTap: () {
-                          Get.to(() => AllProductScreen());
+                          Get.to(() => FindEwasteScreen());
                         },
                       ),
                       SizedBox(height: 16.h),

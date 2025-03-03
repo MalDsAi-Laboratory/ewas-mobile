@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/product/components/bidding_table.dart';
@@ -25,9 +28,10 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
   void initState() {
     super.initState();
     var controller = Get.put(ProductController());
-    controller.getBiddingDetails(
-      orderId: widget.productModel.orderId,
-    );
+    log("productModel ${Get.find<MainScreenController>().user?.roles?[0] != UserRole.recycler}");
+    controller
+        .setRemainingDuration(DateTime.parse(widget.productModel.dateAndTime!));
+    controller.getBiddingDetails(orderId: widget.productModel.orderId);
   }
 
   @override
@@ -162,9 +166,9 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                   ),
                                   Builder(builder: (context) {
                                     double? val =
-                                        productController.getHighestBidPrice();
+                                        productController.highestPrice.value;
                                     return BricolageText(
-                                      text: "₹ ${val ?? "0"}",
+                                      text: "₹ ${val}",
                                       style: TextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w500),
@@ -174,41 +178,59 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                               );
                             }),
                             SizedBox(height: 20.h),
-                            widget.sellerName == null
+                            Get.find<MainScreenController>().user?.roles?[0] !=
+                                    UserRole.recycler
                                 ? SizedBox()
-                                : Column(
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                : productController.remainingDatetime ==
+                                        Duration.zero
+                                    ? SizedBox()
+                                    : Column(
                                         children: [
-                                          Expanded(
-                                            child: CustomTextField(
-                                              FieldName: "Amount",
-                                              // width: size.width - 200.w,
-                                              hintText: "eg. 100",
-                                              keyboardType:
-                                                  TextInputType.number,
-                                            ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Expanded(
+                                                child: CustomTextField(
+                                                  controller: productController
+                                                      .biddingAmountController,
+                                                  hintText: "eg. 100",
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 10.w,
+                                              ),
+                                              SizedBox(
+                                                width: 140.w,
+                                                child: TextandIconButton(
+                                                    isBtnActive: true,
+                                                    height: 40.w,
+                                                    iconInFront: false,
+                                                    buttonText: 'Place Bid',
+                                                    onTap: () {
+                                                      productController
+                                                          .handlePlaceBid(
+                                                              context: context,
+                                                              orderId: widget
+                                                                  .productModel
+                                                                  .orderId!,
+                                                              productName: widget
+                                                                  .productModel
+                                                                  .productName!,
+                                                              volume: double
+                                                                  .parse(widget
+                                                                      .productModel
+                                                                      .volume!));
+                                                    },
+                                                    iconData: Icons.send),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(
-                                            width: 10.w,
-                                          ),
-                                          SizedBox(
-                                            width: 140.w,
-                                            child: TextandIconButton(
-                                                isBtnActive: true,
-                                                height: 40.w,
-                                                iconInFront: false,
-                                                buttonText: 'Place Bid',
-                                                onTap: () {},
-                                                iconData: Icons.send),
-                                          ),
+                                          SizedBox(height: 20.h),
                                         ],
                                       ),
-                                      SizedBox(height: 20.h),
-                                    ],
-                                  ),
                             BiddingTableWidget(),
                             SizedBox(height: 20.h),
                           ],
@@ -221,4 +243,20 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
       ),
     );
   }
+}
+
+showRestrictedLoadingDialog(context) {
+  showDialog(
+      barrierColor: const Color.fromARGB(64, 0, 0, 0),
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        ProductController productController = Get.find<ProductController>();
+
+        return Obx(
+          () => PopScope(
+              canPop: !productController.isBiddingPlacing.value,
+              child: Center(child: AppLoadingWidget())),
+        );
+      });
 }

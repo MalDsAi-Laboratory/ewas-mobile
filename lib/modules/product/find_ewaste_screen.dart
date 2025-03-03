@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
-import 'package:simple_ui/modules/product/all_product_controller.dart';
-import 'package:simple_ui/modules/product/components/all_product_appbar.dart';
+import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
+import 'package:simple_ui/modules/product/components/find_ewaste_appbar.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class AllProductScreen extends StatefulWidget {
-  const AllProductScreen({super.key});
+class FindEwasteScreen extends StatefulWidget {
+  const FindEwasteScreen({super.key});
 
   @override
-  State<AllProductScreen> createState() => _AllProductScreenState();
+  State<FindEwasteScreen> createState() => _FindEwasteScreenState();
 }
 
-class _AllProductScreenState extends State<AllProductScreen> {
+class _FindEwasteScreenState extends State<FindEwasteScreen> {
   @override
   void initState() {
     super.initState();
-    Get.put(AllProductController());
+    Get.put(FindEwasteController());
   }
 
   @override
@@ -32,7 +32,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             children: [
-              GetBuilder<AllProductController>(builder: (controller) {
+              GetBuilder<FindEwasteController>(builder: (controller) {
                 return GridView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -41,10 +41,11 @@ class _AllProductScreenState extends State<AllProductScreen> {
                         crossAxisSpacing: 16.w,
                         mainAxisSpacing: 16.h,
                         childAspectRatio: 0.8),
-                    itemCount: controller.filteredProducts.length,
+                    itemCount: controller.filteredInventoryProducts.length,
                     itemBuilder: (context, index) {
                       return ProductItem(
-                          product: controller.filteredProducts[index]);
+                          product: controller.filteredInventoryProducts.values
+                              .elementAt(index));
                     });
               })
             ],
