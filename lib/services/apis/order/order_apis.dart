@@ -72,13 +72,13 @@ Future<Map<String, dynamic>> createOrderApi({OrderModel? data}) async {
 }
 
 Future<Map<String, dynamic>> getAllOrdersApi(
-    {String? userId, int? pageNumber, int? pageSize, UserRole? role}) async {
+    {String? userId, int? pageNumber, int? pageSize, String? role}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(
         OrderAPIPath.getAllOrders.path +
             ((role == UserRole.admin || role == UserRole.deliveryAgent)
-                ? ""
+                ? "pagination"
                 : userId!) +
             "?page=${pageNumber}&size=${pageSize}",
         options: Options(

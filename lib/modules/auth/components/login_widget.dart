@@ -47,10 +47,24 @@ class LoginWidget extends StatelessWidget {
           Spacer(),
           Column(
             children: [
-              RadialGradientButton(
-                  buttonText: 'Login',
-                  onTap: controller.loginUser,
-                  isBtnActive: true),
+              Obx(
+                () => controller.isLoading.value
+                    ? RadialGradientButtonWithWidget(
+                        buttonChild: SizedBox(
+                          width: 20.w,
+                          height: 20.w,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                        onTap: () {},
+                        isBtnActive: true)
+                    : RadialGradientButton(
+                        buttonText: 'Login',
+                        onTap: controller.loginUser,
+                        isBtnActive: true),
+              ),
               SizedBox(height: 20.h),
               InterText(
                 text: "By signing in, you agree to terms and conditions",

@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_screen.dart';
+import 'package:simple_ui/services/apis/order/order_apis.dart';
+import 'package:simple_ui/ui_utils/app_snackbars.dart';
 
 class OrderController extends GetxController {
   /// boolean to get time to load the data and update the controller values
@@ -23,6 +26,8 @@ class OrderController extends GetxController {
   String? orderStatus;
   DateTime? orderDate;
 
+  bool isUpdatingOrder = false;
+
   initializeEditOrderData() {
     nameController.text =
         "${currentOrder?.firstName} ${currentOrder?.lastName}";
@@ -36,8 +41,9 @@ class OrderController extends GetxController {
     update();
   }
 
-  updateCurrentOrderSummary(int index) {
-    if (true) {
+  updateCurrentOrderSummary(int index, context) async {
+    try {
+      showRestrictedLoadingDialog(context);
       currentOrder = OrderModel(
         eid: currentOrder?.eid,
         firstName: nameController.text.split(' ')[0],
@@ -49,10 +55,23 @@ class OrderController extends GetxController {
         orderDate: orderDate,
         orderDetails: orderDetailsController.text,
       );
+      Map<String, dynamic> response = await updateOrderApi(data: currentOrder);
+      if (response['status']) {
+        update();
+        Get.find<AllOrderController>().orders[index] = currentOrder!;
+        Get.find<AllOrderController>().filteredOrders[index] = currentOrder!;
+        Get.find<AllOrderController>().update();
+        Get.back();
+      } else {
+        AppSnackBars.showErrorSnackBar("Error", response['data']);
+        Get.back();
+      }
+    } catch (e) {
+      AppSnackBars.showErrorSnackBar("Error", "Something went wrong");
+      Get.back();
+    } finally {
+      isUpdatingOrder = false;
       update();
-      Get.find<AllOrderController>().orders[index] = currentOrder!;
-      Get.find<AllOrderController>().filteredOrders[index] = currentOrder!;
-      Get.find<AllOrderController>().update();
     }
   }
 

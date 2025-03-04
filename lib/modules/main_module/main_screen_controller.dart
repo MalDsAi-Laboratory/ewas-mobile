@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
@@ -7,6 +8,7 @@ import 'package:simple_ui/modules/home/admin_home_screen.dart';
 import 'package:simple_ui/modules/home/delivery_home_screen.dart';
 import 'package:simple_ui/modules/home/recycler_home_screen.dart';
 import 'package:simple_ui/modules/home/seller_home_screen.dart';
+import 'package:simple_ui/modules/main_module/components/bottom_navbar.dart';
 import 'package:simple_ui/modules/orders/admin_order_page.dart';
 import 'package:simple_ui/modules/orders/all_order_page.dart';
 
@@ -29,6 +31,7 @@ class MainScreenController extends GetxController {
     // SellerHomePage(),
     CartPage()
   ];
+  List<BottomNavBarItem> bottomNavBarItems = [];
 
   void changePage(int index) {
     currentIndex = index;
@@ -78,10 +81,90 @@ class MainScreenController extends GetxController {
     }
   }
 
+  getRoleBasedBottomNavItems(UserModel user) {
+    switch (user.roles![0]) {
+      case UserRole.admin:
+        return [
+          const BottomNavBarItem(
+            text: "Category",
+            icon: Icons.category,
+            index: 0,
+          ),
+          const BottomNavBarItem(
+            text: "Orders",
+            icon: Icons.list,
+            index: 1,
+          ),
+        ];
+      case UserRole.deliveryAgent:
+        return [
+          const BottomNavBarItem(
+            text: "Category",
+            icon: Icons.category,
+            index: 0,
+          ),
+          const BottomNavBarItem(
+            text: "Orders",
+            icon: Icons.list,
+            index: 1,
+          ),
+        ];
+      case UserRole.seller:
+        return [
+          const BottomNavBarItem(
+            text: "Category",
+            icon: Icons.category,
+            index: 0,
+          ),
+          const BottomNavBarItem(
+            text: "Orders",
+            icon: Icons.list,
+            index: 1,
+          ),
+          const BottomNavBarItem(
+            index: 2,
+          ),
+          const BottomNavBarItem(
+            text: "Cart",
+            index: 3,
+            icon: CupertinoIcons.cart_fill,
+          ),
+        ];
+      case UserRole.recycler:
+        return [
+          const BottomNavBarItem(
+            text: "Category",
+            icon: Icons.category,
+            index: 0,
+          ),
+          const BottomNavBarItem(
+            text: "Orders",
+            icon: Icons.list,
+            index: 1,
+          ),
+          const BottomNavBarItem(
+            index: 2,
+          ),
+          const BottomNavBarItem(
+            text: "Cart",
+            index: 3,
+            icon: CupertinoIcons.cart_fill,
+          ),
+        ];
+      default:
+        return CartPage();
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     pages = getRoleBasedScreen(user!);
+    bottomNavBarItems = getRoleBasedBottomNavItems(user!);
+    if (user?.roles?[0] == UserRole.admin ||
+        user?.roles?[0] == UserRole.deliveryAgent) {
+      currentIndex = 1;
+    }
     isSettingUpApp = false;
     update();
   }

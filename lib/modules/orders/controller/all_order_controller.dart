@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
@@ -24,7 +25,9 @@ class AllOrderController extends GetxController {
   void fetchOrders() async {
     if (orders.isEmpty) {
       try {
+        String role = Get.find<MainScreenController>().user!.roles![0];
         Map<String, dynamic>? response = await getAllOrdersApi(
+            role: role,
             userId: Get.find<MainScreenController>().user!.userId,
             pageNumber: pageNumber.value,
             pageSize: 10000);

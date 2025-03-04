@@ -24,28 +24,11 @@ class NavBar extends StatelessWidget {
           height: 60.h,
           padding: EdgeInsets.only(bottom: 11.h),
           color: const Color.fromARGB(255, 255, 255, 255),
-          child: Row(
-            children: [
-              const BottomNavBarItem(
-                text: "Category",
-                icon: Icons.category,
-                index: 0,
-              ),
-              const BottomNavBarItem(
-                text: "Orders",
-                icon: Icons.list,
-                index: 1,
-              ),
-              const BottomNavBarItem(
-                index: 2,
-              ),
-              const BottomNavBarItem(
-                text: "Cart",
-                index: 3,
-                icon: CupertinoIcons.cart_fill,
-              ),
-            ],
-          ),
+          child: GetBuilder<MainScreenController>(builder: (controller) {
+            return Row(
+              children: controller.bottomNavBarItems,
+            );
+          }),
         ),
       ),
     );

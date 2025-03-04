@@ -10,7 +10,7 @@ import 'package:simple_ui/services/apis/product_details/product_details_api_serv
 Dio dio =
     ProductDetailsDioSingleton.instance; // Create an instance of DioSingleton
 
-enum ProductDetailsAPIPath { getProductsPricing, create, update }
+enum ProductDetailsAPIPath { getProductsPricing, create, update, getProduct }
 
 extension ProductDetailsAPIPathExtension on ProductDetailsAPIPath {
   String get path {
@@ -21,6 +21,8 @@ extension ProductDetailsAPIPathExtension on ProductDetailsAPIPath {
         return "/create";
       case ProductDetailsAPIPath.update:
         return "/update";
+      case ProductDetailsAPIPath.getProduct:
+        return "/product";
     }
   }
 }
@@ -171,6 +173,59 @@ Future<Map<String, dynamic>> updateProductDetailsApi(
     }
     return {
       'status': false,
+      "statusCode":
+          0, // You can set a default status code or handle differently
+      "data": e.toString(),
+    };
+  }
+}
+
+Future<Map<String, dynamic>> getProductPricingApi({String? productId}) async {
+  try {
+    final response = await const RetryOptions(maxAttempts: 2).retry(
+      () => dio.request(
+        ProductDetailsAPIPath.getProduct.path + "/${productId ?? ""}",
+        options: Options(
+          method: "GET",
+          extra: {
+            "requiresToken": false,
+          },
+        ),
+      ),
+      retryIf: (e) => e is DioException || e is SocketException,
+    );
+    final responseBody = response.data;
+    return {
+      "status": true,
+      "statusCode": response.statusCode,
+      "data": responseBody,
+    };
+  } catch (e) {
+    // FirebaseCrashlytics.instance.recordError(e, StackTrace.current);
+    if (e is DioException) {
+      // Handle DioError and access the response
+      final dioError = e;
+      final response = dioError.response;
+      if (response != null) {
+        log("response ${response.data}");
+        return {
+          "status": false,
+          "statusCode": response.statusCode ?? 0,
+          "data": response.data?['detail'].toString(),
+        };
+      }
+    }
+    // Handle SocketException for abrupt connection resets
+    Map<String, dynamic>? result = checkSocketException(e);
+    if (result != null) {
+      return result;
+    }
+    // Handle other exceptions here
+    if (kDebugMode) {
+      log('Error: $e');
+    }
+    return {
+      "status": false,
       "statusCode":
           0, // You can set a default status code or handle differently
       "data": e.toString(),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +12,7 @@ import 'package:simple_ui/modules/orders/controller/order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/dropdown_widgets.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 import 'package:intl/intl.dart';
@@ -58,7 +61,6 @@ class _OrderScreenState extends State<OrderScreen> {
     Size size = MediaQuery.sizeOf(context);
     return GetBuilder<MainScreenController>(builder: (mainScreenController) {
       final userRole = mainScreenController.user!.roles![0];
-
       return Container(
         height: size.height - 110.h,
         width: size.width,
@@ -85,8 +87,10 @@ class _OrderScreenState extends State<OrderScreen> {
                           userRole == UserRole.deliveryAgent)
                         IconButton(
                           onPressed: () {
-                            orderController
-                                .updateCurrentOrderSummary(widget.orderIndex);
+                            if (isEditing) {
+                              orderController.updateCurrentOrderSummary(
+                                  widget.orderIndex, context);
+                            }
                             setState(() {
                               isEditing = !isEditing;
                             });
@@ -231,12 +235,14 @@ class _OrderScreenState extends State<OrderScreen> {
                                         icon: Icon(Icons.person_2, size: 25.r),
                                       )
                                     : orderController.currentOrder?.assignee !=
-                                            null
+                                                null ||
+                                            orderController
+                                                    .currentOrder?.assignee !=
+                                                ""
                                         ? OrderDetailItemWidget(
                                             title: "Assignee",
                                             value: orderController
-                                                    .currentOrder?.assignee ??
-                                                "")
+                                                .currentOrder!.assignee!)
                                         : SizedBox(),
 
                                 /// Status (Editable for Admin & Delivery Agent)
@@ -490,4 +496,18 @@ class OrderDetailItemWidget extends StatelessWidget {
       ],
     );
   }
+}
+
+showRestrictedLoadingDialog(context) {
+  showDialog(
+      barrierColor: const Color.fromARGB(64, 0, 0, 0),
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return GetBuilder<OrderController>(builder: (orderController) {
+          return PopScope(
+              canPop: !orderController.isUpdatingOrder,
+              child: Center(child: AppLoadingWidget()));
+        });
+      });
 }
