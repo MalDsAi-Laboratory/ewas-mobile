@@ -4,13 +4,12 @@ import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/cart/cart_page.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
-import 'package:simple_ui/modules/home/admin_home_screen.dart';
-import 'package:simple_ui/modules/home/delivery_home_screen.dart';
 import 'package:simple_ui/modules/home/recycler_home_screen.dart';
 import 'package:simple_ui/modules/home/seller_home_screen.dart';
 import 'package:simple_ui/modules/main_module/components/bottom_navbar.dart';
 import 'package:simple_ui/modules/orders/admin_order_page.dart';
 import 'package:simple_ui/modules/orders/all_order_page.dart';
+import 'package:simple_ui/modules/settings/settings_screen.dart';
 
 class MainScreenController extends GetxController {
   int currentIndex = 2;
@@ -46,7 +45,7 @@ class MainScreenController extends GetxController {
             isAccessFromBottomTab: true,
           ),
           AdminOrderScreen(),
-          AdminHomePage(),
+          SettingsScreen(),
           CartPage()
         ];
       case UserRole.deliveryAgent:
@@ -55,7 +54,7 @@ class MainScreenController extends GetxController {
             isAccessFromBottomTab: true,
           ),
           AdminOrderScreen(),
-          DeliveryHomePage(),
+          SettingsScreen(),
           CartPage()
         ];
       case UserRole.seller:
@@ -95,6 +94,11 @@ class MainScreenController extends GetxController {
             icon: Icons.list,
             index: 1,
           ),
+          const BottomNavBarItem(
+            text: "Settings",
+            icon: Icons.list,
+            index: 2,
+          ),
         ];
       case UserRole.deliveryAgent:
         return [
@@ -107,6 +111,11 @@ class MainScreenController extends GetxController {
             text: "Orders",
             icon: Icons.list,
             index: 1,
+          ),
+          const BottomNavBarItem(
+            text: "Settings",
+            icon: Icons.list,
+            index: 2,
           ),
         ];
       case UserRole.seller:

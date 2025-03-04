@@ -124,9 +124,8 @@ class _MapScreenState extends State<MapScreen> {
   void _onMapTap(LatLng latLng) async {
     final response = await http.get(
       Uri.parse(
-          'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'),
+          'https://nominatim.openstreetmap.org/reverse.php?lat=${latLng.latitude}&lon=${latLng.longitude}&format=jsonv2'),
     );
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       locationController.setLocation(latLng, data['display_name']);
@@ -205,7 +204,7 @@ class _MapScreenState extends State<MapScreen> {
                       borderRadius: BorderRadius.circular(30.r),
                       child: Container(
                         width: 1.sw * 0.77,
-                        height: 45.h,
+                        height: 50.h,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(30.r),
@@ -227,7 +226,7 @@ class _MapScreenState extends State<MapScreen> {
                             hintText: "Search location...",
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20.w, vertical: 10.h),
+                                horizontal: 20.w, vertical: 5.h),
                           ),
                           onChanged: (value) => _searchAddress(value),
                         ),

@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
@@ -38,13 +41,14 @@ class OrderController extends GetxController {
     orderStatus = currentOrder?.orderStatus ?? 'Order Placed';
     orderDate = currentOrder?.orderDate ?? DateTime.now();
     isLoadingCurrentOrder = false;
+    deliveryOrderSequence = nextStatuses();
     update();
   }
 
   updateCurrentOrderSummary(int index, context) async {
     try {
       showRestrictedLoadingDialog(context);
-      currentOrder = OrderModel(
+      OrderModel temp = OrderModel(
         eid: currentOrder?.eid,
         firstName: nameController.text.split(' ')[0],
         lastName: nameController.text.split(' ')[1],
@@ -55,8 +59,10 @@ class OrderController extends GetxController {
         orderDate: orderDate,
         orderDetails: orderDetailsController.text,
       );
-      Map<String, dynamic> response = await updateOrderApi(data: currentOrder);
+      Map<String, dynamic> response = await updateOrderApi(data: temp);
       if (response['status']) {
+        currentOrder = temp;
+        deliveryOrderSequence = nextStatuses();
         update();
         Get.find<AllOrderController>().orders[index] = currentOrder!;
         Get.find<AllOrderController>().filteredOrders[index] = currentOrder!;
@@ -86,5 +92,30 @@ class OrderController extends GetxController {
     orderDate = DateTime.now();
     isLoadingCurrentOrder = true;
     update();
+  }
+
+  // List of order statuses in a sequential order
+  final List<String> orderSequence = [
+    OrderStatus.orderPlaced,
+    OrderStatus.biddingStarted,
+    OrderStatus.biddingInProgress,
+    OrderStatus.biddingCompleted,
+    OrderStatus.biddingRejected,
+    OrderStatus.awaitingForPick,
+    OrderStatus.deliveredForRecycle,
+    OrderStatus.deliveredToWarehouse,
+    OrderStatus.orderCollected,
+    OrderStatus.completed,
+  ];
+
+  List<String> deliveryOrderSequence = [];
+
+  List<String> nextStatuses() {
+    int currentIndex = orderSequence.indexOf(orderStatus!);
+    if (currentIndex == orderSequence.length - 1) {
+      // If Completed, loop back to Order Placed
+      return [OrderStatus.orderPlaced];
+    }
+    return [orderStatus!, orderSequence[currentIndex + 1]];
   }
 }

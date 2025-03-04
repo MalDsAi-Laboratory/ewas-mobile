@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
+import 'package:simple_ui/modules/product/components/find_ewaste_orders.dart';
 import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
 import 'package:simple_ui/modules/product/components/find_ewaste_appbar.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
+import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class FindEwasteScreen extends StatefulWidget {
@@ -24,35 +26,85 @@ class _FindEwasteScreenState extends State<FindEwasteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    FindEwasteController ewasteController = Get.find<FindEwasteController>();
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AllProductsAppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            children: [
-              GetBuilder<FindEwasteController>(builder: (controller) {
-                return GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16.w,
-                        mainAxisSpacing: 16.h,
-                        childAspectRatio: 0.8),
-                    itemCount: controller.filteredInventoryProducts.length,
-                    itemBuilder: (context, index) {
-                      return ProductItem(
-                          product: controller.filteredInventoryProducts.values
-                              .elementAt(index));
-                    });
-              })
-            ],
+        backgroundColor: Colors.white,
+        appBar: AllProductsAppBar(),
+        body: SafeArea(
+          child: RefreshIndicator(
+            color: AppColors.primaryColor,
+            onRefresh: () async {
+              ewasteController.fetchProducts();
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: EwasteList(),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
+  }
+}
+
+class EwasteList extends StatelessWidget {
+  const EwasteList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    FindEwasteController ewasteController = Get.find<FindEwasteController>();
+
+    return Obx(() {
+      return ewasteController.isLoading.value
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ewasteController.filteredInventoryProducts.isEmpty
+              ? Center(child: Text("No nearby orders right now"))
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: ewasteController.filteredInventoryProducts.length,
+                  itemBuilder: (context, index) {
+                    final order = ewasteController.orders.elementAt(index);
+                    return InkWell(
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      onTap: () {
+                        Get.to(() => ProductBiddingScreen(
+                            productModel:
+                                ewasteController.filteredInventoryProducts[
+                                    order.eid.toString()]!));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(
+                                color: const Color.fromARGB(255, 168, 168, 168),
+                                width: 0.3.w),
+                            boxShadow: [
+                              BoxShadow(
+                                  color:
+                                      const Color.fromARGB(59, 158, 158, 158),
+                                  blurRadius: 8.r,
+                                  offset: Offset(0, 2.0.h)),
+                            ]),
+                        margin: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Padding(
+                          padding: EdgeInsets.all(12.w),
+                          child: ewasteController.isLoading.value &&
+                                  !ewasteController.filteredInventoryProducts
+                                      .containsKey(order.eid.toString())
+                              ? EwasteItemWidget(order: order)
+                              : ewasteController.filteredInventoryProducts
+                                      .containsKey(order.eid.toString())
+                                  ? EwasteItemWidget(order: order)
+                                  : EwasteNoImageItemWidget(
+                                      order: order,
+                                    ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+    });
   }
 }
 

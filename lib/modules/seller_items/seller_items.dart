@@ -35,7 +35,8 @@ class _SellerItemsScreenState extends State<SellerItemsScreen> {
                   height: 30.r,
                   child: TextButton.icon(
                     onPressed: () {
-                      showFilterBottomSheet(context);
+                      showFilterBottomSheet(context, useAllOrders: false);
+                      ;
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     label: Icon(
@@ -86,19 +87,21 @@ class OrderList extends StatelessWidget {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : orderController.filteredOrders.isEmpty
+          : orderController.filteredOrdersUnderAuction.isEmpty
               ? Center(child: Text("No $orderType Orders"))
               : ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: orderController.filteredOrders.length,
+                  itemCount: orderController.filteredOrdersUnderAuction.length,
                   itemBuilder: (context, index) {
-                    final order = orderController.filteredOrders[index];
+                    final order =
+                        orderController.filteredOrdersUnderAuction[index];
                     return InkWell(
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       onTap: () {
                         Get.to(() => ProductBiddingScreen(
                             productModel: orderController.inventoryMap[
-                                orderController.filteredOrders[index].eid!]!));
+                                orderController
+                                    .filteredOrdersUnderAuction[index].eid!]!));
                       },
                       child: Container(
                         decoration: BoxDecoration(

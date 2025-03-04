@@ -34,7 +34,7 @@ class AllProductsAppBar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BricolageText(
-                      text: 'Bid on E-waste',
+                      text: 'Find e-waste',
                       style: TextStyle(fontSize: 20.sp, color: Colors.black87),
                     ),
                     BricolageText(

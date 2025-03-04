@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -184,21 +182,29 @@ class _OrderScreenState extends State<OrderScreen> {
 
                                 SizedBox(height: 10.h),
 
-                                userRole == UserRole.admin && isEditing
-                                    ? EditableField(
-                                        controller:
-                                            orderController.emailController,
-                                        label: "User Id",
-                                        icon: Icon(Icons.email_outlined,
-                                            size: 25.r),
+                                userRole == UserRole.admin
+                                    ? Column(
+                                        children: [
+                                          userRole == UserRole.admin &&
+                                                  isEditing
+                                              ? EditableField(
+                                                  controller: orderController
+                                                      .emailController,
+                                                  label: "User Id",
+                                                  icon: Icon(
+                                                      Icons.email_outlined,
+                                                      size: 25.r),
+                                                )
+                                              : OrderDetailItemWidget(
+                                                  title: "User Id",
+                                                  value: orderController
+                                                          .currentOrder
+                                                          ?.userId ??
+                                                      ""),
+                                          SizedBox(height: 10.h),
+                                        ],
                                       )
-                                    : OrderDetailItemWidget(
-                                        title: "User Id",
-                                        value: orderController
-                                                .currentOrder?.userId ??
-                                            ""),
-
-                                SizedBox(height: 10.h),
+                                    : SizedBox(),
 
                                 InkWell(
                                   overlayColor: WidgetStateProperty.all(
@@ -234,8 +240,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                         label: "Assignee",
                                         icon: Icon(Icons.person_2, size: 25.r),
                                       )
-                                    : orderController.currentOrder?.assignee !=
-                                                null ||
+                                    : orderController.currentOrder!.assignee !=
+                                                null &&
                                             orderController
                                                     .currentOrder?.assignee !=
                                                 ""
@@ -261,42 +267,57 @@ class _OrderScreenState extends State<OrderScreen> {
                                                 color: const Color.fromARGB(
                                                     255, 124, 124, 124)),
                                           ),
-                                          SizedBox(height: 8.h),
+                                          SizedBox(width: 50.w),
                                           isEditing
-                                              ? SizedBox(
-                                                  width: 200.w,
+                                              ? Expanded(
                                                   child: DropDownWidget(
                                                     value: orderController
                                                             .currentOrder
                                                             ?.orderStatus ??
                                                         OrderStatus.orderPlaced,
-                                                    dropDownItems: [
-                                                      OrderStatus.orderPlaced,
-                                                      OrderStatus
-                                                          .biddingStarted,
-                                                      OrderStatus
-                                                          .biddingInProgress,
-                                                      OrderStatus
-                                                          .biddingCompleted,
-                                                      OrderStatus
-                                                          .biddingRejected,
-                                                      OrderStatus
-                                                          .awaitingForPick,
-                                                      OrderStatus.completed,
-                                                      OrderStatus
-                                                          .deliveredForRecycle,
-                                                      OrderStatus
-                                                          .deliveredToWarehouse,
-                                                      OrderStatus
-                                                          .orderCollected,
-                                                    ]
-                                                        .map((status) =>
-                                                            DropdownMenuItem(
-                                                              value: status,
-                                                              child:
-                                                                  Text(status),
-                                                            ))
-                                                        .toList(),
+                                                    dropDownItems: Get.find<
+                                                                    MainScreenController>()
+                                                                .user
+                                                                ?.roles?[0] ==
+                                                            UserRole.admin
+                                                        ? [
+                                                            OrderStatus
+                                                                .orderPlaced,
+                                                            OrderStatus
+                                                                .biddingStarted,
+                                                            OrderStatus
+                                                                .biddingInProgress,
+                                                            OrderStatus
+                                                                .biddingCompleted,
+                                                            OrderStatus
+                                                                .biddingRejected,
+                                                            OrderStatus
+                                                                .awaitingForPick,
+                                                            OrderStatus
+                                                                .deliveredForRecycle,
+                                                            OrderStatus
+                                                                .deliveredToWarehouse,
+                                                            OrderStatus
+                                                                .orderCollected,
+                                                            OrderStatus
+                                                                .completed,
+                                                          ]
+                                                            .map((status) =>
+                                                                DropdownMenuItem(
+                                                                  value: status,
+                                                                  child: Text(
+                                                                      status),
+                                                                ))
+                                                            .toList()
+                                                        : orderController
+                                                            .deliveryOrderSequence
+                                                            .map((status) =>
+                                                                DropdownMenuItem(
+                                                                  value: status,
+                                                                  child: Text(
+                                                                      status),
+                                                                ))
+                                                            .toList(),
                                                     onChanged: (newStatus) {
                                                       orderController
                                                               .orderStatus =

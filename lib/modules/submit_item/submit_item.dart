@@ -10,14 +10,14 @@ import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SubmitItemPage extends StatelessWidget {
-  const SubmitItemPage({super.key});
+  final bool? willGoUnderAuction;
+  const SubmitItemPage({super.key, this.willGoUnderAuction = true});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SubmitItemController>(
         init: SubmitItemController(),
         builder: (controller) {
-          print("isOrderCreated ${controller.isOrderCreated}");
           return PopScope(
             canPop: controller.isOrderCreated,
             child: Scaffold(
@@ -37,7 +37,9 @@ class SubmitItemPage extends StatelessWidget {
               body: SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: SubmitItemComponent(),
+                  child: SubmitItemComponent(
+                    willGoUnderAuction: willGoUnderAuction!,
+                  ),
                 ),
               ),
             ),
@@ -47,7 +49,8 @@ class SubmitItemPage extends StatelessWidget {
 }
 
 class SubmitItemComponent extends StatelessWidget {
-  const SubmitItemComponent({super.key});
+  final bool willGoUnderAuction;
+  const SubmitItemComponent({super.key, required this.willGoUnderAuction});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +174,7 @@ class SubmitItemComponent extends StatelessWidget {
               return RadialGradientButton(
                 buttonText: 'Submit',
                 onTap: () {
-                  controller.submitProduct(context);
+                  controller.submitProduct(context, willGoUnderAuction);
                 },
                 isBtnActive:
                     controller.volumeController.text.trim().isNotEmpty &&

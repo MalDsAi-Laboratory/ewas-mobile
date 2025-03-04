@@ -49,7 +49,7 @@ class UserModel {
 
 class UserRole {
   static const String admin = "Admin";
-  static const String deliveryAgent = "Delivery User";
+  static const String deliveryAgent = "DeliveryUser";
   static const String recycler = "Recycler";
   static const String seller = "Seller";
 }

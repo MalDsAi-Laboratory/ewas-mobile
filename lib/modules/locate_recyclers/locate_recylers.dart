@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:simple_ui/models/product_details_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/locate_recyclers/locate_recyclers_controller.dart';
+import 'package:simple_ui/modules/submit_item/submit_item.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 import 'dart:math' as math;
@@ -198,20 +199,21 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                           child: DraggableScrollableSheet(
                             expand: false,
                             shouldCloseOnMinExtent: false,
-                            initialChildSize: 0.2,
-                            minChildSize: 0.1,
-                            maxChildSize: 0.2,
+                            initialChildSize: 0.28,
+                            minChildSize: 0.2,
+                            maxChildSize: 0.28,
                             builder: (context, scrollController) {
                               return Container(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
                                   borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(25)),
                                 ),
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -258,7 +260,7 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     Row(
                                       children: [
                                         BricolageText(text: "Battery"),
@@ -276,7 +278,7 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                                         BricolageText(text: "Lithium Ion"),
                                       ],
                                     ),
-                                    SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -291,6 +293,19 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                                                 .toString()),
                                       ],
                                     ),
+                                    SizedBox(height: 20.h),
+                                    RadialGradientButton(
+                                      buttonText: 'Place Order',
+                                      onTap: () {
+                                        Get.to(() => SubmitItemPage(
+                                              willGoUnderAuction: false,
+                                            ));
+                                      },
+                                      isBtnActive: true,
+                                    ),
+                                    SizedBox(
+                                      height: 20.h,
+                                    )
                                   ],
                                 ),
                               );

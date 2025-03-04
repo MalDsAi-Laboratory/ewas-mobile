@@ -10,7 +10,7 @@ import 'package:simple_ui/ui_utils/dropdown_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-showFilterBottomSheet(context) {
+showFilterBottomSheet(context, {bool? useAllOrders = true}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -21,12 +21,16 @@ showFilterBottomSheet(context) {
       duration: const Duration(milliseconds: 100),
     ),
     builder: (context) {
-      return OrderFiltersWidget();
+      return OrderFiltersWidget(
+        useAllOrders: useAllOrders!,
+      );
     },
   );
 }
 
 class OrderFiltersWidget extends StatelessWidget {
+  final bool useAllOrders;
+  OrderFiltersWidget({Key? key, required this.useAllOrders}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -64,7 +68,7 @@ class OrderFiltersWidget extends StatelessWidget {
                 onChanged: (value) {
                   orderController.searchId.value = value;
 
-                  orderController.filterOrders();
+                  orderController.filterOrders(useAllOrders: useAllOrders);
                 },
               ),
               (Get.find<MainScreenController>().user!.roles![0] ==
@@ -105,7 +109,7 @@ class OrderFiltersWidget extends StatelessWidget {
                 ],
                 onChanged: (value) {
                   orderController.selectedStatus.value = value ?? '';
-                  orderController.filterOrders();
+                  orderController.filterOrders(useAllOrders: useAllOrders);
                 },
               ),
               SizedBox(height: 20.h),
@@ -115,7 +119,8 @@ class OrderFiltersWidget extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        orderController.clearFilters();
+                        orderController.clearFilters(
+                            useAllOrders: useAllOrders);
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(

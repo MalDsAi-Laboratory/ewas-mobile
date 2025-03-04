@@ -22,7 +22,7 @@ class SubmitItemController extends GetxController {
   var images = <File>[];
   bool isOrderCreated = true;
 
-  Future<void> submitProduct(context) async {
+  Future<void> submitProduct(context, willGoUnderAuction) async {
     if (volumeController.text.isEmpty) {
       Get.snackbar("Error", "Please enter volume details");
       return;
@@ -36,7 +36,8 @@ class SubmitItemController extends GetxController {
       update();
       showLoadingDialog(context);
       // Create order
-      String? orderId = await createOrder();
+      String? orderId =
+          await createOrder(willGoUnderAuction: willGoUnderAuction);
       if (orderId == null) {
         isOrderCreated = true;
         update();
@@ -54,10 +55,12 @@ class SubmitItemController extends GetxController {
 
           AppSnackBars.showErrorSnackBar("Error", "Failed to create inventory");
         } else {
-          await Future.wait([
-            updateOrderStatus(orderId: orderId),
-            productImageUpload(orderId),
-          ]);
+          willGoUnderAuction
+              ? await Future.wait([
+                  updateOrderStatus(orderId: orderId),
+                  productImageUpload(orderId),
+                ])
+              : await productImageUpload(orderId);
           Get.back();
           Get.back();
           Get.back();
@@ -154,7 +157,7 @@ class SubmitItemController extends GetxController {
     }
   }
 
-  Future<String?> createOrder() async {
+  Future<String?> createOrder({required bool willGoUnderAuction}) async {
     try {
       MainScreenController mainScreenController =
           Get.find<MainScreenController>();
@@ -164,18 +167,17 @@ class SubmitItemController extends GetxController {
         address: mainScreenController.user!.address,
         assignee: null,
         userId: mainScreenController.user!.userId,
-        orderStatus: OrderStatus.orderPlaced,
+        orderStatus: willGoUnderAuction
+            ? OrderStatus.orderPlaced
+            : OrderStatus.awaitingForPick,
         orderDate: DateTime.now(),
         orderDetails: "Order details",
       );
       Map<String, dynamic> response = await createOrderApi(data: orderModel);
       if (response['status']) {
-        Get.find<AllOrderController>()
-            .orders
-            .add(OrderModel.fromJson(response['data']));
-        Get.find<AllOrderController>()
-            .filteredOrders
-            .add(OrderModel.fromJson(response['data']));
+        AllOrderController allOrderController = Get.find<AllOrderController>();
+        allOrderController.orders.add(OrderModel.fromJson(response['data']));
+        allOrderController.filteredOrders.assignAll(allOrderController.orders);
         return response['data']['eid'];
       }
     } catch (e) {
@@ -201,14 +203,12 @@ class SubmitItemController extends GetxController {
       );
       Map<String, dynamic> response = await updateOrderApi(data: orderModel);
       if (response['status']) {
-        Get.find<AllOrderController>()
-            .orders
-            .add(OrderModel.fromJson(response['data']));
-        int index = Get.find<AllOrderController>()
-            .filteredOrders
+        AllOrderController allOrderController = Get.find<AllOrderController>();
+        int index = allOrderController.orders
             .indexWhere((element) => element.eid == orderId);
-        Get.find<AllOrderController>().filteredOrders[index] =
+        allOrderController.orders[index] =
             OrderModel.fromJson(response['data']);
+        allOrderController.filteredOrders.assignAll(allOrderController.orders);
         return response['data']['eid'];
       }
     } catch (e) {

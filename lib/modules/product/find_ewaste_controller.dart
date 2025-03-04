@@ -34,7 +34,7 @@ class FindEwasteController extends GetxController {
     update();
   }
 
-  void _fetchProducts() async {
+  void fetchProducts() async {
     // Simulating API call (replace with real backend call)
     List<String> sellerIds = await getSellerIds();
     try {
@@ -145,7 +145,7 @@ class FindEwasteController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _fetchProducts();
+    fetchProducts();
     searchController.addListener(_filterProduct);
   }
 

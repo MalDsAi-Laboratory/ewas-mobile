@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
-import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 
@@ -13,6 +13,7 @@ class AllOrderController extends GetxController {
   var orders = <OrderModel>[].obs;
 
   var filteredOrders = <OrderModel>[].obs;
+  var filteredOrdersUnderAuction = <OrderModel>[].obs;
   var searchId = ''.obs;
   var searchAssignee = ''.obs;
   var selectedStatus = ''.obs;
@@ -49,7 +50,15 @@ class AllOrderController extends GetxController {
       }
     }
     filteredOrders.assignAll(orders);
+    filterOrderUnderAuctionOnly();
     _fetchInventory();
+  }
+
+  void filterOrderUnderAuctionOnly() {
+    filteredOrdersUnderAuction.assignAll(orders.where((order) =>
+        (order.orderStatus == OrderStatus.biddingStarted ||
+            order.orderStatus == OrderStatus.biddingInProgress ||
+            order.orderStatus == OrderStatus.biddingCompleted)));
   }
 
   void _fetchInventory() async {
@@ -75,7 +84,7 @@ class AllOrderController extends GetxController {
     }
   }
 
-  void filterOrders() {
+  void filterOrders({bool? useAllOrders = true}) {
     if (searchId.value.isNotEmpty) {
       filterCount.value = 1;
     } else {
@@ -91,8 +100,8 @@ class AllOrderController extends GetxController {
       }
     }
     update();
-    filteredOrders.assignAll(
-      orders.where((order) {
+    if (useAllOrders!) {
+      filteredOrders.assignAll(orders.where((order) {
         return (searchId.isEmpty ||
                 order.eid!
                     .toLowerCase()
@@ -104,17 +113,38 @@ class AllOrderController extends GetxController {
             (selectedStatus.isEmpty ||
                 selectedStatus.value == "All" ||
                 order.orderStatus == selectedStatus.value);
-      }).toList(),
-    );
+      }).toList());
+    } else {
+      filteredOrdersUnderAuction.assignAll(
+        orders.where((order) {
+          return (searchId.isEmpty ||
+                  order.eid!
+                      .toLowerCase()
+                      .contains(searchId.value.toLowerCase())) &&
+              (searchAssignee.isEmpty ||
+                  order.assignee!
+                      .toLowerCase()
+                      .contains(searchAssignee.value.toLowerCase())) &&
+              (selectedStatus.isEmpty ||
+                  selectedStatus.value == "All" ||
+                  order.orderStatus == selectedStatus.value);
+        }).toList(),
+      );
+    }
+    update();
   }
 
-  void clearFilters() {
+  void clearFilters({bool? useAllOrders = true}) {
     searchId.value = '';
     searchAssignee.value = '';
     selectedStatus.value = '';
     filterCount.value = 0;
     update();
-    filterOrders();
+    if (useAllOrders!) {
+      filterOrders();
+    } else {
+      filterOrderUnderAuctionOnly();
+    }
   }
 
   @override
