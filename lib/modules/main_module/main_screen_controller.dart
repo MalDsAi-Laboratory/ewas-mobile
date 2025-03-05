@@ -11,6 +11,7 @@ import 'package:simple_ui/modules/orders/admin_order_page.dart';
 import 'package:simple_ui/modules/orders/all_order_page.dart';
 import 'package:simple_ui/modules/orders/recycler_order_page.dart';
 import 'package:simple_ui/modules/settings/settings_screen.dart';
+import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 
 class MainScreenController extends GetxController {
   int currentIndex = 2;
@@ -69,7 +70,7 @@ class MainScreenController extends GetxController {
         ];
       case UserRole.recycler:
         return [
-          CategoriesPage(
+          UpdatePriceScreen(
             isAccessFromBottomTab: true,
           ),
           RecyclerOrderPage(),

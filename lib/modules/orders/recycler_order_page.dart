@@ -103,7 +103,7 @@ class EwasteList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               BricolageText(
-                text: "No ongoing auctions near to you",
+                text: "You have no order history",
                 style: TextStyle(fontSize: 15.sp),
               ),
               SizedBox(height: 16.h),

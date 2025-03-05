@@ -7,42 +7,44 @@ import 'package:simple_ui/models/product_details_model.dart';
 import 'package:simple_ui/models/sub_category_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 import 'package:simple_ui/services/apis/product_details/product_details_api.dart';
 
 class UpdatePriceController extends GetxController {
-  /// {"Battery": [{"subCategory":SubCategoryModel, "price":123}]}
-  RxMap<String, List<Map<String, dynamic>>> allSubCategories =
-      <String, List<Map<String, dynamic>>>{}.obs;
+  /// {"Battery": {"productId":price}}
+  RxMap<String, Map<String, Map<SubCategoryModel, double>>> allSubCategories =
+      <String, Map<String, Map<SubCategoryModel, double>>>{}.obs;
+  RxMap<String, Map<String, Map<SubCategoryModel, double>>>
+      filteredSubCategories =
+      <String, Map<String, Map<SubCategoryModel, double>>>{}.obs;
 
   RxBool isProductsPricingLoading = true.obs;
 
   /// Stores a list of TextEditingControllers for each subcategory
-  RxMap<String, List<TextEditingController>> textControllers =
-      <String, List<TextEditingController>>{}.obs;
+  RxMap<String, Map<String, TextEditingController>> textControllers =
+      <String, Map<String, TextEditingController>>{}.obs;
 
   /// Stores a list of TextEditingControllers for each subcategory
   /// {"Battery":[{"productId":TextEditingController}]}
-  RxMap<String, List<Map<String, TextEditingController>>>
-      actualTextControllers =
-      <String, List<Map<String, TextEditingController>>>{}.obs;
+  RxMap<String, Map<String, TextEditingController>> actualTextControllers =
+      <String, Map<String, TextEditingController>>{}.obs;
   RxList<ProductDetailsModel> fetchedProductDetails =
       <ProductDetailsModel>[].obs;
 
   RxBool isUpdatingPrices = false.obs;
+  var searchController = TextEditingController();
 
   /// Initialize controllers for each subcategory
   void initializeControllers() {
     textControllers.clear(); // Clear existing controllers before reinitializing
 
     for (var entry in allSubCategories.entries) {
-      List<TextEditingController> controllers = [];
+      Map<String, TextEditingController> controllers = {};
 
-      for (var subcategory in entry.value) {
-        controllers.add(TextEditingController(
-          text: subcategory["price"]?.toString() ?? '',
-        ));
+      for (var subcategory in entry.value.entries) {
+        controllers[subcategory.key] = TextEditingController(
+            text: subcategory.value.entries.first.value.toString());
       }
-
       textControllers[entry.key] = controllers;
     }
   }
@@ -52,6 +54,7 @@ class UpdatePriceController extends GetxController {
     try {
       Map<String, dynamic> response = await getAllProductPricingApi(
           userId: Get.find<MainScreenController>().user?.userId ?? "");
+
       if (response['status']) {
         List<ProductDetailsModel> temp = [];
         for (var i = 0; i < response['data'].length; i++) {
@@ -68,33 +71,39 @@ class UpdatePriceController extends GetxController {
     RxMap<String, List<SubCategoryModel>> temp =
         Get.find<CategoriesController>().allSubCategories;
     for (var i = 0; i < temp.length; i++) {
-      allSubCategories[temp.keys.toList()[i]] = temp.values
+      allSubCategories[temp.keys.toList()[i]] = Map.fromEntries(temp.values
           .toList()[i]
-          .map((e) => {"subCategory": e, "price": 0})
-          .toList();
+          .map((e) => MapEntry(e.productId.toString(), {e: 0.0})));
     }
 
     if (productDetails.isEmpty) {
     } else {
       for (var i = 0; i < productDetails.length; i++) {
-        allSubCategories[productDetails[i].category]![0]['price'] =
-            productDetails[i].price;
+        allSubCategories[productDetails[i].category]![
+            productDetails[i].productId.toString()] = {
+          allSubCategories[productDetails[i].category]![
+                  productDetails[i].productId.toString()]!
+              .keys
+              .first: productDetails[i].price ?? 0.0
+        };
       }
     }
     isProductsPricingLoading.value = false;
+    filteredSubCategories.assignAll(allSubCategories);
     initializeControllers();
   }
 
-  handleSubmit() async {
+  handleSubmit(context) async {
     try {
       isUpdatingPrices.value = true;
-
+      showUpdatePricingRestrictedLoadingDialog(context);
       await processProductDetails();
-      await getProductsPricing();
-      clearState();
+      // await getProductsPricing();
+      isUpdatingPrices.value = false;
       Get.back();
     } catch (e) {
       log("Error in handleSubmit $e");
+      Get.back();
     } finally {
       isUpdatingPrices.value = false;
     }
@@ -103,9 +112,9 @@ class UpdatePriceController extends GetxController {
   Future<void> processProductDetails() async {
     await Future.wait(
       actualTextControllers.keys.map((category) async {
-        for (var controllerMap in actualTextControllers[category]!) {
-          String productId = controllerMap.keys.first;
-          TextEditingController controller = controllerMap.values.first;
+        for (var controllerMap in actualTextControllers[category]!.entries) {
+          String productId = controllerMap.key;
+          TextEditingController controller = controllerMap.value;
 
           bool found = fetchedProductDetails.any((product) =>
               product.productId == productId && product.category == category);
@@ -123,23 +132,9 @@ class UpdatePriceController extends GetxController {
               price: double.parse(controller.text),
             );
           } else {
-            SubCategoryModel model = SubCategoryModel();
-            List<Map<String, dynamic>> map = allSubCategories[category]!;
-
-            for (var entry in map) {
-              if (entry['subCategory'].productId == int.parse(productId)) {
-                model = entry['subCategory'];
-                break;
-              }
-            }
-
             await createProductDetails(
-              subCategory: SubCategoryModel(
-                category: model.category,
-                materialDetails: model.materialDetails,
-                productName: model.productName,
-                productId: model.productId,
-              ),
+              subCategory:
+                  allSubCategories[category]![productId]!.entries.first.key,
               price: double.parse(controller.text),
             );
           }
@@ -191,8 +186,37 @@ class UpdatePriceController extends GetxController {
     }
   }
 
-  clearState() {
-    actualTextControllers.clear();
-    isUpdatingPrices.value = false;
+  void _filterSubCategories() {
+    // Create a new filtered map
+    final query = searchController.text.toLowerCase();
+
+    Map<String, Map<String, Map<SubCategoryModel, double>>> filteredData = {};
+
+    allSubCategories.forEach((categoryKey, subcategoryMap) {
+      Map<String, Map<SubCategoryModel, double>> filteredSubcategories = {};
+
+      subcategoryMap.forEach((subcategoryKey, productMap) {
+        // Filter products where productName contains the query
+        var filteredProducts = productMap.entries.where((entry) =>
+            entry.key.productName!.toLowerCase().contains(query.toLowerCase()));
+
+        if (filteredProducts.isNotEmpty) {
+          filteredSubcategories[subcategoryKey] =
+              Map.fromEntries(filteredProducts);
+        }
+      });
+
+      if (filteredSubcategories.isNotEmpty) {
+        filteredData[categoryKey] = filteredSubcategories;
+      }
+    });
+
+    filteredSubCategories.assignAll(filteredData);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    searchController.addListener(_filterSubCategories);
   }
 }

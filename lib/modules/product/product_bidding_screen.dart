@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -125,7 +123,7 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                     )),
                               ],
                             ),
-                            SizedBox(height: 20.h),
+                            SizedBox(height: 12.h),
                             widget.productModel.volume != null
                                 ? Column(
                                     children: [
@@ -148,35 +146,50 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 20.h),
+                                      SizedBox(height: 12.h),
                                     ],
                                   )
                                 : SizedBox(),
-                            Builder(builder: (context) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BricolageText(
-                                    text: 'Current Bid',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                BricolageText(
+                                  text: 'Minimum base price',
+                                  style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                BricolageText(
+                                  text: "₹ ${widget.productModel.mbp}",
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                BricolageText(
+                                  text: 'Current Bid',
+                                  style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                Builder(builder: (context) {
+                                  double? val =
+                                      productController.highestPrice.value;
+                                  return BricolageText(
+                                    text: "₹ ${val}",
                                     style: TextStyle(
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  Builder(builder: (context) {
-                                    double? val =
-                                        productController.highestPrice.value;
-                                    return BricolageText(
-                                      text: "₹ ${val}",
-                                      style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500),
-                                    );
-                                  }),
-                                ],
-                              );
-                            }),
-                            SizedBox(height: 20.h),
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w500),
+                                  );
+                                }),
+                              ],
+                            ),
+                            SizedBox(height: 12.h),
                             Get.find<MainScreenController>().user?.roles?[0] !=
                                     UserRole.recycler
                                 ? SizedBox()
@@ -209,19 +222,22 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                                     iconInFront: false,
                                                     buttonText: 'Place Bid',
                                                     onTap: () {
-                                                      productController
-                                                          .handlePlaceBid(
-                                                              context: context,
-                                                              orderId: widget
+                                                      productController.handlePlaceBid(
+                                                          context: context,
+                                                          orderId: widget
+                                                              .productModel
+                                                              .orderId!,
+                                                          productName: widget
+                                                              .productModel
+                                                              .productName!,
+                                                          mbp: widget
                                                                   .productModel
-                                                                  .orderId!,
-                                                              productName: widget
+                                                                  .mbp ??
+                                                              0,
+                                                          volume: double.parse(
+                                                              widget
                                                                   .productModel
-                                                                  .productName!,
-                                                              volume: double
-                                                                  .parse(widget
-                                                                      .productModel
-                                                                      .volume!));
+                                                                  .volume!));
                                                     },
                                                     iconData: Icons.send),
                                               ),

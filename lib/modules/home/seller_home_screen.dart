@@ -17,6 +17,7 @@ class _SellerHomePageState extends State<SellerHomePage> {
   bool _isBannerAutoPlay = true;
   bool _isHero1AutoPlay = false;
   bool _isHero2AutoPlay = false;
+  bool _isHero3AutoPlay = false;
 
   @override
   void initState() {
@@ -29,18 +30,26 @@ class _SellerHomePageState extends State<SellerHomePage> {
     double currentScroll = _scrollController.position.pixels;
 
     setState(() {
-      if (currentScroll < maxScroll * 0.50) {
+      if (currentScroll < maxScroll * 0.33) {
         _isBannerAutoPlay = true;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = false;
-      } else if (currentScroll < maxScroll * 0.90) {
+        _isHero3AutoPlay = false;
+      } else if (currentScroll < maxScroll * 0.66) {
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = true;
         _isHero2AutoPlay = false;
-      } else {
+        _isHero3AutoPlay = false;
+      } else if (currentScroll < maxScroll * 0.90) {
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = true;
+        _isHero3AutoPlay = false;
+      } else {
+        _isBannerAutoPlay = false;
+        _isHero1AutoPlay = false;
+        _isHero2AutoPlay = false;
+        _isHero3AutoPlay = true; // Enabling autoplay for last carousel
       }
     });
   }
@@ -91,6 +100,20 @@ class _SellerHomePageState extends State<SellerHomePage> {
                         showBottomWidget: false,
                         onTap: () {
                           Get.to(() => SellerItemsScreen());
+                        },
+                        imgList: [
+                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
+                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+                      HeroCarousal(
+                        title: 'Buy Recycled Items',
+                        autoPlay:
+                            _isHero3AutoPlay, // Updated autoplay condition
+                        showBottomWidget: false,
+                        onTap: () {
+                          // Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
                           'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',

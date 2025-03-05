@@ -28,7 +28,7 @@ class AuthController extends GetxController {
   late TabController tabController;
   RxBool isLoading = false.obs;
 
-  checkIfAnyFieldIsEmpty({bool? isLogin}) {
+  checkIfAnyFieldIsEmpty({bool? isLogin = false}) {
     if (isLogin!) {
       if (userId.value.isEmpty || password.value.isEmpty) {
         return true;

@@ -10,7 +10,7 @@ import 'package:simple_ui/ui_utils/text_widgets.dart';
 class CustomExpansionTile extends StatefulWidget {
   final int index;
   final String title;
-  final List<Map<String, dynamic>> productsWithPrice;
+  final Map<String, Map<SubCategoryModel, double>> productsWithPrice;
   const CustomExpansionTile({
     super.key,
     required this.index,
@@ -77,17 +77,24 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
                     ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: widget.productsWithPrice.length,
+                        itemCount: widget.productsWithPrice.entries.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
                               ProductItemWidget(
-                                productIndex: index,
-                                categoryIndex: widget.index,
-                                price: widget.productsWithPrice[index]['price']
+                                price: widget.productsWithPrice.entries
+                                    .elementAt(index)
+                                    .value
+                                    .entries
+                                    .first
+                                    .value
                                     .toString(),
-                                productModel: widget.productsWithPrice[index]
-                                    ['subCategory'],
+                                productModel: widget.productsWithPrice.entries
+                                    .elementAt(index)
+                                    .value
+                                    .entries
+                                    .first
+                                    .key,
                               ),
                               index != widget.productsWithPrice.length - 1
                                   ? SizedBox(
@@ -109,15 +116,12 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> {
 
 class ProductItemWidget extends StatelessWidget {
   final SubCategoryModel productModel;
-  final int productIndex;
-  final int categoryIndex;
   final String price;
-  const ProductItemWidget(
-      {super.key,
-      required this.productModel,
-      required this.price,
-      required this.productIndex,
-      required this.categoryIndex});
+  const ProductItemWidget({
+    super.key,
+    required this.productModel,
+    required this.price,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -143,72 +147,40 @@ class ProductItemWidget extends StatelessWidget {
               BricolageText(
                   text: productModel.productName ?? "",
                   style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                       color: const Color.fromARGB(255, 101, 101, 101))),
               SizedBox(height: 10.h),
-              Obx(
-                () => CustomTextFieldWithLightBorder(
+              Obx(() {
+                return CustomTextFieldWithLightBorder(
                   height: 55.h,
-                  hintText: "Enter your user id",
+                  hintText: "Enter your price",
                   initialValue: controller
-                      .textControllers[controller.allSubCategories.keys
-                          .elementAt(categoryIndex)]![productIndex]
+                      .textControllers[productModel.category]![
+                          productModel.productId.toString()]!
                       .text,
                   onChanged: (val) {
-                    String category = controller.allSubCategories.keys
-                        .elementAt(categoryIndex);
+                    String category = productModel.category ?? "";
                     if (controller.actualTextControllers[category] != null) {
-                      bool found = false;
-                      for (var map
-                          in controller.actualTextControllers[category]!) {
-                        if (map[controller
-                                .allSubCategories[category]![productIndex]
-                                    ['subCategory']
-                                .productId
-                                .toString()] !=
-                            null) {
-                          controller
-                              .actualTextControllers[category]![controller
-                                  .actualTextControllers[category]!
-                                  .indexOf(map)]
-                              .values
-                              .first
-                              .text = val.trim();
-                          controller.update();
-                          found = true;
-                          break;
-                        }
-                      }
+                      bool found = controller.actualTextControllers[category]![
+                              productModel.productId.toString()] ==
+                          null;
                       if (!found) {
-                        controller.actualTextControllers[controller
-                                .allSubCategories.keys
-                                .elementAt(categoryIndex)]!
-                            .add({
-                          controller
-                              .allSubCategories[controller.allSubCategories.keys
-                                      .elementAt(categoryIndex)]![productIndex]
-                                  ['subCategory']
-                              .productId
-                              .toString(): TextEditingController()
-                            ..text = val.trim().isNotEmpty ? val.trim() : "0"
-                        });
+                        controller.actualTextControllers[category] = {
+                          productModel.productId.toString(): controller
+                                  .textControllers[productModel.category]![
+                              productModel.productId.toString()]!
+                            ..text = val
+                        };
                         controller.update();
                       }
                     } else {
-                      controller.actualTextControllers[controller
-                          .allSubCategories.keys
-                          .elementAt(categoryIndex)] = [
-                        {
-                          controller
-                              .allSubCategories[controller.allSubCategories.keys
-                                      .elementAt(categoryIndex)]![productIndex]
-                                  ['subCategory']
-                              .productId
-                              .toString(): TextEditingController()
-                            ..text = val.trim().isNotEmpty ? val.trim() : "0"
-                        }
-                      ];
+                      controller.actualTextControllers[category] = {
+                        productModel.productId.toString():
+                            controller.textControllers[productModel.category]![
+                                productModel.productId.toString()]!
+                              ..text = val
+                      };
                       controller.update();
                     }
                   },
@@ -219,8 +191,10 @@ class ProductItemWidget extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   keyboardType: TextInputType.text,
-                ),
-              ),
+                );
+              }),
+              BricolageText(
+                  text: "/${productModel.scale ?? ""} ${productModel.units}"),
               SizedBox(height: 10.h),
             ],
           ),

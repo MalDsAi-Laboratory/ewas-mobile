@@ -80,11 +80,17 @@ class ProductController extends GetxController {
       {required String orderId,
       required String productName,
       required double volume,
+      required double mbp,
       required BuildContext context}) async {
     try {
       String amount = biddingAmountController.text.trim();
       if (amount.isEmpty || amount == "0") {
         AppSnackBars.showNormalSnackBar("Oops", "Please enter bid amount");
+        return;
+      }
+      if (double.parse(amount) < mbp) {
+        AppSnackBars.showNormalSnackBar("Oops",
+            "Your bid should be higher or equal to the minimum base price");
         return;
       }
       if (double.parse(amount) <= highestPrice.value) {
