@@ -6,6 +6,7 @@ import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
+import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class AllOrderScreen extends StatefulWidget {
@@ -80,54 +81,69 @@ class OrderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return orderController.isOrdersLoading.value
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : orderController.filteredOrders.isEmpty
-              ? Center(child: Text("No $orderType Orders"))
-              : ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: orderController.filteredOrders.length,
-                  itemBuilder: (context, index) {
-                    final order = orderController.filteredOrders[index];
-                    return InkWell(
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                      onTap: () {
-                        showOrderDetailScreen(context, index);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.r),
-                            border: Border.all(
-                                color: const Color.fromARGB(255, 168, 168, 168),
-                                width: 0.3.w),
-                            boxShadow: [
-                              BoxShadow(
-                                  color:
-                                      const Color.fromARGB(59, 158, 158, 158),
-                                  blurRadius: 8.r,
-                                  offset: Offset(0, 2.0.h)),
-                            ]),
-                        margin: EdgeInsets.symmetric(vertical: 10.h),
-                        child: Padding(
-                          padding: EdgeInsets.all(12.w),
-                          child: orderController.isInventoryLoading.value &&
-                                  !orderController.inventoryMap
-                                      .containsKey(order.eid.toString())
-                              ? OrderItemWidget(order: order)
-                              : orderController.inventoryMap
-                                      .containsKey(order.eid.toString())
-                                  ? OrderItemWidget(order: order)
-                                  : NoImageItemWidget(
-                                      order: order,
-                                    ),
-                        ),
-                      ),
-                    );
-                  },
-                );
+      if (orderController.isOrdersLoading.value) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      if (orderController.filteredOrders.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BricolageText(
+                text: "No $orderType Orders",
+                style: TextStyle(fontSize: 15.sp),
+              ),
+              SizedBox(height: 16.h),
+              RetryWidget(
+                onTap: orderController.fetchOrders,
+              )
+            ],
+          ),
+        );
+      }
+
+      return ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: orderController.filteredOrders.length,
+        itemBuilder: (context, index) {
+          final order = orderController.filteredOrders[index];
+          return InkWell(
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            onTap: () {
+              showOrderDetailScreen(context, index);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.r),
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 168, 168, 168),
+                      width: 0.3.w),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color.fromARGB(59, 158, 158, 158),
+                        blurRadius: 8.r,
+                        offset: Offset(0, 2.0.h)),
+                  ]),
+              margin: EdgeInsets.symmetric(vertical: 10.h),
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: orderController.isInventoryLoading.value &&
+                        !orderController.inventoryMap
+                            .containsKey(order.eid.toString())
+                    ? OrderItemWidget(order: order)
+                    : orderController.inventoryMap
+                            .containsKey(order.eid.toString())
+                        ? OrderItemWidget(order: order)
+                        : NoImageItemWidget(order: order),
+              ),
+            ),
+          );
+        },
+      );
     });
   }
 }

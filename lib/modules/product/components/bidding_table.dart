@@ -47,10 +47,13 @@ class BiddingTableWidget extends StatelessWidget {
                 ),
               ),
               DataColumn(
-                label: BricolageText(
-                  text: "Recycler",
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
+                label: Container(
+                  width: size.width * 0.55,
+                  child: BricolageText(
+                    text: "Recycler",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
+                  ),
                 ),
               ),
               DataColumn(

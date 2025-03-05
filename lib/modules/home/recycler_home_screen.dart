@@ -5,7 +5,7 @@ import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/home/components/home_appbar.dart';
 import 'package:simple_ui/modules/product/find_ewaste_screen.dart';
-import 'package:simple_ui/modules/updatePrice/all_products_screen.dart';
+import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
 
 class RecyclerHomePage extends StatefulWidget {

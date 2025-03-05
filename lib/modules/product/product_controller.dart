@@ -3,9 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/bidding_model.dart';
+import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/services/apis/bidding/bidding_apis.dart';
+import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
 
 class ProductController extends GetxController {
@@ -105,6 +109,9 @@ class ProductController extends GetxController {
         response = await updateBiddingApi(data: model);
       } else {
         response = await createBiddingApi(data: model);
+        if (response['status']) {
+          await updateOrderStatus(orderId: orderId);
+        }
       }
 
       if (response['status']) {
@@ -139,5 +146,38 @@ class ProductController extends GetxController {
     } finally {
       isBiddingPlacing.value = false;
     }
+  }
+
+  Future<String?> updateOrderStatus({required String orderId}) async {
+    try {
+      MainScreenController mainScreenController =
+          Get.find<MainScreenController>();
+      OrderModel orderModel = OrderModel(
+        eid: orderId,
+        firstName: mainScreenController.user!.firstName,
+        lastName: mainScreenController.user!.lastName,
+        address: mainScreenController.user!.address,
+        assignee: null,
+        userId: mainScreenController.user!.userId,
+        orderStatus: OrderStatus.biddingStarted,
+        orderDate: DateTime.now(),
+        orderDetails: "Order details",
+      );
+      Map<String, dynamic> response = await updateOrderApi(data: orderModel);
+      if (response['status']) {
+        AllOrderController allOrderController = Get.find<AllOrderController>();
+        int index = allOrderController.orders
+            .indexWhere((element) => element.eid == orderId);
+        allOrderController.orders[index] =
+            OrderModel.fromJson(response['data']);
+        allOrderController.filteredOrders.assignAll(allOrderController.orders);
+        allOrderController.filterOrderUnderAuctionOnly();
+
+        return response['data']['eid'];
+      }
+    } catch (e) {
+      log("error in createOrder $e");
+    }
+    return null;
   }
 }

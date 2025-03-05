@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:simple_ui/modules/product/components/find_ewaste_orders.dart';
+import 'package:simple_ui/modules/orders/components/recycler_order_components.dart';
 import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
-import 'package:simple_ui/modules/product/components/find_ewaste_appbar.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class FindEwasteScreen extends StatefulWidget {
-  const FindEwasteScreen({super.key});
+class RecyclerOrderPage extends StatefulWidget {
+  const RecyclerOrderPage({super.key});
 
   @override
-  State<FindEwasteScreen> createState() => _FindEwasteScreenState();
+  State<RecyclerOrderPage> createState() => _RecyclerOrderPageState();
 }
 
-class _FindEwasteScreenState extends State<FindEwasteScreen> {
+class _RecyclerOrderPageState extends State<RecyclerOrderPage> {
   @override
   void initState() {
     super.initState();
     Get.put(FindEwasteController());
-    Get.find<FindEwasteController>().fetchProducts();
+    Get.find<FindEwasteController>().fetchProducts(isCategoryTabs: true);
   }
 
   @override
@@ -29,7 +28,14 @@ class _FindEwasteScreenState extends State<FindEwasteScreen> {
     FindEwasteController ewasteController = Get.find<FindEwasteController>();
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AllProductsAppBar(),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          title: BricolageText(
+            text: "My Orders",
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
+          ),
+        ),
         body: SafeArea(
           child: RefreshIndicator(
             color: AppColors.primaryColor,
@@ -61,7 +67,7 @@ class EwasteList extends StatelessWidget {
       }
 
       // Empty state
-      if (ewasteController.filteredInventoryProducts.isEmpty) {
+      if (ewasteController.participatedfilteredInventoryProducts.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,15 +86,17 @@ class EwasteList extends StatelessWidget {
       }
       return ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: ewasteController.filteredInventoryProducts.length,
+        itemCount:
+            ewasteController.participatedfilteredInventoryProducts.length,
         itemBuilder: (context, index) {
           final order = ewasteController.orders.elementAt(index);
           return InkWell(
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             onTap: () {
               Get.to(() => ProductBiddingScreen(
-                  productModel: ewasteController
-                      .filteredInventoryProducts[order.eid.toString()]!));
+                  productModel:
+                      ewasteController.participatedfilteredInventoryProducts[
+                          order.eid.toString()]!));
             },
             child: Container(
               decoration: BoxDecoration(
@@ -107,18 +115,18 @@ class EwasteList extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(12.w),
                 child: ewasteController.isLoading.value &&
-                        !ewasteController.filteredInventoryProducts
+                        !ewasteController.participatedfilteredInventoryProducts
                             .containsKey(order.eid.toString())
-                    ? EwasteItemWidget(order: order)
-                    : ewasteController.filteredInventoryProducts
+                    ? ParticipatedEwasteItemWidget(order: order)
+                    : ewasteController.participatedfilteredInventoryProducts
                             .containsKey(order.eid.toString())
-                        ? EwasteItemWidget(
+                        ? ParticipatedEwasteItemWidget(
                             order: order,
-                            inventory:
-                                ewasteController.filteredInventoryProducts[
-                                    order.eid.toString()],
+                            inventory: ewasteController
+                                    .participatedfilteredInventoryProducts[
+                                order.eid.toString()],
                           )
-                        : EwasteNoImageItemWidget(
+                        : ParticipatedEwasteNoImageItemWidget(
                             order: order,
                           ),
               ),

@@ -10,9 +10,9 @@ import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/shimmer_effects.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
-class EwasteStatusWidget extends StatelessWidget {
+class ParticipatedEwasteStatusWidget extends StatelessWidget {
   final OrderModel order;
-  const EwasteStatusWidget({super.key, required this.order});
+  const ParticipatedEwasteStatusWidget({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,8 @@ class EwasteStatusWidget extends StatelessWidget {
 
     return Obx(
       () => controller.isLoading.value &&
-              !controller.inventoryMap.containsKey(order.eid.toString())
+              !controller.participatedInventoryMap
+                  .containsKey(order.eid.toString())
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -45,7 +46,8 @@ class EwasteStatusWidget extends StatelessWidget {
                 ),
               ],
             )
-          : controller.inventoryMap.containsKey(order.eid.toString())
+          : controller.participatedInventoryMap
+                  .containsKey(order.eid.toString())
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -95,17 +97,18 @@ class EwasteStatusWidget extends StatelessWidget {
   }
 }
 
-class EwasteDateWidget extends StatelessWidget {
+class ParticipatedEwasteDateWidget extends StatelessWidget {
   final OrderModel order;
 
-  const EwasteDateWidget({super.key, required this.order});
+  const ParticipatedEwasteDateWidget({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
     FindEwasteController controller = Get.find<FindEwasteController>();
 
     return controller.isLoading.value &&
-            !controller.inventoryMap.containsKey(order.eid.toString())
+            !controller.participatedInventoryMap
+                .containsKey(order.eid.toString())
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -127,7 +130,7 @@ class EwasteDateWidget extends StatelessWidget {
               ),
             ],
           )
-        : controller.inventoryMap.containsKey(order.eid.toString())
+        : controller.participatedInventoryMap.containsKey(order.eid.toString())
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -170,10 +173,10 @@ class EwasteDateWidget extends StatelessWidget {
   }
 }
 
-class EwasteProductWidget extends StatelessWidget {
+class ParticipatedEwasteProductWidget extends StatelessWidget {
   final InventoryModel order;
 
-  const EwasteProductWidget({super.key, required this.order});
+  const ParticipatedEwasteProductWidget({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +203,9 @@ class EwasteProductWidget extends StatelessWidget {
   }
 }
 
-class EwasteNoImageItemWidget extends StatelessWidget {
+class ParticipatedEwasteNoImageItemWidget extends StatelessWidget {
   final OrderModel order;
-  const EwasteNoImageItemWidget({super.key, required this.order});
+  const ParticipatedEwasteNoImageItemWidget({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +219,7 @@ class EwasteNoImageItemWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: EwasteStatusWidget(
+              child: ParticipatedEwasteStatusWidget(
                 order: order,
               ),
             ),
@@ -228,7 +231,7 @@ class EwasteNoImageItemWidget extends StatelessWidget {
                   EdgeInsets.symmetric(horizontal: 8.w), // Space around divider
             ),
             Expanded(
-              child: EwasteDateWidget(
+              child: ParticipatedEwasteDateWidget(
                 order: order,
               ),
             ),
@@ -240,10 +243,11 @@ class EwasteNoImageItemWidget extends StatelessWidget {
   }
 }
 
-class EwasteItemWidget extends StatelessWidget {
+class ParticipatedEwasteItemWidget extends StatelessWidget {
   final OrderModel order;
   final InventoryModel? inventory;
-  const EwasteItemWidget({super.key, required this.order, this.inventory});
+  const ParticipatedEwasteItemWidget(
+      {super.key, required this.order, this.inventory});
 
   @override
   Widget build(BuildContext context) {
@@ -253,13 +257,15 @@ class EwasteItemWidget extends StatelessWidget {
       children: [
         Obx(
           () => controller.isLoading.value &&
-                  !controller.inventoryMap.containsKey(order.eid.toString())
+                  !controller.participatedInventoryMap
+                      .containsKey(order.eid.toString())
               ? CustomShimmer(height: 100.w, width: 100.w)
               : ClipRRect(
                   borderRadius: BorderRadius.circular(15.r),
                   child: CachedNetworkImage(
                     imageUrl: controller
-                            .inventoryMap[order.eid.toString()]!.imgPath1 ??
+                            .participatedInventoryMap[order.eid.toString()]!
+                            .imgPath1 ??
                         "",
                     width: 100.w,
                     height: 100.w,
@@ -293,19 +299,19 @@ class EwasteItemWidget extends StatelessWidget {
                 children: inventory != null
                     ? [
                         SizedBox(height: 10.h),
-                        EwasteProductWidget(
+                        ParticipatedEwasteProductWidget(
                           order: inventory!,
                         ),
                       ]
                     : [
                         SizedBox(height: 10.h),
-                        EwasteDateWidget(
+                        ParticipatedEwasteDateWidget(
                           order: order,
                         ),
                       ],
               ),
               SizedBox(height: 10.h),
-              EwasteStatusWidget(
+              ParticipatedEwasteStatusWidget(
                 order: order,
               ),
               SizedBox(height: 10.h),

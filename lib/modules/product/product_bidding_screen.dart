@@ -28,7 +28,6 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
   void initState() {
     super.initState();
     var controller = Get.put(ProductController());
-    log("productModel ${Get.find<MainScreenController>().user?.roles?[0] != UserRole.recycler}");
     controller
         .setRemainingDuration(DateTime.parse(widget.productModel.dateAndTime!));
     controller.getBiddingDetails(orderId: widget.productModel.orderId);

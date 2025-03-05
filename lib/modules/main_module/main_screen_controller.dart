@@ -9,6 +9,7 @@ import 'package:simple_ui/modules/home/seller_home_screen.dart';
 import 'package:simple_ui/modules/main_module/components/bottom_navbar.dart';
 import 'package:simple_ui/modules/orders/admin_order_page.dart';
 import 'package:simple_ui/modules/orders/all_order_page.dart';
+import 'package:simple_ui/modules/orders/recycler_order_page.dart';
 import 'package:simple_ui/modules/settings/settings_screen.dart';
 
 class MainScreenController extends GetxController {
@@ -71,7 +72,7 @@ class MainScreenController extends GetxController {
           CategoriesPage(
             isAccessFromBottomTab: true,
           ),
-          AllOrderScreen(),
+          RecyclerOrderPage(),
           RecyclerHomePage(),
           CartPage(),
         ];

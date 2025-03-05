@@ -209,6 +209,8 @@ class SubmitItemController extends GetxController {
         allOrderController.orders[index] =
             OrderModel.fromJson(response['data']);
         allOrderController.filteredOrders.assignAll(allOrderController.orders);
+        allOrderController.filterOrderUnderAuctionOnly();
+
         return response['data']['eid'];
       }
     } catch (e) {
