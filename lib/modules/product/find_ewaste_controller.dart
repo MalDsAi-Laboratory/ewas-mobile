@@ -33,18 +33,67 @@ class FindEwasteController extends GetxController {
     update();
   }
 
+  RxInt filterCount = 0.obs;
+  var searchId = ''.obs;
+  var productNameSearch = ''.obs;
   String recyclerId = Get.find<MainScreenController>().user!.userId!;
   RxBool isCategoryTab = false.obs;
   clearState() {
     selectedProduct = null;
     searchController.clear();
-    filteredInventoryProducts.assignAll(inventoryMap);
+    filteredInventoryProducts.clear();
+    participatedInventoryMap.clear();
+    participatedOrders.clear();
+    participatedfilteredInventoryProducts.clear();
+
+    orders.clear();
     update();
   }
 
-  void fetchProducts({bool? isCategoryTabs = false}) async {
+  void filterOrders() {
+    if (searchId.value.isNotEmpty) {
+      filterCount.value = 1;
+    } else {
+      if (productNameSearch.isNotEmpty) {
+        filterCount.value = 1;
+      } else {
+        filterCount.value =
+            filterCount.value > 0 ? filterCount.value - 1 : filterCount.value;
+      }
+    }
+    update();
+    participatedfilteredInventoryProducts.assignAll(
+        Map.fromEntries(participatedInventoryMap.entries.where((entry) {
+      final inventoryItem = entry.value;
+
+      return (searchId.isEmpty ||
+              inventoryItem.orderId!
+                  .toLowerCase()
+                  .contains(searchId.value.toLowerCase())) &&
+          (productNameSearch.isEmpty ||
+              inventoryItem.productName!
+                  .toLowerCase()
+                  .contains(productNameSearch.value.toLowerCase()));
+    })));
+    update();
+  }
+
+  void clearFilters() {
+    searchId.value = '';
+    productNameSearch.value = '';
+    filterCount.value = 0;
+    update();
+    filterOrders();
+  }
+
+  void fetchProducts(
+      {bool? isCategoryTabs = false, bool? isRefreshed = false}) async {
     isCategoryTab.value = isCategoryTabs!;
-    isLoading.value = true;
+
+    if (!isRefreshed!) {
+      clearState();
+      isLoading.value = true;
+    }
     // Simulating API call (replace with real backend call)
     List<String> sellerIds = await getSellerIds();
     try {
@@ -116,32 +165,32 @@ class FindEwasteController extends GetxController {
   }
 
   Future<void> fetchOrders({required String userId}) async {
-    if (orders.isEmpty) {
-      try {
-        Map<String, dynamic>? response = await getAllOrdersApi(
-            userId: userId, pageNumber: 0, pageSize: 10000);
-        if (response['status']) {
-          List<OrderModel> allOrders = [];
-          for (var i = 0; i < response['data']['orders'].length; i++) {
-            OrderModel order =
-                OrderModel.fromJson(response['data']['orders'][i]);
-            if (isCategoryTab.value) {
+    try {
+      Map<String, dynamic>? response =
+          await getAllOrdersApi(userId: userId, pageNumber: 0, pageSize: 10000);
+      if (response['status']) {
+        List<OrderModel> allOrders = [];
+        for (var i = 0; i < response['data']['orders'].length; i++) {
+          OrderModel order = OrderModel.fromJson(response['data']['orders'][i]);
+          print("isCategoryTab.value ${isCategoryTab.value}");
+          if (isCategoryTab.value) {
+            allOrders.add(order);
+          } else {
+            if (order.orderStatus == OrderStatus.biddingInProgress ||
+                order.orderStatus == OrderStatus.biddingStarted) {
               allOrders.add(order);
-            } else {
-              if (order.orderStatus == OrderStatus.biddingInProgress ||
-                  order.orderStatus == OrderStatus.biddingStarted) {
-                allOrders.add(order);
-              }
             }
           }
-          if (allOrders.isNotEmpty) {
-            orders.addAll(allOrders);
-          }
-        } else {}
-      } catch (e) {
-        if (kDebugMode) {
-          log('Error occured in fetch orders: $e');
         }
+        print("allOrders ${allOrders}");
+        if (allOrders.isNotEmpty) {
+          orders.assignAll(allOrders);
+        }
+        print("orders ${orders}");
+      } else {}
+    } catch (e) {
+      if (kDebugMode) {
+        log('Error occured in fetch orders: $e');
       }
     }
   }

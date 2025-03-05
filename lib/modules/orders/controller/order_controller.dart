@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
@@ -28,7 +26,6 @@ class OrderController extends GetxController {
   final TextEditingController orderDetailsController = TextEditingController();
   String? orderStatus;
   DateTime? orderDate;
-
   bool isUpdatingOrder = false;
 
   initializeEditOrderData() {

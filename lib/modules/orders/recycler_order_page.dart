@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/orders/components/recycler_order_components.dart';
+import 'package:simple_ui/modules/orders/components/recycler_order_filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class RecyclerOrderPage extends StatefulWidget {
@@ -35,12 +37,40 @@ class _RecyclerOrderPageState extends State<RecyclerOrderPage> {
             text: "My Orders",
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500),
           ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Obx(
+                () => Badge(
+                  isLabelVisible:
+                      ewasteController.filterCount == 0 ? false : true,
+                  smallSize: 10,
+                  backgroundColor: AppColors.primaryColor,
+                  child: SizedBox(
+                    width: 30.r,
+                    height: 30.r,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        showRecyclerFilterBottomSheet(context);
+                      },
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      label: Icon(
+                        Icons.filter_list_outlined,
+                        color: Colors.black,
+                        size: 25.r,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         body: SafeArea(
           child: RefreshIndicator(
             color: AppColors.primaryColor,
             onRefresh: () async {
-              ewasteController.fetchProducts();
+              ewasteController.fetchProducts(isRefreshed: true);
             },
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -62,7 +92,7 @@ class EwasteList extends StatelessWidget {
       // Loading state
       if (ewasteController.isLoading.value) {
         return Center(
-          child: CircularProgressIndicator(),
+          child: AppLoadingWidget(),
         );
       }
 
@@ -89,7 +119,7 @@ class EwasteList extends StatelessWidget {
         itemCount:
             ewasteController.participatedfilteredInventoryProducts.length,
         itemBuilder: (context, index) {
-          final order = ewasteController.orders.elementAt(index);
+          final order = ewasteController.participatedOrders.elementAt(index);
           return InkWell(
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             onTap: () {

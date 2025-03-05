@@ -7,6 +7,7 @@ import 'package:simple_ui/modules/product/components/find_ewaste_appbar.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
+import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class FindEwasteScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _FindEwasteScreenState extends State<FindEwasteScreen> {
           child: RefreshIndicator(
             color: AppColors.primaryColor,
             onRefresh: () async {
-              ewasteController.fetchProducts();
+              ewasteController.fetchProducts(isRefreshed: true);
             },
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -56,7 +57,7 @@ class EwasteList extends StatelessWidget {
       // Loading state
       if (ewasteController.isLoading.value) {
         return Center(
-          child: CircularProgressIndicator(),
+          child: AppLoadingWidget(),
         );
       }
 
