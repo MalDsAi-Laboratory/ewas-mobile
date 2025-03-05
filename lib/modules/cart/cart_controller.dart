@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
-import 'package:simple_ui/models/product_model.dart';
 import 'package:simple_ui/services/secure_storage/cached_cart_list.dart';
 
 class CartController extends GetxController {

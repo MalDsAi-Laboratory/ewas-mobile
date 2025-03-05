@@ -95,7 +95,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
               style: TextStyle(fontSize: 16.sp),
             ),
             BricolageText(
-              text: "Let's sell your e-waste",
+              text: "Find and buy e-waste",
               style: TextStyle(
                   fontSize: 12.sp,
                   color: const Color.fromARGB(255, 124, 124, 124)),

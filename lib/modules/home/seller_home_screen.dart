@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/categories/categories.dart';
+import 'package:simple_ui/modules/home/components/app_drawer.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
-import 'package:simple_ui/modules/home/components/home_appbar.dart';
 import 'package:simple_ui/modules/seller_items/seller_items.dart';
+import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SellerHomePage extends StatefulWidget {
   @override
@@ -60,10 +61,47 @@ class _SellerHomePageState extends State<SellerHomePage> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(0.0)),
+        ),
+        child: AppDrawerWidget(),
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        leading: InkWell(
+            onTap: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            child: Icon(
+              Icons.menu_open_sharp,
+              size: 30.r,
+            )),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BricolageText(
+              text: "Hi !",
+              style: TextStyle(fontSize: 16.sp),
+            ),
+            BricolageText(
+              text: "Let's sell your e-waste",
+              style: TextStyle(
+                  fontSize: 12.sp,
+                  color: const Color.fromARGB(255, 124, 124, 124)),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
@@ -71,9 +109,6 @@ class _SellerHomePageState extends State<SellerHomePage> {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               children: [
-                SizedBox(height: 20.h),
-                HomeAppbar(),
-                SizedBox(height: 20.h),
                 // Carousel Section
                 BannerCarousal(
                   autoPlay: _isBannerAutoPlay,

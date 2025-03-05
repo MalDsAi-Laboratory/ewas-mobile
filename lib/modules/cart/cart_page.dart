@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
-import 'package:simple_ui/models/product_model.dart';
 import 'package:simple_ui/modules/cart/cart_controller.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
