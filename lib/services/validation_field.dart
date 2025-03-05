@@ -6,7 +6,7 @@ class Validations {
   }
 
   static bool validateName(String value) {
-    if (value.length < 3) {
+    if (value.length < 4) {
       return false;
     } else {
       return true;

@@ -7,6 +7,7 @@ import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
+import 'package:simple_ui/modules/product/find_ewaste_controller.dart';
 import 'package:simple_ui/modules/product/product_bidding_screen.dart';
 import 'package:simple_ui/services/apis/bidding/bidding_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
@@ -150,18 +151,19 @@ class ProductController extends GetxController {
 
   Future<String?> updateOrderStatus({required String orderId}) async {
     try {
-      MainScreenController mainScreenController =
-          Get.find<MainScreenController>();
+      OrderModel order = Get.find<FindEwasteController>()
+          .orders
+          .firstWhere((element) => element.eid == orderId);
       OrderModel orderModel = OrderModel(
         eid: orderId,
-        firstName: mainScreenController.user!.firstName,
-        lastName: mainScreenController.user!.lastName,
-        address: mainScreenController.user!.address,
-        assignee: null,
-        userId: mainScreenController.user!.userId,
-        orderStatus: OrderStatus.biddingStarted,
-        orderDate: DateTime.now(),
-        orderDetails: "Order details",
+        firstName: order.firstName,
+        lastName: order.lastName,
+        address: order.address,
+        assignee: order.assignee,
+        userId: order.userId,
+        orderStatus: OrderStatus.biddingInProgress,
+        orderDate: order.orderDate,
+        orderDetails: order.orderDetails,
       );
       Map<String, dynamic> response = await updateOrderApi(data: orderModel);
       if (response['status']) {

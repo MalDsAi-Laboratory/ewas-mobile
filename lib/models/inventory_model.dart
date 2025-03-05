@@ -2,6 +2,7 @@ class InventoryModel {
   String? productId;
   String? orderId;
   String? volume;
+  double? mbp;
   String? category;
   String? materialType;
   String? productName;
@@ -13,20 +14,22 @@ class InventoryModel {
   String? dateAndTime;
   String? units;
 
-  InventoryModel(
-      {this.productId,
-      this.orderId,
-      this.volume,
-      this.category,
-      this.materialType,
-      this.productName,
-      this.imgPath1,
-      this.imgPath2,
-      this.imgPath3,
-      this.imgPath4,
-      this.imgPath5,
-      this.dateAndTime,
-      this.units});
+  InventoryModel({
+    this.productId,
+    this.orderId,
+    this.volume,
+    this.category,
+    this.materialType,
+    this.productName,
+    this.imgPath1,
+    this.imgPath2,
+    this.imgPath3,
+    this.imgPath4,
+    this.imgPath5,
+    this.dateAndTime,
+    this.units,
+    this.mbp,
+  });
 
   InventoryModel.fromJson(Map<String, dynamic> json) {
     productId = json['productId'];
@@ -52,6 +55,7 @@ class InventoryModel {
         : null;
     dateAndTime = json['dateAndTime'];
     units = json['units'];
+    mbp = json['mbp'];
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -68,6 +72,7 @@ class InventoryModel {
     data['imgPath5'] = this.imgPath5;
     data['dateAndTime'] = this.dateAndTime;
     data['units'] = this.units;
+    data['mbp'] = this.mbp;
     return data;
   }
 }

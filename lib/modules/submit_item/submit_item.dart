@@ -66,80 +66,133 @@ class SubmitItemComponent extends StatelessWidget {
             BricolageText(
               text: "Approximate volume of scrap",
               style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                   color: Colors.black87),
             ),
-            SizedBox(
-              height: 20.h,
-            ),
             GetBuilder<SubmitItemController>(builder: (controller) {
-              return Row(
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: controller.volumeController,
-                      onChanged: (value) {
-                        controller.update();
-                      },
-                      style: TextStyle(fontSize: 14.sp),
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.balance_outlined,
-                          size: 23.r,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: controller.volumeController,
+                          onChanged: (value) {
+                            controller.update();
+                          },
+                          style: TextStyle(fontSize: 14.sp),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.balance_outlined,
+                              size: 23.r,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.r)),
+                                borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 232, 232, 232),
+                                    width: 0)),
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.r)),
+                                borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 232, 232, 232),
+                                    width: 0)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.r)),
+                                borderSide: const BorderSide(
+                                    color: Color.fromARGB(0, 255, 255, 255),
+                                    width: 0)),
+                            hintText: "eg. 100",
+                            hintStyle: GoogleFonts.bricolageGrotesque(
+                                textStyle: TextStyle(
+                              fontSize: 16.sp,
+                              color: const Color.fromARGB(255, 111, 111, 111),
+                              fontWeight: FontWeight.w400,
+                            )),
+                            // contentPadding: EdgeInsets.only(bottom: 13.h, left: 19.w),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 19.w, vertical: 16.h),
+                            filled: true,
+                            fillColor: Color.fromRGBO(244, 244, 244, 1.0),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.r)),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 232, 232, 232),
-                                width: 0)),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.r)),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 232, 232, 232),
-                                width: 0)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.r)),
-                            borderSide: const BorderSide(
-                                color: Color.fromARGB(0, 255, 255, 255),
-                                width: 0)),
-                        hintText: "eg. 100",
-                        hintStyle: GoogleFonts.bricolageGrotesque(
-                            textStyle: TextStyle(
-                          fontSize: 16.sp,
-                          color: const Color.fromARGB(255, 111, 111, 111),
-                          fontWeight: FontWeight.w400,
-                        )),
-                        // contentPadding: EdgeInsets.only(bottom: 13.h, left: 19.w),
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 19.w, vertical: 16.h),
-                        filled: true,
-                        fillColor: Color.fromRGBO(244, 244, 244, 1.0),
                       ),
+                      GetBuilder<CategoriesController>(
+                          builder: (categoriesController) {
+                        return Row(
+                          children: [
+                            SizedBox(width: 10.w),
+                            Container(
+                              height: 50,
+                              child: Center(
+                                child: BricolageText(
+                                    style: TextStyle(),
+                                    text: categoriesController
+                                            .selectedSubCategory!.units ??
+                                        ""),
+                              ),
+                            )
+                          ],
+                        );
+                      }),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  BricolageText(
+                    text: "Minimum base price",
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87),
+                  ),
+                  TextFormField(
+                    controller: controller.basePriceController,
+                    onChanged: (value) {
+                      controller.update();
+                    },
+                    style: TextStyle(fontSize: 14.sp),
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.currency_rupee_sharp,
+                        size: 23.r,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 232, 232, 232),
+                              width: 0)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 232, 232, 232),
+                              width: 0)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(0, 255, 255, 255),
+                              width: 0)),
+                      hintText: "100",
+                      hintStyle: GoogleFonts.bricolageGrotesque(
+                          textStyle: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color.fromARGB(255, 111, 111, 111),
+                        fontWeight: FontWeight.w400,
+                      )),
+                      // contentPadding: EdgeInsets.only(bottom: 13.h, left: 19.w),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 19.w, vertical: 16.h),
+                      filled: true,
+                      fillColor: Color.fromRGBO(244, 244, 244, 1.0),
                     ),
                   ),
-                  GetBuilder<CategoriesController>(
-                      builder: (categoriesController) {
-                    return Row(
-                      children: [
-                        SizedBox(width: 10.w),
-                        Container(
-                          height: 50,
-                          child: Center(
-                            child: BricolageText(
-                                style: TextStyle(),
-                                text: categoriesController
-                                        .selectedSubCategory!.units ??
-                                    ""),
-                          ),
-                        )
-                      ],
-                    );
-                  }),
                 ],
               );
             }),
@@ -178,6 +231,7 @@ class SubmitItemComponent extends StatelessWidget {
                 },
                 isBtnActive:
                     controller.volumeController.text.trim().isNotEmpty &&
+                        controller.basePriceController.text.trim().isNotEmpty &&
                         controller.images.isNotEmpty,
               );
             }),

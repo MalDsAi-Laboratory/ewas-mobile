@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
+import 'package:simple_ui/modules/locate_recyclers/locate_recyclers_controller.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
@@ -17,6 +18,7 @@ import 'package:simple_ui/ui_utils/loading_widgets.dart';
 
 class SubmitItemController extends GetxController {
   var volumeController = TextEditingController();
+  var basePriceController = TextEditingController();
   bool isBtnActive = false;
   final ImagePicker _picker = ImagePicker();
   var images = <File>[];
@@ -25,6 +27,10 @@ class SubmitItemController extends GetxController {
   Future<void> submitProduct(context, willGoUnderAuction) async {
     if (volumeController.text.isEmpty) {
       Get.snackbar("Error", "Please enter volume details");
+      return;
+    }
+    if (basePriceController.text.isEmpty) {
+      Get.snackbar("Error", "Please enter minimum base price");
       return;
     }
     if (images.isEmpty) {
@@ -139,6 +145,7 @@ class SubmitItemController extends GetxController {
             Get.find<CategoriesController>().selectedSubCategory!.productName,
         volume: volumeController.text,
         dateAndTime: DateTime.now().toIso8601String(),
+        mbp: double.parse(basePriceController.text.trim()),
         productId: Get.find<CategoriesController>()
             .selectedSubCategory!
             .productId
@@ -158,6 +165,7 @@ class SubmitItemController extends GetxController {
   }
 
   Future<String?> createOrder({required bool willGoUnderAuction}) async {
+    DateTime now = DateTime.now();
     try {
       MainScreenController mainScreenController =
           Get.find<MainScreenController>();
@@ -170,8 +178,9 @@ class SubmitItemController extends GetxController {
         orderStatus: willGoUnderAuction
             ? OrderStatus.orderPlaced
             : OrderStatus.awaitingForPick,
-        orderDate: DateTime.now(),
-        orderDetails: "Order details",
+        orderDate: now,
+        orderDetails:
+            "${now.toIso8601String()} || ${willGoUnderAuction ? "Minimum base price ${basePriceController.text.trim()}" : "${Get.find<LocateRecyclersController>().selectedRecycler.value.userId ?? ""} is chosen with price ${Get.find<LocateRecyclersController>().selectedRecycler.value.price}"}",
       );
       Map<String, dynamic> response = await createOrderApi(data: orderModel);
       if (response['status']) {
@@ -190,6 +199,7 @@ class SubmitItemController extends GetxController {
     try {
       MainScreenController mainScreenController =
           Get.find<MainScreenController>();
+      DateTime now = DateTime.now();
       OrderModel orderModel = OrderModel(
         eid: orderId,
         firstName: mainScreenController.user!.firstName,
@@ -198,8 +208,9 @@ class SubmitItemController extends GetxController {
         assignee: null,
         userId: mainScreenController.user!.userId,
         orderStatus: OrderStatus.biddingStarted,
-        orderDate: DateTime.now(),
-        orderDetails: "Order details",
+        orderDate: now,
+        orderDetails:
+            "${now.toIso8601String()} || Minimum base price ${basePriceController.text.trim()}",
       );
       Map<String, dynamic> response = await updateOrderApi(data: orderModel);
       if (response['status']) {

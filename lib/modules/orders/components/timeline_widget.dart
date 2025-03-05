@@ -65,7 +65,7 @@ class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
         disableScroll: false,
         direction: Axis.horizontal,
         stepRadius: 10.r,
-        internalPadding: 60,
+        internalPadding: 70.w,
         showStepBorder: false,
         steps: orderFlow
             .map((status) => _buildStep(status, orderFlow.indexOf(status)))

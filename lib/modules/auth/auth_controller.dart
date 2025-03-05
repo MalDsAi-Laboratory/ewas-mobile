@@ -28,21 +28,34 @@ class AuthController extends GetxController {
   late TabController tabController;
   RxBool isLoading = false.obs;
 
-  checkIfAnyFieldIsEmpty() {
-    if (userId.value.isEmpty ||
-        firstName.value.isEmpty ||
-        lastName.value.isEmpty ||
-        mobileNumber.value.isEmpty ||
-        email.value.isEmpty ||
-        password.value.isEmpty ||
-        confirmPassword.value.isEmpty ||
-        selectedAddress.value.isEmpty) {
-      return true;
+  checkIfAnyFieldIsEmpty({bool? isLogin}) {
+    if (isLogin!) {
+      if (userId.value.isEmpty || password.value.isEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (userId.value.isEmpty ||
+          firstName.value.isEmpty ||
+          lastName.value.isEmpty ||
+          mobileNumber.value.isEmpty ||
+          email.value.isEmpty ||
+          password.value.isEmpty ||
+          confirmPassword.value.isEmpty ||
+          selectedAddress.value.isEmpty) {
+        return true;
+      }
+      return false;
     }
-    return false;
   }
 
   bool areFieldsValidated() {
+    if (!Validations.validateName(userId.value)) {
+      AppSnackBars.showErrorSnackBar(
+          "Error", "UserId should be atleast of length 4");
+      return false;
+    }
     if (!Validations.isEmail(email.value)) {
       AppSnackBars.showErrorSnackBar("Error", "Invalid email");
       return false;
@@ -106,6 +119,7 @@ class AuthController extends GetxController {
         roles: [userRole.value],
         lastLogin: DateTime.now().toUtc().toIso8601String(),
       );
+      isLoading.value = true;
       Map<String, dynamic> response = await createUserApi(data: userModel);
       if (response['status']) {
         Map<String, dynamic> response = await createUser2Api(
@@ -142,6 +156,12 @@ class AuthController extends GetxController {
 
   void loginUser() async {
     try {
+      if (checkIfAnyFieldIsEmpty(isLogin: true)) {
+        AppSnackBars.showErrorSnackBar(
+            "Error", "Please fill all the required fields");
+        return;
+      }
+      isLoading.value = true;
       Map<String, dynamic> response =
           await getUserAccountPasswordApi(userId: userId.value);
       if (response['status']) {

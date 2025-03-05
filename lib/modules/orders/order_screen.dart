@@ -7,6 +7,7 @@ import 'package:simple_ui/modules/orders/components/order_product_components.dar
 import 'package:simple_ui/modules/orders/components/timeline_widget.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/controller/order_controller.dart';
+import 'package:simple_ui/modules/orders/helper.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/dropdown_widgets.dart';
@@ -389,17 +390,50 @@ class _OrderScreenState extends State<OrderScreen> {
                                               ? Column(
                                                   children: [
                                                     SizedBox(height: 8.h),
-                                                    BricolageText(
-                                                      text: orderController
+                                                    Builder(builder: (context) {
+                                                      String details = "";
+                                                      String? input =
+                                                          orderController
                                                               .currentOrder
-                                                              ?.orderDetails ??
-                                                          "",
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                          fontSize: 14.sp,
-                                                          fontWeight: FontWeight
-                                                              .normal),
-                                                    )
+                                                              ?.orderDetails;
+                                                      if (input != null) {
+                                                        List<String> parts =
+                                                            input
+                                                                .split("||")
+                                                                .map((e) =>
+                                                                    e.trim())
+                                                                .toList();
+
+                                                        // Extract timestamp and parse it
+                                                        String timestamp =
+                                                            parts[0];
+                                                        DateTime dateTime =
+                                                            DateTime.parse(
+                                                                timestamp);
+
+                                                        // Format the date for UI
+                                                        String formattedTime =
+                                                            "${getMonthName(dateTime.month)} ${dateTime.day}, ${dateTime.year}, "
+                                                            "${formatHour(dateTime.hour)}:${formatMinute(dateTime.minute)} ${getAmPm(dateTime.hour)}";
+
+                                                        details = orderController
+                                                                .currentOrder
+                                                                ?.orderDetails ??
+                                                            "";
+                                                        details =
+                                                            "${formattedTime} || ${parts[1]}";
+                                                      }
+                                                      return BricolageText(
+                                                        text: details,
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                        style: TextStyle(
+                                                            fontSize: 14.sp,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      );
+                                                    })
                                                   ],
                                                 )
                                               : SizedBox(),
