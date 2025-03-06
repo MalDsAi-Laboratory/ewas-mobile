@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/controller/order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
@@ -49,7 +50,9 @@ class AllOrderController extends GetxController {
         }
       }
     }
+    log("order before ${orders.length} ${filteredOrders.length}");
     filteredOrders.assignAll(orders);
+    log("order after ${orders.length} ${filteredOrders.length}");
     filterOrderUnderAuctionOnly();
     _fetchInventory();
   }
@@ -80,6 +83,14 @@ class AllOrderController extends GetxController {
         log('Error occurred in fetch inventory: $e');
       }
     } finally {
+      if (Get.isRegistered<OrderController>()) {
+        OrderController orderController = Get.find<OrderController>();
+        if (orderController.currentInventory == null) {
+          orderController.currentInventory =
+              inventoryMap[orderController.currentOrder!.eid ?? ""];
+          orderController.update();
+        }
+      }
       isInventoryLoading.value = false;
     }
   }

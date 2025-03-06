@@ -98,7 +98,7 @@ class MainScreenController extends GetxController {
           ),
           const BottomNavBarItem(
             text: "Settings",
-            icon: Icons.list,
+            icon: Icons.account_circle_sharp,
             index: 2,
           ),
         ];
@@ -116,7 +116,7 @@ class MainScreenController extends GetxController {
           ),
           const BottomNavBarItem(
             text: "Settings",
-            icon: Icons.list,
+            icon: Icons.account_circle_sharp,
             index: 2,
           ),
         ];

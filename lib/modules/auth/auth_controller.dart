@@ -174,7 +174,7 @@ class AuthController extends GetxController {
             Get.offAll(
                 () => AppScreen(user: UserModel.fromJson(response['data'])));
             AppSnackBars.showSuccessSnackBar(
-                "Success", 'You have registered successfully.\nPlease login.');
+                "Success", 'You have logged in successfully.');
           } else {
             AppSnackBars.showErrorSnackBar("Error", response['data']);
           }

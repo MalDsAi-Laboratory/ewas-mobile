@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
+import 'package:simple_ui/modules/splash/splash_screen.dart';
+import 'package:simple_ui/services/secure_storage/user_caching.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -99,5 +104,42 @@ class RetryWidget extends StatelessWidget {
           size: 25.r,
           color: Colors.black,
         ));
+  }
+}
+
+class LogOutButton extends StatelessWidget {
+  const LogOutButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
+        backgroundColor: const Color.fromARGB(
+            255, 244, 244, 244), // Make the button itself transparent
+        shadowColor: const Color.fromARGB(
+            0, 238, 238, 238), // Remove default button shadow
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+      ),
+      onPressed: () async {
+        try {
+          await SecureStorageServices().logOut();
+          Get.off(() => SplashScreen());
+        } catch (e) {
+          log("error in logOut $e");
+        }
+      },
+      child: Center(
+        child: BricolageText(
+          text: "Logout",
+          style: TextStyle(
+              fontSize: 16.sp,
+              color: const Color.fromARGB(255, 237, 0, 0),
+              fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }

@@ -54,118 +54,121 @@ class AdminOrderScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columnSpacing: size.width * 0.06,
-                          border: TableBorder(
-                              top: BorderSide(width: 0.2, color: Colors.grey)),
-                          columns: [
-                            DataColumn(
-                              label: Container(
-                                constraints:
-                                    BoxConstraints(minWidth: size.width * 0.08),
-                                child: BricolageText(
-                                  text: "#",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15.sp),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columnSpacing: size.width * 0.06,
+                            border: TableBorder(
+                                top:
+                                    BorderSide(width: 0.2, color: Colors.grey)),
+                            columns: [
+                              DataColumn(
+                                label: Container(
+                                  constraints: BoxConstraints(
+                                      minWidth: size.width * 0.08),
+                                  child: BricolageText(
+                                    text: "#",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp),
+                                  ),
                                 ),
                               ),
-                            ),
-                            DataColumn(
-                                label: Container(
-                              constraints:
-                                  BoxConstraints(minWidth: size.width * 0.3),
-                              child: BricolageText(
-                                  text: "Order ID",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15.sp)),
-                            )),
-                            DataColumn(
-                                label: Container(
-                              constraints:
-                                  BoxConstraints(minWidth: size.width * 0.22),
-                              child: BricolageText(
-                                  text: "Status",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15.sp)),
-                            )),
-                            DataColumn(
-                                label: Container(
-                              constraints:
-                                  BoxConstraints(minWidth: size.width * 0.2),
-                              child: BricolageText(
-                                  text: "Assignee",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15.sp)),
-                            )),
-                          ],
-                          rows: orderController.filteredOrders
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            int index = entry.key + 1; // Index starts from 1
-                            OrderModel order = entry.value;
-                            return DataRow(cells: [
-                              DataCell(
-                                  BricolageText(
-                                    text: index.toString(),
-                                    textAlign: TextAlign.center,
+                              DataColumn(
+                                  label: Container(
+                                constraints:
+                                    BoxConstraints(minWidth: size.width * 0.3),
+                                child: BricolageText(
+                                    text: "Order ID",
                                     style: TextStyle(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500),
-                                  ), onTap: () {
-                                showOrderDetailScreen(context, entry.key);
-                              }),
-                              DataCell(
-                                  BricolageText(
-                                    text: order.eid ?? "",
-                                    textAlign: TextAlign.left,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp)),
+                              )),
+                              DataColumn(
+                                  label: Container(
+                                constraints:
+                                    BoxConstraints(minWidth: size.width * 0.22),
+                                child: BricolageText(
+                                    text: "Status",
                                     style: TextStyle(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w500),
-                                  ), onTap: () {
-                                showOrderDetailScreen(context, entry.key);
-                              }),
-                              DataCell(
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: getStatusColor(
-                                          order.orderStatus ?? ""),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: BricolageText(
-                                      text: order.orderStatus ?? "No Order",
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp)),
+                              )),
+                              DataColumn(
+                                  label: Container(
+                                constraints:
+                                    BoxConstraints(minWidth: size.width * 0.2),
+                                child: BricolageText(
+                                    text: "Assignee",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp)),
+                              )),
+                            ],
+                            rows: orderController.filteredOrders
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key + 1; // Index starts from 1
+                              OrderModel order = entry.value;
+                              return DataRow(cells: [
+                                DataCell(
+                                    BricolageText(
+                                      text: index.toString(),
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          color: Colors.white,
                                           fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ), onTap: () {
-                                showOrderDetailScreen(context, entry.key);
-                              }),
-                              DataCell(
-                                  SizedBox(
-                                    width: 130.w,
-                                    child: BricolageText(
-                                      text: order.assignee ?? "",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                          fontWeight: FontWeight.w500),
+                                    ), onTap: () {
+                                  showOrderDetailScreen(context, entry.key);
+                                }),
+                                DataCell(
+                                    BricolageText(
+                                      text: order.eid ?? "",
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500),
-                                    ),
-                                  ), onTap: () {
-                                showOrderDetailScreen(context, entry.key);
-                              }),
-                            ]);
-                          }).toList(),
+                                    ), onTap: () {
+                                  showOrderDetailScreen(context, entry.key);
+                                }),
+                                DataCell(
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: getStatusColor(
+                                            order.orderStatus ?? ""),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: BricolageText(
+                                        text: order.orderStatus ?? "No Order",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ), onTap: () {
+                                  showOrderDetailScreen(context, entry.key);
+                                }),
+                                DataCell(
+                                    SizedBox(
+                                      width: 130.w,
+                                      child: BricolageText(
+                                        text: order.assignee ?? "",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ), onTap: () {
+                                  showOrderDetailScreen(context, entry.key);
+                                }),
+                              ]);
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ),

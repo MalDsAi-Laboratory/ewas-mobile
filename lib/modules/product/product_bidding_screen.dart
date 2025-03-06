@@ -150,24 +150,32 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                     ],
                                   )
                                 : SizedBox(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                BricolageText(
-                                  text: 'Minimum base price',
-                                  style: TextStyle(
-                                      fontSize: 13.sp,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                                BricolageText(
-                                  text: "₹ ${widget.productModel.mbp}",
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 12.h),
+                            widget.productModel.mbp != null
+                                ? Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          BricolageText(
+                                            text: 'Minimum base price',
+                                            style: TextStyle(
+                                                fontSize: 13.sp,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          BricolageText(
+                                            text:
+                                                "₹ ${widget.productModel.mbp}",
+                                            style: TextStyle(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 12.h),
+                                    ],
+                                  )
+                                : SizedBox(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
