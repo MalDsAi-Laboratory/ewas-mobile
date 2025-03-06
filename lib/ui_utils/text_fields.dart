@@ -229,6 +229,7 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
   final double? borderRadius;
   final Function()? onPressOfSearchButton;
   final double? height;
+  final int? maxLines;
   const CustomTextFieldWithLightBorder(
       {super.key,
       this.validator,
@@ -242,7 +243,8 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
       this.hintText,
       this.borderRadius = 10,
       this.icon,
-      this.height});
+      this.height,
+      this.maxLines = 1});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -273,6 +275,7 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
               cursorColor: Colors.black,
               onChanged: onChanged,
               controller: controller,
+              maxLines: maxLines,
               cursorWidth: 1,
               initialValue: initialValue,
               validator: validator ??
