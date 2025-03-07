@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:simple_ui/modules/orders/components/all_order_page_components.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
@@ -113,7 +114,11 @@ class OrderList extends StatelessWidget {
           return InkWell(
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             onTap: () {
-              showOrderDetailScreen(context, index);
+              if (order.orderStatus == OrderStatus.orderPlaced) {
+                return;
+              } else {
+                showOrderDetailScreen(context, index);
+              }
             },
             child: Container(
               decoration: BoxDecoration(

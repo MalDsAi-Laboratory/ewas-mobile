@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
@@ -9,12 +11,13 @@ import 'package:simple_ui/modules/locate_recyclers/locate_recyclers_controller.d
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
+import 'package:simple_ui/modules/submit_item/submit_item.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'dart:io';
 import "package:dio/dio.dart" as dio;
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
-import 'package:simple_ui/ui_utils/loading_widgets.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SubmitItemController extends GetxController {
   var volumeController = TextEditingController();
@@ -40,7 +43,7 @@ class SubmitItemController extends GetxController {
     try {
       isOrderCreated = false;
       update();
-      showLoadingDialog(context);
+      showOrderRestrictedLoadingDialog(context);
       // Create order
       String? orderId =
           await createOrder(willGoUnderAuction: willGoUnderAuction);
@@ -52,40 +55,56 @@ class SubmitItemController extends GetxController {
 
         AppSnackBars.showErrorSnackBar("Error", "Failed to create order");
       } else {
-        bool response = await createInventory(orderId);
-        if (!response) {
-          isOrderCreated = true;
-          update();
-          Get.back();
-          print("createInventory failed");
-
-          AppSnackBars.showErrorSnackBar("Error", "Failed to create inventory");
+        if (willGoUnderAuction) {
+          // Save order data to local storage
+          bool response = await saveOrderDataToLocalStorage(orderId);
+          if (response) {
+            Get.back();
+            Get.back();
+            Get.back();
+            Get.back();
+            AppSnackBars.showSuccessSnackBar("Success",
+                "Product listed for auction!\nYou can view your product for auction from orders screen.");
+          } else {
+            Get.back();
+          }
         } else {
-          willGoUnderAuction
-              ? await Future.wait([
-                  updateOrderStatus(orderId: orderId),
-                  productImageUpload(orderId),
-                ])
-              : await productImageUpload(orderId);
-          Get.back();
-          Get.back();
-          Get.back();
-          Get.back();
-          AppSnackBars.showSuccessSnackBar("Success",
-              "Product listed for auction!\nYou can view your product for auction from orders screen.");
-          AllOrderController controller = Get.find<AllOrderController>();
-          try {
-            controller.isInventoryLoading.value = false;
-            Map<String, dynamic> response =
-                await getInventoryByIdApi(orderId: orderId);
-            if (response['status']) {
-              controller.inventoryMap[orderId] =
-                  InventoryModel.fromJson(response['data']);
+          bool response = await createInventory(orderId);
+          if (!response) {
+            isOrderCreated = true;
+            update();
+            Get.back();
+            print("createInventory failed");
+
+            AppSnackBars.showErrorSnackBar(
+                "Error", "Failed to create inventory");
+          } else {
+            willGoUnderAuction
+                ? await Future.wait([
+                    updateOrderStatus(orderId: orderId),
+                    productImageUpload(orderId),
+                  ])
+                : await productImageUpload(orderId);
+            Get.back();
+            Get.back();
+            Get.back();
+            Get.back();
+            AppSnackBars.showSuccessSnackBar("Success",
+                "Product listed for auction!\nYou can view your product for auction from orders screen.");
+            AllOrderController controller = Get.find<AllOrderController>();
+            try {
+              controller.isInventoryLoading.value = false;
+              Map<String, dynamic> response =
+                  await getInventoryByIdApi(orderId: orderId);
+              if (response['status']) {
+                controller.inventoryMap[orderId] =
+                    InventoryModel.fromJson(response['data']);
+              }
+            } catch (e) {
+              log("error in getInventoryByIdApi $e");
+            } finally {
+              controller.isInventoryLoading.value = false;
             }
-          } catch (e) {
-            log("error in getInventoryByIdApi $e");
-          } finally {
-            controller.isInventoryLoading.value = false;
           }
         }
       }
@@ -97,6 +116,64 @@ class SubmitItemController extends GetxController {
 
       isOrderCreated = true;
       update();
+    }
+  }
+
+  Future<bool> saveOrderDataToLocalStorage(String orderId) async {
+    try {
+      // Get the application documents directory
+      final appDocDir = await getApplicationDocumentsDirectory();
+
+      // Create a directory for this order
+      final orderDir = Directory('${appDocDir.path}/$orderId');
+      if (!await orderDir.exists()) {
+        await orderDir.create(recursive: true);
+      }
+
+      // Get categories controller to access the category details
+      CategoriesController categoriesController =
+          Get.find<CategoriesController>();
+
+      // Save order metadata with additional fields
+      final metadataFile = File('${orderDir.path}/metadata.json');
+      final metadata = {
+        'productId': categoriesController.selectedSubCategory?.productId,
+        'volume': volumeController.text,
+        'minimum_base_price': basePriceController.text,
+        'timestamp': DateTime.now().toIso8601String(),
+        // Add the new fields
+        'category': categoriesController.selectedCategory?.category,
+        'materialType':
+            categoriesController.selectedSubCategory?.materialDetails,
+        'productName': categoriesController.selectedSubCategory?.productName,
+        'units': categoriesController.selectedSubCategory
+            ?.units, // Try to extract units from volume text if present
+      };
+      await metadataFile.writeAsString(jsonEncode(metadata));
+
+      // Save images
+      for (int i = 0; i < images.length; i++) {
+        final imageFile = images[i];
+        final fileName = 'image_$i.jpg';
+        final savedImagePath = '${orderDir.path}/$fileName';
+
+        // Copy the image to the order directory
+        await imageFile.copy(savedImagePath);
+      }
+
+      // Save order reference to shared preferences for easy access
+      final prefs = await SharedPreferences.getInstance();
+      List<String> savedOrders = prefs.getStringList('saved_orders') ?? [];
+      if (!savedOrders.contains(orderId)) {
+        savedOrders.add(orderId);
+        await prefs.setStringList('saved_orders', savedOrders);
+      }
+
+      log("Order data saved to local storage: $orderId");
+      return true;
+    } catch (e) {
+      log("Error saving order data to local storage: $e");
+      return false;
     }
   }
 
@@ -139,8 +216,9 @@ class SubmitItemController extends GetxController {
       InventoryModel inventoryModel = InventoryModel(
         orderId: orderId,
         category: Get.find<CategoriesController>().selectedCategory!.category,
-        materialType:
-            Get.find<CategoriesController>().selectedSubCategory!.category,
+        materialType: Get.find<CategoriesController>()
+            .selectedSubCategory!
+            .materialDetails,
         productName:
             Get.find<CategoriesController>().selectedSubCategory!.productName,
         volume: volumeController.text,

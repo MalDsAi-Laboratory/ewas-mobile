@@ -257,7 +257,7 @@ class SubmitItemComponent extends StatelessWidget {
   }
 }
 
-showRestrictedLoadingDialog(context) {
+showOrderRestrictedLoadingDialog(context) {
   showDialog(
       barrierColor: const Color.fromARGB(64, 0, 0, 0),
       barrierDismissible: false,
