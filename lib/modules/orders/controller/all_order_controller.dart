@@ -21,8 +21,54 @@ class AllOrderController extends GetxController {
   RxInt filterCount = 0.obs;
   RxBool isOrdersLoading = true.obs;
   RxInt pageNumber = 0.obs;
+  RxInt currentPage = 0.obs; // Current page for UI pagination
+  RxInt itemsPerPage = 10.obs; // Items per page for UI pagination
   RxBool isInventoryLoading = true.obs;
   RxMap<String, InventoryModel> inventoryMap = <String, InventoryModel>{}.obs;
+
+  // Computed property for paginated orders
+  List<OrderModel> get paginatedOrders {
+    final startIndex = currentPage.value * itemsPerPage.value;
+    final endIndex = startIndex + itemsPerPage.value;
+    if (startIndex >= filteredOrders.length) {
+      return [];
+    }
+    return filteredOrders.sublist(
+      startIndex,
+      endIndex > filteredOrders.length ? filteredOrders.length : endIndex,
+    );
+  }
+
+  // Total number of pages
+  int get totalPages {
+    return (filteredOrders.length / itemsPerPage.value).ceil();
+  }
+
+  // Check if there's a next page
+  bool get hasNextPage {
+    return currentPage.value < totalPages - 1;
+  }
+
+  // Check if there's a previous page
+  bool get hasPrevPage {
+    return currentPage.value > 0;
+  }
+
+  // Go to next page
+  void nextPage() {
+    if (hasNextPage) {
+      currentPage.value++;
+      update();
+    }
+  }
+
+  // Go to previous page
+  void prevPage() {
+    if (hasPrevPage) {
+      currentPage.value--;
+      update();
+    }
+  }
 
   void fetchOrders() async {
     if (orders.isEmpty) {
@@ -111,6 +157,7 @@ class AllOrderController extends GetxController {
         }
       }
     }
+    currentPage.value = 0; // Reset to first page when filtering
     update();
     if (useAllOrders!) {
       filteredOrders.assignAll(orders.where((order) {
@@ -151,6 +198,7 @@ class AllOrderController extends GetxController {
     searchAssignee.value = '';
     selectedStatus.value = '';
     filterCount.value = 0;
+    currentPage.value = 0; // Reset to first page when clearing filters
     update();
     if (useAllOrders!) {
       filterOrders();

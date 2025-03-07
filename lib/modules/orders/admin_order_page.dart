@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/orders/order_screen.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
@@ -44,14 +45,14 @@ class AdminOrderScreen extends StatelessWidget {
             ? Center(
                 child: AppLoadingWidget(),
               )
-            : Column(
-                children: [
-                  Expanded(
-                    child: Container(
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
                       width: size.width,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: SingleChildScrollView(
                         child: SingleChildScrollView(
@@ -105,11 +106,15 @@ class AdminOrderScreen extends StatelessWidget {
                                         fontSize: 15.sp)),
                               )),
                             ],
-                            rows: orderController.filteredOrders
+                            rows: orderController
+                                .paginatedOrders // Using paginatedOrders instead of filteredOrders
                                 .asMap()
                                 .entries
                                 .map((entry) {
-                              int index = entry.key + 1; // Index starts from 1
+                              int index = orderController.currentPage.value *
+                                      orderController.itemsPerPage.value +
+                                  entry.key +
+                                  1; // Calculate the real index
                               OrderModel order = entry.value;
                               return DataRow(cells: [
                                 DataCell(
@@ -120,7 +125,14 @@ class AdminOrderScreen extends StatelessWidget {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500),
                                     ), onTap: () {
-                                  showOrderDetailScreen(context, entry.key);
+                                  if (order.orderStatus !=
+                                      OrderStatus.orderPlaced) {
+                                    // Calculate the real index for the filtered orders
+                                    int realIndex = orderController
+                                        .filteredOrders
+                                        .indexOf(order);
+                                    showOrderDetailScreen(context, realIndex);
+                                  }
                                 }),
                                 DataCell(
                                     BricolageText(
@@ -130,7 +142,14 @@ class AdminOrderScreen extends StatelessWidget {
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w500),
                                     ), onTap: () {
-                                  showOrderDetailScreen(context, entry.key);
+                                  if (order.orderStatus !=
+                                      OrderStatus.orderPlaced) {
+                                    // Calculate the real index for the filtered orders
+                                    int realIndex = orderController
+                                        .filteredOrders
+                                        .indexOf(order);
+                                    showOrderDetailScreen(context, realIndex);
+                                  }
                                 }),
                                 DataCell(
                                     Container(
@@ -149,7 +168,14 @@ class AdminOrderScreen extends StatelessWidget {
                                             fontWeight: FontWeight.w600),
                                       ),
                                     ), onTap: () {
-                                  showOrderDetailScreen(context, entry.key);
+                                  if (order.orderStatus !=
+                                      OrderStatus.orderPlaced) {
+                                    // Calculate the real index for the filtered orders
+                                    int realIndex = orderController
+                                        .filteredOrders
+                                        .indexOf(order);
+                                    showOrderDetailScreen(context, realIndex);
+                                  }
                                 }),
                                 DataCell(
                                     SizedBox(
@@ -164,7 +190,14 @@ class AdminOrderScreen extends StatelessWidget {
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ), onTap: () {
-                                  showOrderDetailScreen(context, entry.key);
+                                  if (order.orderStatus !=
+                                      OrderStatus.orderPlaced) {
+                                    // Calculate the real index for the filtered orders
+                                    int realIndex = orderController
+                                        .filteredOrders
+                                        .indexOf(order);
+                                    showOrderDetailScreen(context, realIndex);
+                                  }
                                 }),
                               ]);
                             }).toList(),
@@ -172,8 +205,86 @@ class AdminOrderScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    // Pagination controls
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.h, horizontal: 16.w),
+                      child: GetBuilder<AllOrderController>(
+                        builder: (controller) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Previous button
+                              SizedBox(
+                                width: 30.w,
+                                height: 30.w,
+                                child: ElevatedButton(
+                                  onPressed: controller.hasPrevPage
+                                      ? () => controller.prevPage()
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.only(left: 5.w),
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    disabledForegroundColor:
+                                        Colors.grey.withOpacity(0.38),
+                                    disabledBackgroundColor:
+                                        Colors.grey.withOpacity(0.12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.r),
+                                      side: BorderSide(color: Colors.black12),
+                                    ),
+                                  ),
+                                  child: Icon(Icons.arrow_back_ios, size: 16.r),
+                                ),
+                              ),
+                              SizedBox(width: 16.w),
+
+                              // Page info
+                              BricolageText(
+                                text:
+                                    'Page ${controller.currentPage.value + 1} of ${controller.totalPages}',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(width: 16.w),
+
+                              // Next button
+                              SizedBox(
+                                width: 30.w,
+                                height: 30.w,
+                                child: ElevatedButton(
+                                  onPressed: controller.hasNextPage
+                                      ? () => controller.nextPage()
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    padding: EdgeInsets.only(left: 4.w),
+                                    disabledForegroundColor:
+                                        Colors.grey.withOpacity(0.38),
+                                    disabledBackgroundColor:
+                                        Colors.grey.withOpacity(0.12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.r),
+                                      side: BorderSide(color: Colors.black12),
+                                    ),
+                                  ),
+                                  child:
+                                      Icon(Icons.arrow_forward_ios, size: 16.r),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
       ),
     );

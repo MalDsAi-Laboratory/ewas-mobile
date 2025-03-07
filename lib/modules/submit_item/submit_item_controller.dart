@@ -32,7 +32,7 @@ class SubmitItemController extends GetxController {
       Get.snackbar("Error", "Please enter volume details");
       return;
     }
-    if (basePriceController.text.isEmpty) {
+    if (willGoUnderAuction && basePriceController.text.isEmpty) {
       Get.snackbar("Error", "Please enter minimum base price");
       return;
     }
@@ -69,7 +69,7 @@ class SubmitItemController extends GetxController {
             Get.back();
           }
         } else {
-          bool response = await createInventory(orderId);
+          bool response = await createInventory(orderId, willGoUnderAuction);
           if (!response) {
             isOrderCreated = true;
             update();
@@ -211,7 +211,7 @@ class SubmitItemController extends GetxController {
     }
   }
 
-  Future<bool> createInventory(String orderId) async {
+  Future<bool> createInventory(String orderId, willGoUnderAuction) async {
     try {
       InventoryModel inventoryModel = InventoryModel(
         orderId: orderId,
@@ -223,7 +223,9 @@ class SubmitItemController extends GetxController {
             Get.find<CategoriesController>().selectedSubCategory!.productName,
         volume: volumeController.text,
         dateAndTime: DateTime.now().toIso8601String(),
-        mbp: double.parse(basePriceController.text.trim()),
+        mbp: willGoUnderAuction
+            ? double.parse(basePriceController.text.trim())
+            : null,
         productId: Get.find<CategoriesController>()
             .selectedSubCategory!
             .productId
@@ -258,7 +260,7 @@ class SubmitItemController extends GetxController {
             : OrderStatus.awaitingForPick,
         orderDate: now,
         orderDetails:
-            "${now.toIso8601String()} || ${willGoUnderAuction ? "Minimum base price ${basePriceController.text.trim()}" : "${Get.find<LocateRecyclersController>().selectedRecycler.value.userId ?? ""} is chosen with price ${Get.find<LocateRecyclersController>().selectedRecycler.value.price}"}",
+            "${now.toIso8601String()} || ${willGoUnderAuction ? "Minimum base price ₹ ${basePriceController.text.trim()}" : "${Get.find<LocateRecyclersController>().selectedRecycler.value.userId ?? ""} is chosen with price ₹ ${Get.find<LocateRecyclersController>().selectedRecycler.value.price}"}",
       );
       Map<String, dynamic> response = await createOrderApi(data: orderModel);
       if (response['status']) {

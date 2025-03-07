@@ -137,7 +137,7 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Text(
-                                      recycler.price.toString(),
+                                      "₹ ${recycler.price.toString()}",
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -296,9 +296,8 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                                           style: TextStyle(color: Colors.grey),
                                         ),
                                         BricolageText(
-                                            text: locationController
-                                                .selectedRecycler.value.price
-                                                .toString()),
+                                            text:
+                                                "₹ ${locationController.selectedRecycler.value.price.toString()}"),
                                       ],
                                     ),
                                     SizedBox(height: 20.h),

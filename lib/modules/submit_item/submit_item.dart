@@ -148,60 +148,72 @@ class SubmitItemComponent extends StatelessWidget {
                           }),
                         ],
                       ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      BricolageText(
-                        text: "Minimum base price",
-                        style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87),
-                      ),
-                      TextFormField(
-                        controller: controller.basePriceController,
-                        onChanged: (value) {
-                          controller.update();
-                        },
-                        style: TextStyle(fontSize: 14.sp),
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.currency_rupee_sharp,
-                            size: 23.r,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.r)),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 232, 232, 232),
-                                  width: 0)),
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.r)),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 232, 232, 232),
-                                  width: 0)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.r)),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(0, 255, 255, 255),
-                                  width: 0)),
-                          hintText: "100",
-                          hintStyle: GoogleFonts.bricolageGrotesque(
-                              textStyle: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color.fromARGB(255, 111, 111, 111),
-                            fontWeight: FontWeight.w400,
-                          )),
-                          // contentPadding: EdgeInsets.only(bottom: 13.h, left: 19.w),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 19.w, vertical: 16.h),
-                          filled: true,
-                          fillColor: Color.fromRGBO(244, 244, 244, 1.0),
-                        ),
-                      ),
+                      willGoUnderAuction
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                BricolageText(
+                                  text: "Minimum base price",
+                                  style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87),
+                                ),
+                                TextFormField(
+                                  controller: controller.basePriceController,
+                                  onChanged: (value) {
+                                    controller.update();
+                                  },
+                                  style: TextStyle(fontSize: 14.sp),
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.currency_rupee_sharp,
+                                      size: 23.r,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15.r)),
+                                        borderSide: const BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 232, 232, 232),
+                                            width: 0)),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15.r)),
+                                        borderSide: const BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 232, 232, 232),
+                                            width: 0)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15.r)),
+                                        borderSide: const BorderSide(
+                                            color: Color.fromARGB(
+                                                0, 255, 255, 255),
+                                            width: 0)),
+                                    hintText: "100",
+                                    hintStyle: GoogleFonts.bricolageGrotesque(
+                                        textStyle: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: const Color.fromARGB(
+                                          255, 111, 111, 111),
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                                    // contentPadding: EdgeInsets.only(bottom: 13.h, left: 19.w),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 19.w, vertical: 16.h),
+                                    filled: true,
+                                    fillColor:
+                                        Color.fromRGBO(244, 244, 244, 1.0),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
                     ],
                   );
                 }),
@@ -241,10 +253,13 @@ class SubmitItemComponent extends StatelessWidget {
                 onTap: () {
                   controller.submitProduct(context, willGoUnderAuction);
                 },
-                isBtnActive:
-                    controller.volumeController.text.trim().isNotEmpty &&
-                        controller.basePriceController.text.trim().isNotEmpty &&
-                        controller.images.isNotEmpty,
+                isBtnActive: controller.volumeController.text
+                        .trim()
+                        .isNotEmpty &&
+                    (willGoUnderAuction
+                        ? controller.basePriceController.text.trim().isNotEmpty
+                        : true) &&
+                    controller.images.isNotEmpty,
               );
             }),
             SizedBox(

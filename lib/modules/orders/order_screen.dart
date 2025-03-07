@@ -484,9 +484,9 @@ class _OrderComponentState extends State<OrderComponent> {
                                     currentStatus:
                                         orderController.orderStatus ??
                                             "Order Placed"),
-                                SizedBox(height: 20.h),
                               ],
                             ),
+                          SizedBox(height: 20.h),
                         ],
                       ),
                     ),

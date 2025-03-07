@@ -169,22 +169,33 @@ class AuthController extends GetxController {
           Map<String, dynamic> response =
               await getUserByUserIdApi(userId: userId.value);
           if (response['status']) {
-            Map<String, dynamic> response2 =
-                await getRecyclersIds(userId.value);
-            if (response2['status']) {
-              await SecureStorageServices().setUserModel(response['data']);
-              await SecureStorageServices().setUserLocation({
-                "latitude": response2['lat'],
-                "longitude": response2['long']
-              });
-              clearFields();
-              Get.offAll(
-                  () => AppScreen(user: UserModel.fromJson(response['data'])));
-              AppSnackBars.showSuccessSnackBar(
-                  "Success", 'You have logged in successfully.');
-            } else {
-              AppSnackBars.showErrorSnackBar("Error", response['data']);
-            }
+            UserModel user = UserModel.fromJson(response['data']);
+            if (user.roles![0] == UserRole.recycler ||
+                user.roles![0] == UserRole.seller) {
+              Map<String, dynamic> response2 =
+                  await getRecyclersIds(userId.value);
+              if (response2['status']) {
+                await SecureStorageServices().setUserModel(response['data']);
+                await SecureStorageServices().setUserLocation({
+                  "latitude": response2['lat'],
+                  "longitude": response2['long']
+                });
+                clearFields();
+                Get.offAll(() =>
+                    AppScreen(user: UserModel.fromJson(response['data'])));
+                AppSnackBars.showSuccessSnackBar(
+                    "Success", 'You have logged in successfully.');
+              } else {
+                AppSnackBars.showErrorSnackBar("Error", response['data']);
+              }
+            } else {}
+            await SecureStorageServices().setUserModel(response['data']);
+
+            clearFields();
+            Get.offAll(
+                () => AppScreen(user: UserModel.fromJson(response['data'])));
+            AppSnackBars.showSuccessSnackBar(
+                "Success", 'You have logged in successfully.');
           } else {
             AppSnackBars.showErrorSnackBar("Error", response['data']);
           }
