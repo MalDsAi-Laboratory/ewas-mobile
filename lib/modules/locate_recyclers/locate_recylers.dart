@@ -48,6 +48,8 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
     setState(() {
       _selectedRecyclerIndex = index;
     });
+    Get.find<LocateRecyclersController>().selectedRecycler.value =
+        Get.find<LocateRecyclersController>().inventories[index];
   }
 
   void _prevRecycler() {
@@ -175,17 +177,19 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             AppBarButton(bgColor: Colors.white),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: BricolageText(
-                                  text:
-                                      '${locationController.inventories.length} recyclers around you'),
-                            ),
+                            locationController.inventories.isEmpty
+                                ? Container()
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: BricolageText(
+                                        text:
+                                            '${locationController.inventories.length} recyclers around you'),
+                                  ),
                             AppBarButton(
                               iconData: CupertinoIcons.refresh_thin,
                               bgColor: Colors.white,

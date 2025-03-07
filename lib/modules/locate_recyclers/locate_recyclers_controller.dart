@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:simple_ui/models/create_user_model.dart';
 import 'package:simple_ui/models/product_details_model.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/services/apis/product_details/product_details_api.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
 
@@ -73,6 +75,11 @@ class LocateRecyclersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchDataSimultaneously();
+    String role = Get.find<MainScreenController>().user?.roles![0] ?? "";
+    if (role == UserRole.seller || role == UserRole.recycler) {
+      fetchDataSimultaneously();
+    } else {
+      isLoading.value = false;
+    }
   }
 }

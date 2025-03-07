@@ -30,9 +30,9 @@ class BannerCarousal extends StatelessWidget {
           autoPlay: autoPlay,
           height: 270.h,
           imgList: [
-            'http://93.229.113.153:8080/myapp/home_banner/1.webp',
-            'http://93.229.113.153:8080/myapp/home_banner/2.webp',
-            'http://93.229.113.153:8080/myapp/home_banner/3.webp',
+            'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+            'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+            'http://ewas.maldsai.com:8080/myapp/home_banner/3.webp',
           ],
         ),
       ),
@@ -72,7 +72,7 @@ class CarousalWidget extends StatelessWidget {
                 autoPlayCurve: Curves.fastOutSlowIn, // Animation curve
                 enableInfiniteScroll: imgList.length > 1, // Infinite scrolling
                 autoPlayAnimationDuration:
-                    Duration(milliseconds: 800), // Animation duration
+                    Duration(milliseconds: 300), // Animation duration
               ),
               items: imgList.map((item) {
                 return CachedNetworkImage(

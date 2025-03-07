@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,13 +76,18 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<String> _getAddressFromLatLng(LatLng latLng) async {
-    final response = await http.get(Uri.parse(
-        'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['display_name'] ?? 'Unknown Location';
-    } else {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'));
+      print("response: " + response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['display_name'] ?? 'Unknown Location';
+      } else {
+        return 'Address not found';
+      }
+    } catch (e) {
+      log("error in getting location");
       return 'Address not found';
     }
   }
@@ -122,13 +129,18 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _onMapTap(LatLng latLng) async {
-    final response = await http.get(
-      Uri.parse(
-          'https://nominatim.openstreetmap.org/reverse.php?lat=${latLng.latitude}&lon=${latLng.longitude}&format=jsonv2'),
-    );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      locationController.setLocation(latLng, data['display_name']);
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://nominatim.openstreetmap.org/reverse.php?lat=${latLng.latitude}&lon=${latLng.longitude}&format=jsonv2'),
+      );
+      print("response lcation ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        locationController.setLocation(latLng, data['display_name']);
+      }
+    } catch (e) {
+      log("error in _onMapTap $e");
     }
   }
 

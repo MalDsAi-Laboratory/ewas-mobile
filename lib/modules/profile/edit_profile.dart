@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:simple_ui/models/user_model.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/profile/components/edit_profile_map.dart';
 import 'package:simple_ui/modules/profile/profile_controller.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
@@ -119,65 +121,75 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         ),
                         keyboardType: TextInputType.emailAddress,
                       ),
-                      SizedBox(height: 20.h),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BricolageText(
-                            text: "Your location",
-                            style: TextStyle(
-                                fontSize: 15.sp, fontWeight: FontWeight.w400),
-                          ),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              final result =
-                                  await Get.to(() => EditProfileMapScreen());
+                      Get.find<MainScreenController>().user?.roles![0] ==
+                                  UserRole.seller ||
+                              Get.find<MainScreenController>()
+                                      .user
+                                      ?.roles![0] ==
+                                  UserRole.recycler
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 20.h),
+                                BricolageText(
+                                  text: "Your location",
+                                  style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                                SizedBox(
+                                  height: 5.h,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final result = await Get.to(
+                                        () => EditProfileMapScreen());
 
-                              if (result != null) {
-                                controller.setLocation(
-                                  LatLng(result['lat'], result['lon']),
-                                  result['address'],
-                                );
-                              }
-                            },
-                            child: Obx(() => Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 14.h, horizontal: 16.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromARGB(255, 230, 230, 230)),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        color: AppColors.primaryColor,
-                                        size: 25.r,
-                                      ),
-                                      SizedBox(width: 10.w),
-                                      Expanded(
-                                        child: InterText(
-                                          text: controller
-                                                  .selectedAddress.value.isEmpty
-                                              ? "Tap to select location"
-                                              : controller
-                                                  .selectedAddress.value,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(fontSize: 15.sp),
+                                    if (result != null) {
+                                      controller.setLocation(
+                                        LatLng(result['lat'], result['lon']),
+                                        result['address'],
+                                      );
+                                    }
+                                  },
+                                  child: Obx(() => Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 14.h, horizontal: 16.w),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color.fromARGB(
+                                                  255, 230, 230, 230)),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ),
-                        ],
-                      ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              color: AppColors.primaryColor,
+                                              size: 25.r,
+                                            ),
+                                            SizedBox(width: 10.w),
+                                            Expanded(
+                                              child: InterText(
+                                                text: controller.selectedAddress
+                                                        .value.isEmpty
+                                                    ? "Tap to select location"
+                                                    : controller
+                                                        .selectedAddress.value,
+                                                textAlign: TextAlign.left,
+                                                style:
+                                                    TextStyle(fontSize: 15.sp),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
                       SizedBox(height: 20.h),
                       Row(
                         children: [
@@ -211,13 +223,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                       controller.updateUser();
                                     },
                                     isBtnActive: true),
-                          ),
-                          SizedBox(height: 10.h),
-                          InterText(
-                            text:
-                                "By registering, I agree to the terms and conditions",
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.grey),
                           ),
                           SizedBox(height: 20.h),
                         ],

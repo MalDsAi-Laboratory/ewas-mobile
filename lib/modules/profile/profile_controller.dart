@@ -26,7 +26,11 @@ class ProfileController extends GetxController {
         lastName.value.isEmpty ||
         mobileNumber.value.isEmpty ||
         email.value.isEmpty ||
-        selectedAddress.value.isEmpty) {
+        (Get.find<MainScreenController>().user?.roles![0] == UserRole.seller ||
+                Get.find<MainScreenController>().user?.roles![0] ==
+                    UserRole.recycler
+            ? selectedAddress.value.isEmpty
+            : false)) {
       return true;
     }
     return false;
@@ -38,7 +42,7 @@ class ProfileController extends GetxController {
       return false;
     }
     if (!Validations.validateMobile(mobileNumber.value)) {
-      AppSnackBars.showErrorSnackBar("Error", "Passwords don't match");
+      AppSnackBars.showErrorSnackBar("Error", "Mobile number is not valid");
       return false;
     }
     return true;
@@ -83,18 +87,23 @@ class ProfileController extends GetxController {
         Map<String, dynamic> response = await updateUserApi(data: userModel);
         if (response['status']) {
           SecureStorageServices().setUserModel(userModel.toJson());
-          await updateUser2Api(
-              data: CreateUserModel(
-                  userid: model.userId,
-                  role: model.roles![0],
-                  location:
-                      "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
-                  address: selectedAddress.value));
-          SecureStorageServices().setUserLocation({
-            "latitude": selectedLatLng.value!.latitude,
-            "longitude": selectedLatLng.value!.longitude,
-            "address": selectedAddress.value
-          });
+          if (Get.find<MainScreenController>().user?.roles![0] ==
+                  UserRole.seller ||
+              Get.find<MainScreenController>().user?.roles![0] ==
+                  UserRole.recycler) {
+            await updateUser2Api(
+                data: CreateUserModel(
+                    userid: model.userId,
+                    role: model.roles![0],
+                    location:
+                        "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
+                    address: selectedAddress.value));
+            SecureStorageServices().setUserLocation({
+              "latitude": selectedLatLng.value!.latitude,
+              "longitude": selectedLatLng.value!.longitude,
+              "address": selectedAddress.value
+            });
+          }
           AppSnackBars.showSuccessSnackBar(
               "Success", 'Updated profile successfully.');
         } else {

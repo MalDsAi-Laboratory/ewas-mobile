@@ -33,17 +33,20 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
     double currentScroll = _scrollController.position.pixels;
 
     setState(() {
-      if (currentScroll < maxScroll * 0.33) {
+      if (currentScroll < maxScroll * 0.2) {
+        // Reduced from 0.33
         _isBannerAutoPlay = true;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = false;
         _isHero3AutoPlay = false;
-      } else if (currentScroll < maxScroll * 0.66) {
+      } else if (currentScroll < maxScroll * 0.4) {
+        // Reduced from 0.66
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = true;
         _isHero2AutoPlay = false;
         _isHero3AutoPlay = false;
-      } else if (currentScroll < maxScroll * 0.90) {
+      } else if (currentScroll < maxScroll * 0.7) {
+        // Reduced from 0.90
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = true;
@@ -52,7 +55,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = false;
-        _isHero3AutoPlay = true; // Enabling autoplay for last carousel
+        _isHero3AutoPlay = true;
       }
     });
   }
@@ -110,10 +113,6 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               children: [
-                // SizedBox(height: 20.h),
-                // HomeAppbar(),
-                // SizedBox(height: 20.h),
-
                 // Banner Carousel
                 BannerCarousal(autoPlay: _isBannerAutoPlay),
 
@@ -124,10 +123,11 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       HeroCarousal(
                         title: 'Find E-waste',
                         imgList: [
-                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
-                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                         autoPlay: _isHero1AutoPlay,
+                        showBottomWidget: false,
                         onTap: () {
                           Get.to(() => FindEwasteScreen());
                         },
@@ -136,8 +136,8 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       HeroCarousal(
                         title: 'Update your purchase prices',
                         imgList: [
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
-                          'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                         autoPlay: _isHero2AutoPlay,
                         showBottomWidget: false,
@@ -155,8 +155,8 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                           // Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
-                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                       ),
                     ],

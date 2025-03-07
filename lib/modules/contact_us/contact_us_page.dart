@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatelessWidget {
   final String phoneNumber =
-      "+91xxxxxxxxxx"; // Replace with your WhatsApp number
+      "+918148574923"; // Replace with your WhatsApp number
 
   void openWhatsApp() async {
     final Uri whatsappUri = Uri.parse("https://wa.me/$phoneNumber");

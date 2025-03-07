@@ -395,8 +395,8 @@ class _OrderComponentState extends State<OrderComponent> {
                                   controller:
                                       orderController.orderDetailsController,
                                   label: "Order Details",
-                                  icon: Icon(Icons.description_outlined,
-                                      size: 25.r),
+                                  height: 250,
+                                  maxLines: 10,
                                 )
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -502,9 +502,16 @@ class _OrderComponentState extends State<OrderComponent> {
 class EditableField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final int? maxLines;
   final Widget? icon;
+  final double? height;
   const EditableField(
-      {super.key, required this.controller, required this.label, this.icon});
+      {super.key,
+      required this.controller,
+      required this.label,
+      this.icon,
+      this.maxLines = 1,
+      this.height = 45});
 
   @override
   Widget build(BuildContext context) {
@@ -519,6 +526,8 @@ class EditableField extends StatelessWidget {
         SizedBox(height: 5.h),
         CustomTextField(
           icon: icon,
+          height: height,
+          maxLines: maxLines,
           controller: controller,
           onChanged: (val) {
             Get.find<AllOrderController>().update();

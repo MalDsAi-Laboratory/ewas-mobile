@@ -96,9 +96,7 @@ class AllOrderController extends GetxController {
         }
       }
     }
-    log("order before ${orders.length} ${filteredOrders.length}");
     filteredOrders.assignAll(orders);
-    log("order after ${orders.length} ${filteredOrders.length}");
     filterOrderUnderAuctionOnly();
     _fetchInventory();
   }

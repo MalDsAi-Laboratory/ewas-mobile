@@ -22,6 +22,7 @@ extension UserAPIPathExtension on LocatioAPIPath {
 
 Future<Map<String, dynamic>> createUser2Api({CreateUserModel? data}) async {
   try {
+    print("data ${data?.toJson()}");
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(LocatioAPIPath.createUser.path,
           data: jsonEncode(data!.toJson()),

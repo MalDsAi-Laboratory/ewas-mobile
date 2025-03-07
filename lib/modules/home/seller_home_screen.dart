@@ -120,12 +120,13 @@ class _SellerHomePageState extends State<SellerHomePage> {
                       HeroCarousal(
                         title: 'Sell your E-waste',
                         autoPlay: _isHero1AutoPlay,
+                        showBottomWidget: false,
                         onTap: () {
                           Get.to(() => CategoriesPage());
                         },
                         imgList: [
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbcqMJdCtRjtPSsWh2b3NX-3DuwuDntyh0Gw&s',
-                          'https://content.jdmagicbox.com/v2/comp/delhi/v6/011pxx11.xx11.121011103308.k8v6/catalogue/e-waste-recyclers-india-okhla-industrial-area-phase-1-delhi-e-waste-management-services-os297dh1bk.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                       ),
                       SizedBox(height: 16.h),
@@ -137,8 +138,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                           Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
-                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                       ),
                       SizedBox(height: 16.h),
@@ -151,8 +152,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                           // Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'https://lh5.googleusercontent.com/p/AF1QipPrZuvnjVugY-po3T-CkYFVthnWo2fpGcFS-JB4=w408-h544-k-no',
-                          'https://lh5.googleusercontent.com/p/AF1QipN62C_mq6FZxPGN93ObZDb44TTe9Zo0bARxd18C=w519-h240-k-no',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
+                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                       ),
                     ],

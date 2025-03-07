@@ -125,6 +125,7 @@ class CustomTextField extends StatelessWidget {
   final double? borderRadius;
   final Function()? onPressOfSearchButton;
   final double? height;
+  final int? maxLines;
   const CustomTextField(
       {super.key,
       this.validator,
@@ -138,7 +139,8 @@ class CustomTextField extends StatelessWidget {
       this.hintText,
       this.borderRadius = 10,
       this.icon,
-      this.height});
+      this.height,
+      this.maxLines = 1});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -162,7 +164,7 @@ class CustomTextField extends StatelessWidget {
               )
             : SizedBox(),
         SizedBox(
-          height: height ?? 45.h,
+          height: height != null ? height!.h : 45.h,
           width: width,
           child: TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -170,6 +172,7 @@ class CustomTextField extends StatelessWidget {
               cursorColor: Colors.black,
               onChanged: onChanged,
               controller: controller,
+              maxLines: maxLines,
               cursorWidth: 1,
               initialValue: initialValue,
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),

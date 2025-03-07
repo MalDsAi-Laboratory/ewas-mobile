@@ -70,7 +70,7 @@ class AuthController extends GetxController {
       return false;
     }
     if (!Validations.validateMobile(mobileNumber.value)) {
-      AppSnackBars.showErrorSnackBar("Error", "Passwords don't match");
+      AppSnackBars.showErrorSnackBar("Error", "Mobile number is not valid");
       return false;
     }
     return true;

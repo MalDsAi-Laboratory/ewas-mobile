@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/contact_us/contact_us_page.dart';
+import 'package:simple_ui/modules/home/components/edit_photo.dart';
 import 'package:simple_ui/modules/profile/edit_profile.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
@@ -19,9 +20,25 @@ class AppDrawerWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 80.h,
+              ),
+              EditableProfileAvatar(),
+              // Container(
+              //   width: 100.w,
+              //   height: 100.w,
+              //   decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(100.r),
+              //       color: const Color.fromARGB(255, 250, 250, 250)),
+              //   child: Icon(
+              //     Icons.person,
+              //     size: 50.r,
+              //   ),
+              // ),
+              SizedBox(
+                height: 20.h,
               ),
               InkWell(
                 onTap: () {
