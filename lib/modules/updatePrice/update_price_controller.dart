@@ -98,7 +98,7 @@ class UpdatePriceController extends GetxController {
       isUpdatingPrices.value = true;
       showUpdatePricingRestrictedLoadingDialog(context);
       await processProductDetails();
-      // await getProductsPricing();
+      await getProductsPricing();
       isUpdatingPrices.value = false;
       Get.back();
     } catch (e) {
@@ -116,19 +116,21 @@ class UpdatePriceController extends GetxController {
           String productId = controllerMap.key;
           TextEditingController controller = controllerMap.value;
 
-          bool found = fetchedProductDetails.any((product) =>
-              product.productId == productId && product.category == category);
-          if (found) {
-            var product = fetchedProductDetails.firstWhere(
-                (p) => p.productId == productId && p.category == category);
+          bool found = fetchedProductDetails
+              .any((product) => product.productId.toString() == productId);
 
+          if (found) {
+            var product = fetchedProductDetails
+                .firstWhere((p) => p.productId.toString() == productId);
             await updateProductDetails(
               subCategory: SubCategoryModel(
                 category: product.category,
                 materialDetails: product.materialDetails,
                 productName: product.productName,
                 productId: product.productId,
+                units: product.unit,
               ),
+              id: product.id!,
               price: double.parse(controller.text),
             );
           } else {
@@ -156,7 +158,7 @@ class UpdatePriceController extends GetxController {
           category: subCategory.category,
           materialDetails: subCategory.materialDetails,
           productName: subCategory.productName,
-          unit: "string");
+          unit: subCategory.units);
       await createProductDetailsApi(data: data);
     } catch (e) {
       if (kDebugMode) {
@@ -166,19 +168,22 @@ class UpdatePriceController extends GetxController {
   }
 
   Future<void> updateProductDetails(
-      {required SubCategoryModel subCategory, required double price}) async {
+      {required SubCategoryModel subCategory,
+      required double price,
+      required int id}) async {
     try {
       await updateProductDetailsApi(
           data: ProductDetailsModel(
+              id: id,
               userId: Get.find<MainScreenController>().user?.userId,
               productId: subCategory.productId,
               price: price,
-              address: Get.find<MainScreenController>().user?.address,
-              latitudeLongitude: null,
-              category: subCategory.category,
-              materialDetails: subCategory.materialDetails,
-              productName: subCategory.productName,
-              unit: null));
+              address: Get.find<MainScreenController>().user?.address ?? "",
+              latitudeLongitude: "",
+              category: subCategory.category ?? "",
+              materialDetails: subCategory.materialDetails ?? "",
+              productName: subCategory.productName ?? "",
+              unit: subCategory.units ?? ""));
     } catch (e) {
       if (kDebugMode) {
         log("Error in createProductDetails $e");
