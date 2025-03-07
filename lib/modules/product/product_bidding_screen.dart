@@ -26,9 +26,11 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
   void initState() {
     super.initState();
     var controller = Get.put(ProductController());
-    controller
-        .setRemainingDuration(DateTime.parse(widget.productModel.dateAndTime!));
-    controller.getBiddingDetails(orderId: widget.productModel.orderId);
+
+    print(" reminaing  ${controller.remainingDatetime}");
+    controller.getBiddingDetails(
+        orderId: widget.productModel.orderId,
+        dateTime: DateTime.parse(widget.productModel.dateAndTime!));
   }
 
   @override

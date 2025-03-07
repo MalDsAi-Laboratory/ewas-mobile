@@ -73,8 +73,9 @@ class BiddingTableWidget extends StatelessWidget {
                   (mainScreenController.user!.roles![0] == UserRole.recycler &&
                       bidding.bidder == mainScreenController.user?.userId);
               bool isWinner = controller.remainingDatetime == Duration.zero
-                  ? bidding.priceTag == controller.highestPrice
+                  ? bidding.priceTag == controller.highestPrice.value
                   : false;
+
               return DataRow(
                 color: WidgetStateProperty.resolveWith<Color?>(
                   (Set<WidgetState> states) {

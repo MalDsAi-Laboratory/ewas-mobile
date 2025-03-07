@@ -46,7 +46,8 @@ class _TimerWidgetState extends State<TimerWidget> {
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() {
           remainingTime = targetTime.difference(DateTime.now());
-          Get.find<ProductController>().remainingDatetime.value = remainingTime;
+          Get.find<ProductController>().remainingDatetime = remainingTime;
+           Get.find<ProductController>().update();
           if (remainingTime.isNegative) {
             remainingTime = Duration.zero;
             _timer?.cancel();

@@ -16,13 +16,32 @@ import 'package:simple_ui/ui_utils/app_snackbars.dart';
 class ProductController extends GetxController {
   List<BiddingModel> biddingList = [];
   RxBool isLoading = true.obs;
-  Rx<Duration> remainingDatetime = Duration().obs;
+
+  Duration remainingDatetime = Duration();
   Rx<double> myPrice = 0.0.obs;
   Rx<double> highestPrice = 0.0.obs;
   TextEditingController biddingAmountController = TextEditingController();
   RxBool isBiddingPlacing = false.obs;
-  void getBiddingDetails({String? orderId}) async {
+  // Replace your existing setRemainingDuration function with this improved version
+  Future<void> setRemainingDuration(DateTime? inputDateTime) async {
+    DateTime targetTime = inputDateTime!
+        .add(DateTime.now().timeZoneOffset)
+        .add(const Duration(hours: 4));
+    if (targetTime.isBefore(DateTime.now())) {
+      remainingDatetime = Duration.zero;
+      update();
+    } else {
+      remainingDatetime = targetTime.difference(DateTime.now());
+      update();
+    }
+  }
+
+// Modify your getBiddingDetails function to ensure proper sequencing
+  void getBiddingDetails({String? orderId, DateTime? dateTime}) async {
+    isLoading.value = true;
     try {
+      // Then set the remaining duration and wait for it to complete
+      await setRemainingDuration(dateTime);
       Map<String, dynamic> response = await getAllBiddingApi(orderId: orderId);
       if (response['status']) {
         List<BiddingModel> temp = [];
@@ -30,24 +49,21 @@ class ProductController extends GetxController {
           temp.add(BiddingModel.fromJson(response['data'][i]));
         }
         biddingList.assignAll(temp);
+
+        // First update my price
         checkAndUpdateMyPrice();
+
+        // Then get highest bid price
         getHighestBidPrice();
+
+        // Log to verify values after all updates
+        log("Remaining time after updates: ${remainingDatetime.inSeconds} seconds");
+        log("Highest price after updates: ${highestPrice.value}");
       }
     } catch (e) {
-      print("Error: $e");
+      log("Error in getBiddingDetails: $e", error: e);
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  void setRemainingDuration(DateTime? inputDateTime) {
-    DateTime targetTime = inputDateTime!.add(const Duration(hours: 4));
-
-    // If targetTime is in the past, move it to the next available future time
-    if (targetTime.isBefore(DateTime.now())) {
-      remainingDatetime.value = Duration.zero;
-    } else {
-      remainingDatetime.value = targetTime.difference(DateTime.now());
     }
   }
 

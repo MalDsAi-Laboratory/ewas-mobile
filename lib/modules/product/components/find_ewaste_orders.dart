@@ -292,20 +292,24 @@ class EwasteItemWidget extends StatelessWidget {
               Column(
                 children: inventory != null
                     ? [
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 6.h),
                         EwasteProductWidget(
                           order: inventory!,
                         ),
                       ]
                     : [
-                        SizedBox(height: 10.h),
+                        SizedBox(height: 6.h),
                         EwasteDateWidget(
                           order: order,
                         ),
                       ],
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 6.h),
               EwasteStatusWidget(
+                order: order,
+              ),
+              SizedBox(height: 6.h),
+              EwasteDateWidget(
                 order: order,
               ),
               SizedBox(height: 10.h),

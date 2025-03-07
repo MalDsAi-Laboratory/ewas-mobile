@@ -172,7 +172,6 @@ class FindEwasteController extends GetxController {
         List<OrderModel> allOrders = [];
         for (var i = 0; i < response['data']['orders'].length; i++) {
           OrderModel order = OrderModel.fromJson(response['data']['orders'][i]);
-          print("isCategoryTab.value ${isCategoryTab.value}");
           if (isCategoryTab.value) {
             allOrders.add(order);
           } else {
