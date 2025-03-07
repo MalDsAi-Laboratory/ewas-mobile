@@ -166,13 +166,18 @@ class ProductItemWidget extends StatelessWidget {
                               productModel.productId.toString()] ==
                           null;
                       if (!found) {
-                        controller.actualTextControllers[category] = {
-                          productModel.productId.toString(): controller
-                                  .textControllers[productModel.category]![
-                              productModel.productId.toString()]!
-                            ..text = val
-                        };
+                        controller.actualTextControllers[category]![
+                            productModel.productId.toString()] = controller
+                                .textControllers[productModel.category]![
+                            productModel.productId.toString()]!
+                          ..text = val;
                         controller.update();
+                      } else {
+                        controller.actualTextControllers[category]![
+                            productModel.productId.toString()] = controller
+                                .textControllers[productModel.category]![
+                            productModel.productId.toString()]!
+                          ..text = val;
                       }
                     } else {
                       controller.actualTextControllers[category] = {
@@ -181,10 +186,10 @@ class ProductItemWidget extends StatelessWidget {
                                 productModel.productId.toString()]!
                               ..text = val
                       };
+
                       controller.update();
                     }
                   },
-                  // initialValue: controller.userId.value,
                   icon: Icon(
                     Icons.currency_rupee,
                     size: 20.r,
