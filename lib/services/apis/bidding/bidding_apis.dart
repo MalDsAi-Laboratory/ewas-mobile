@@ -126,8 +126,8 @@ Future<Map<String, dynamic>> createBiddingApi({BiddingModel? data}) async {
 Future<Map<String, dynamic>> updateBiddingApi({BiddingModel? data}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(
-      () => dio.request(
-          "/${data?.orderId}/update?newPrice=${data?.priceTag}&newBidder=${data?.bidder}",
+      () => dio.request("/${data?.orderId}/${data?.bidder}/update",
+          data: {"priceTag": data?.priceTag},
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),

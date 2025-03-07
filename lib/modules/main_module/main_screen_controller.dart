@@ -75,7 +75,6 @@ class MainScreenController extends GetxController {
           ),
           RecyclerOrderPage(),
           RecyclerHomePage(),
-          CartPage(),
         ];
       default:
         return CartPage();
@@ -155,11 +154,6 @@ class MainScreenController extends GetxController {
           ),
           const BottomNavBarItem(
             index: 2,
-          ),
-          const BottomNavBarItem(
-            text: "Cart",
-            index: 3,
-            icon: CupertinoIcons.cart_fill,
           ),
         ];
       default:

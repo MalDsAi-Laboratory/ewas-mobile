@@ -169,12 +169,22 @@ class AuthController extends GetxController {
           Map<String, dynamic> response =
               await getUserByUserIdApi(userId: userId.value);
           if (response['status']) {
-            SecureStorageServices().setUserModel(response['data']);
-            clearFields();
-            Get.offAll(
-                () => AppScreen(user: UserModel.fromJson(response['data'])));
-            AppSnackBars.showSuccessSnackBar(
-                "Success", 'You have logged in successfully.');
+            Map<String, dynamic> response2 =
+                await getRecyclersIds(userId.value);
+            if (response2['status']) {
+              await SecureStorageServices().setUserModel(response['data']);
+              await SecureStorageServices().setUserLocation({
+                "latitude": response2['lat'],
+                "longitude": response2['long']
+              });
+              clearFields();
+              Get.offAll(
+                  () => AppScreen(user: UserModel.fromJson(response['data'])));
+              AppSnackBars.showSuccessSnackBar(
+                  "Success", 'You have logged in successfully.');
+            } else {
+              AppSnackBars.showErrorSnackBar("Error", response['data']);
+            }
           } else {
             AppSnackBars.showErrorSnackBar("Error", response['data']);
           }
@@ -188,6 +198,26 @@ class AuthController extends GetxController {
       log("error in loginUser $e");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<Map<String, dynamic>> getRecyclersIds(String userId) async {
+    try {
+      Map<String, dynamic> response = await getUserByUserIdApi2(userId: userId);
+      if (response['status']) {
+        CreateUserModel userModel = CreateUserModel.fromJson(response['data']);
+        return {
+          "status": true,
+          "lat": double.parse(userModel.location!.split(',')[0]),
+          "long": double.parse(userModel.location!.split(',')[1])
+        };
+      } else {
+        log("Error in fetching recyclerIds ${response['data']}");
+        return {"status": false, "data": response['data']};
+      }
+    } catch (e) {
+      log("Error in fetching recyclerIds ${e}");
+      return {"status": false, "data": e};
     }
   }
 }

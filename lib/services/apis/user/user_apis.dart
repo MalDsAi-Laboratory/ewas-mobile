@@ -86,7 +86,7 @@ Future<Map<String, dynamic>> getUserAccountPasswordApi({String? userId}) async {
     // Ensure response body is handled correctly
     if (response.statusCode == 200) {
       try {
-        final data = jsonDecode(response.body);
+        final data = response.body;
         return {
           "status": true,
           "statusCode": response.statusCode,

@@ -99,6 +99,8 @@ class OrderList extends StatelessWidget {
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       onTap: () {
                         Get.to(() => ProductBiddingScreen(
+                            orderIndex: index,
+                            order: order,
                             productModel: orderController.inventoryMap[
                                 orderController
                                     .filteredOrdersUnderAuction[index].eid!]!));

@@ -22,6 +22,7 @@ class ProductController extends GetxController {
   Rx<double> highestPrice = 0.0.obs;
   TextEditingController biddingAmountController = TextEditingController();
   RxBool isBiddingPlacing = false.obs;
+  bool isBiddingRejecting = false;
   // Replace your existing setRemainingDuration function with this improved version
   Future<void> setRemainingDuration(DateTime? inputDateTime) async {
     DateTime targetTime = inputDateTime!
@@ -97,16 +98,12 @@ class ProductController extends GetxController {
       required String productName,
       required double volume,
       required double mbp,
+      OrderModel? order,
       required BuildContext context}) async {
     try {
       String amount = biddingAmountController.text.trim();
       if (amount.isEmpty || amount == "0") {
         AppSnackBars.showNormalSnackBar("Oops", "Please enter bid amount");
-        return;
-      }
-      if (double.parse(amount) < mbp) {
-        AppSnackBars.showNormalSnackBar("Oops",
-            "Your bid should be higher or equal to the minimum base price");
         return;
       }
       if (double.parse(amount) <= highestPrice.value) {
@@ -127,13 +124,16 @@ class ProductController extends GetxController {
       // check if userId is already in bidding list
       bool isUserAlreadyInBiddingList =
           biddingList.any((bid) => bid.bidder == model.bidder);
+      log("isUserAlreadyInBiddingList $isUserAlreadyInBiddingList");
       Map<String, dynamic> response;
       if (isUserAlreadyInBiddingList) {
         response = await updateBiddingApi(data: model);
       } else {
         response = await createBiddingApi(data: model);
         if (response['status']) {
-          await updateOrderStatus(orderId: orderId);
+          if (order!.orderStatus == OrderStatus.biddingStarted)
+            await updateOrderStatus(
+                orderId: orderId, orderStatus: OrderStatus.biddingInProgress);
         }
       }
 
@@ -171,11 +171,19 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<String?> updateOrderStatus({required String orderId}) async {
+  Future<void> updateOrderStatus(
+      {required String orderId, required String orderStatus}) async {
     try {
-      OrderModel order = Get.find<FindEwasteController>()
-          .orders
-          .firstWhere((element) => element.eid == orderId);
+      OrderModel order = OrderModel();
+      if (orderStatus == OrderStatus.biddingInProgress) {
+        order = Get.find<FindEwasteController>()
+            .orders
+            .firstWhere((element) => element.eid == orderId);
+      } else {
+        order = Get.find<AllOrderController>()
+            .filteredOrdersUnderAuction
+            .firstWhere((element) => element.eid == orderId);
+      }
       OrderModel orderModel = OrderModel(
         eid: orderId,
         firstName: order.firstName,
@@ -183,7 +191,7 @@ class ProductController extends GetxController {
         address: order.address,
         assignee: order.assignee,
         userId: order.userId,
-        orderStatus: OrderStatus.biddingInProgress,
+        orderStatus: orderStatus,
         orderDate: order.orderDate,
         orderDetails: order.orderDetails,
       );
@@ -196,12 +204,19 @@ class ProductController extends GetxController {
             OrderModel.fromJson(response['data']);
         allOrderController.filteredOrders.assignAll(allOrderController.orders);
         allOrderController.filterOrderUnderAuctionOnly();
-
-        return response['data']['eid'];
+        if (orderStatus == OrderStatus.biddingInProgress) {
+          index = Get.find<FindEwasteController>()
+              .orders
+              .indexWhere((element) => element.eid == orderId);
+          Get.find<FindEwasteController>().orders[index] =
+              OrderModel.fromJson(response['data']);
+        }
       }
     } catch (e) {
       log("error in createOrder $e");
+    } finally {
+      isBiddingRejecting = false;
+      update();
     }
-    return null;
   }
 }

@@ -88,6 +88,7 @@ class EwasteList extends StatelessWidget {
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             onTap: () {
               Get.to(() => ProductBiddingScreen(
+                  order: order,
                   productModel: ewasteController
                       .filteredInventoryProducts[order.eid.toString()]!));
             },

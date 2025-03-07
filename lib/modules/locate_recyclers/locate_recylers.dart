@@ -8,6 +8,7 @@ import 'package:simple_ui/models/product_details_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/locate_recyclers/locate_recyclers_controller.dart';
 import 'package:simple_ui/modules/submit_item/submit_item.dart';
+import 'package:simple_ui/services/load_env.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 import 'dart:math' as math;
@@ -19,13 +20,16 @@ class LocateRecyclers extends StatefulWidget {
 
 class _LocateRecyclersState extends State<LocateRecyclers> {
   final MapController _mapController = MapController();
-  final double fixedRadiusMeters = 4000;
+  double fixedRadiusMeters = double.parse(radius ?? "3000");
   double _zoom = 12.0;
   int _selectedRecyclerIndex = 0; // Default to first recycler
 
   @override
   void initState() {
     super.initState();
+    fixedRadiusMeters = double.parse(radius ?? "3000");
+    print("radius ${radius}");
+    setState(() {});
     Get.put(LocateRecyclersController(
         productId: Get.find<CategoriesController>()
             .selectedSubCategory
@@ -107,11 +111,15 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                             .map((entry) {
                           int index = entry.key;
                           ProductDetailsModel recycler = entry.value;
+                          LatLng loc = LatLng(
+                              double.parse(
+                                  recycler.latitudeLongitude!.split(",")[0]),
+                              double.parse(
+                                  recycler.latitudeLongitude!.split(",")[1]));
                           return Marker(
-                            point: locationController
-                                .recyclersIdsAndLocations[recycler.userId]!,
-                            width: 80.0,
-                            height: 80.0,
+                            point: loc,
+                            width: 80.0.w,
+                            height: 80.0.w,
                             child: GestureDetector(
                               onTap: () => _selectRecycler(index),
                               child: Column(

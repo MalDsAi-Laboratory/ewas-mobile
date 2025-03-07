@@ -9,6 +9,7 @@ import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 import 'package:simple_ui/services/apis/product_details/product_details_api.dart';
+import 'package:simple_ui/services/secure_storage/user_caching.dart';
 
 class UpdatePriceController extends GetxController {
   /// {"Battery": {"productId":price}}
@@ -110,6 +111,8 @@ class UpdatePriceController extends GetxController {
   }
 
   Future<void> processProductDetails() async {
+    Map<String, dynamic> location =
+        await SecureStorageServices().getUserLocation() ?? {};
     await Future.wait(
       actualTextControllers.keys.map((category) async {
         for (var controllerMap in actualTextControllers[category]!.entries) {
@@ -130,11 +133,13 @@ class UpdatePriceController extends GetxController {
                 productId: product.productId,
                 units: product.unit,
               ),
+              location: "${location['latitude']},${location['longitude']}",
               id: product.id!,
               price: double.parse(controller.text),
             );
           } else {
             await createProductDetails(
+              location: "${location['latitude']},${location['longitude']}",
               subCategory:
                   allSubCategories[category]![productId]!.entries.first.key,
               price: double.parse(controller.text),
@@ -146,7 +151,9 @@ class UpdatePriceController extends GetxController {
   }
 
   Future<void> createProductDetails(
-      {required SubCategoryModel subCategory, required double price}) async {
+      {required SubCategoryModel subCategory,
+      required double price,
+      required String location}) async {
     try {
       ProductDetailsModel data = ProductDetailsModel(
           id: 0,
@@ -154,7 +161,7 @@ class UpdatePriceController extends GetxController {
           productId: subCategory.productId,
           price: price,
           address: Get.find<MainScreenController>().user?.address,
-          latitudeLongitude: "string",
+          latitudeLongitude: location,
           category: subCategory.category,
           materialDetails: subCategory.materialDetails,
           productName: subCategory.productName,
@@ -170,7 +177,8 @@ class UpdatePriceController extends GetxController {
   Future<void> updateProductDetails(
       {required SubCategoryModel subCategory,
       required double price,
-      required int id}) async {
+      required int id,
+      required String location}) async {
     try {
       await updateProductDetailsApi(
           data: ProductDetailsModel(
@@ -179,7 +187,7 @@ class UpdatePriceController extends GetxController {
               productId: subCategory.productId,
               price: price,
               address: Get.find<MainScreenController>().user?.address ?? "",
-              latitudeLongitude: "",
+              latitudeLongitude: location,
               category: subCategory.category ?? "",
               materialDetails: subCategory.materialDetails ?? "",
               productName: subCategory.productName ?? "",

@@ -108,7 +108,9 @@ class EwasteList extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               RetryWidget(
-                onTap: ewasteController.fetchProducts,
+                onTap: () {
+                  ewasteController.fetchProducts(isCategoryTabs: true);
+                },
               )
             ],
           ),

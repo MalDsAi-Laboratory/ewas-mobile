@@ -119,7 +119,9 @@ class FindEwasteController extends GetxController {
     try {
       await fetchAllBidding();
       await _fetchParticipatedOrdersInventory();
-    } catch (e) {}
+    } catch (e) {
+      log("hiii ${e}");
+    }
   }
 
   Future<void> fetchAllBidding() async {
@@ -142,7 +144,7 @@ class FindEwasteController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error: $e");
+      print("Error in getBiddingDetails: $e");
     }
   }
 
@@ -186,7 +188,11 @@ class FindEwasteController extends GetxController {
           orders.assignAll(allOrders);
         }
         print("orders ${orders}");
-      } else {}
+      } else {
+        if (kDebugMode) {
+          log('Error occured in fetch orders: ${response['message']}');
+        }
+      }
     } catch (e) {
       if (kDebugMode) {
         log('Error occured in fetch orders: $e');

@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
+import 'package:simple_ui/models/order_model.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/product/components/bidding_table.dart';
+import 'package:simple_ui/modules/product/components/rejectBidding_btn.dart';
 import 'package:simple_ui/modules/product/components/timer_widget.dart';
 import 'package:simple_ui/modules/product/product_controller.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
@@ -16,7 +20,13 @@ import 'package:simple_ui/ui_utils/text_widgets.dart';
 class ProductBiddingScreen extends StatefulWidget {
   final InventoryModel productModel;
   final String? sellerName;
-  ProductBiddingScreen({required this.productModel, this.sellerName});
+  final int? orderIndex;
+  final OrderModel? order;
+  ProductBiddingScreen(
+      {required this.productModel,
+      this.sellerName,
+      this.order,
+      this.orderIndex});
   @override
   _ProductBiddingScreenState createState() => _ProductBiddingScreenState();
 }
@@ -26,8 +36,6 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
   void initState() {
     super.initState();
     var controller = Get.put(ProductController());
-
-    print(" reminaing  ${controller.remainingDatetime}");
     controller.getBiddingDetails(
         orderId: widget.productModel.orderId,
         dateTime: DateTime.parse(widget.productModel.dateAndTime!));
@@ -36,12 +44,71 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
   @override
   Widget build(BuildContext context) {
     ProductController productController = Get.find<ProductController>();
+    final AllOrderController orderController = Get.find();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         leading: AppBarButton(),
+        actions: [
+          widget.orderIndex != null
+              ? Obx(() {
+                  print(
+                      "status ${orderController.filteredOrdersUnderAuction[widget.orderIndex!].orderStatus}");
+                  return Get.find<MainScreenController>().user?.roles?[0] ==
+                              UserRole.seller &&
+                          orderController
+                                  .filteredOrdersUnderAuction[
+                                      widget.orderIndex!]
+                                  .orderStatus ==
+                              OrderStatus.biddingInProgress
+                      ? GetBuilder<ProductController>(
+                          builder: (productController) {
+                          return Container(
+                            margin: EdgeInsets.only(right: 16.w),
+                            width: 155.w,
+                            height: 40.h,
+                            child: productController.isBiddingRejecting
+                                ? RejectBiddingButton(
+                                    buttonChild: SizedBox(
+                                      width: 20.w,
+                                      height: 20.w,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                    onTap: () {},
+                                    isBtnActive:
+                                        productController.remainingDatetime ==
+                                            Duration.zero,
+                                  )
+                                : RejectBiddingButton2(
+                                    buttonText: 'Reject Bidding',
+                                    onTap: () async {
+                                      productController.isBiddingRejecting =
+                                          true;
+                                      productController.update();
+                                      await productController.updateOrderStatus(
+                                          orderId: widget.order!.eid!,
+                                          orderStatus:
+                                              OrderStatus.biddingRejected);
+                                      productController.isBiddingRejecting =
+                                          false;
+                                      productController.update();
+                                    },
+                                    isBtnActive:
+                                        productController.remainingDatetime ==
+                                            Duration.zero,
+                                  ),
+                          );
+                        })
+                      : SizedBox();
+                })
+              : SizedBox()
+        ],
       ),
       body: SafeArea(
         child: Container(
@@ -187,16 +254,13 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                       fontSize: 13.sp,
                                       fontWeight: FontWeight.normal),
                                 ),
-                                Builder(builder: (context) {
-                                  double? val =
-                                      productController.highestPrice.value;
-                                  return BricolageText(
-                                    text: "₹ ${val}",
-                                    style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w500),
-                                  );
-                                }),
+                                BricolageText(
+                                  text:
+                                      "₹ ${productController.highestPrice.value}",
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500),
+                                )
                               ],
                             ),
                             SizedBox(height: 12.h),
@@ -244,6 +308,7 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                                                   .productModel
                                                                   .mbp ??
                                                               0,
+                                                          order: widget.order,
                                                           volume: double.parse(
                                                               widget
                                                                   .productModel

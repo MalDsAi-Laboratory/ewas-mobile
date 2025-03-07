@@ -61,7 +61,8 @@ class AllOrderController extends GetxController {
     filteredOrdersUnderAuction.assignAll(orders.where((order) =>
         (order.orderStatus == OrderStatus.biddingStarted ||
             order.orderStatus == OrderStatus.biddingInProgress ||
-            order.orderStatus == OrderStatus.biddingCompleted)));
+            order.orderStatus == OrderStatus.biddingCompleted ||
+            order.orderStatus == OrderStatus.biddingRejected)));
   }
 
   void _fetchInventory() async {
