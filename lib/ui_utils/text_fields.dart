@@ -252,13 +252,13 @@ class CustomTextFieldWithLightBorder extends StatelessWidget {
       children: [
         FieldName != null && FieldName!.isNotEmpty
             ? Padding(
-                padding: EdgeInsets.only(left: 10.w),
+                padding: EdgeInsets.only(left: 2.w),
                 child: Column(
                   children: [
                     BricolageText(
                       text: FieldName ?? "",
                       style: TextStyle(
-                          fontSize: 15.sp, fontWeight: FontWeight.bold),
+                          fontSize: 15.sp, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: 5.h,

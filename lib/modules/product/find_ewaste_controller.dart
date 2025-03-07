@@ -97,6 +97,7 @@ class FindEwasteController extends GetxController {
     // Simulating API call (replace with real backend call)
     List<String> sellerIds = await getSellerIds();
     try {
+      orders.clear();
       // Create a list of futures for each seller ID
       List<Future<void>> orderFutures =
           sellerIds.map((sellerId) => fetchOrders(userId: sellerId)).toList();
@@ -119,9 +120,7 @@ class FindEwasteController extends GetxController {
     try {
       await fetchAllBidding();
       await _fetchParticipatedOrdersInventory();
-    } catch (e) {
-      log("hiii ${e}");
-    }
+    } catch (e) {}
   }
 
   Future<void> fetchAllBidding() async {
@@ -133,12 +132,11 @@ class FindEwasteController extends GetxController {
       Map<String, dynamic> response = await getAllBiddingApi(
         orderId: order?.eid,
       );
-      if (response['status']) {
+      if (response['status'] && response['data'].runtimeType == List) {
         for (var i = 0; i < response['data'].length; i++) {
           if (BiddingModel.fromJson(response['data'][i]).bidder == recyclerId) {
             participatedOrders.add(order!);
             update();
-            log("participatedOrders ${participatedOrders}");
             break;
           }
         }
@@ -171,23 +169,17 @@ class FindEwasteController extends GetxController {
       Map<String, dynamic>? response =
           await getAllOrdersApi(userId: userId, pageNumber: 0, pageSize: 10000);
       if (response['status']) {
-        List<OrderModel> allOrders = [];
         for (var i = 0; i < response['data']['orders'].length; i++) {
           OrderModel order = OrderModel.fromJson(response['data']['orders'][i]);
           if (isCategoryTab.value) {
-            allOrders.add(order);
+            orders.add(order);
           } else {
             if (order.orderStatus == OrderStatus.biddingInProgress ||
                 order.orderStatus == OrderStatus.biddingStarted) {
-              allOrders.add(order);
+              orders.add(order);
             }
           }
         }
-        print("allOrders ${allOrders}");
-        if (allOrders.isNotEmpty) {
-          orders.assignAll(allOrders);
-        }
-        print("orders ${orders}");
       } else {
         if (kDebugMode) {
           log('Error occured in fetch orders: ${response['message']}');
@@ -258,7 +250,6 @@ class FindEwasteController extends GetxController {
         CreateUserModel userModel = CreateUserModel.fromJson(response['data']);
         // split the userModel.crossuserId by ;
         sellerIds = userModel.crossuserId!.split(';');
-        log("sellerIds ${sellerIds}");
         return sellerIds;
       } else {
         log("Error in fetching sellerIds ${response['data']}");

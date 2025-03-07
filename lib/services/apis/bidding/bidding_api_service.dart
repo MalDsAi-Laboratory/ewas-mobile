@@ -54,7 +54,7 @@ class BiddingDioSingleton {
         onResponse: (response, handler) {
           if (kDebugMode) {
             // print(" response $response");
-            log("response $response");
+            // log("response $response");
           }
           handler.next(response); // Continue with the response
         },

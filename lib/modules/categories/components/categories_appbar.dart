@@ -90,6 +90,7 @@ class CategoriesAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               );
             }),
+
             SizedBox(
               height: 20.h,
             ),

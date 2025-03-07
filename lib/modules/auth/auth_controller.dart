@@ -178,7 +178,8 @@ class AuthController extends GetxController {
                 await SecureStorageServices().setUserModel(response['data']);
                 await SecureStorageServices().setUserLocation({
                   "latitude": response2['lat'],
-                  "longitude": response2['long']
+                  "longitude": response2['long'],
+                  "address": response2['address'] ?? ""
                 });
                 clearFields();
                 Get.offAll(() =>
@@ -188,14 +189,15 @@ class AuthController extends GetxController {
               } else {
                 AppSnackBars.showErrorSnackBar("Error", response['data']);
               }
-            } else {}
-            await SecureStorageServices().setUserModel(response['data']);
+            } else {
+              await SecureStorageServices().setUserModel(response['data']);
 
-            clearFields();
-            Get.offAll(
-                () => AppScreen(user: UserModel.fromJson(response['data'])));
-            AppSnackBars.showSuccessSnackBar(
-                "Success", 'You have logged in successfully.');
+              clearFields();
+              Get.offAll(
+                  () => AppScreen(user: UserModel.fromJson(response['data'])));
+              AppSnackBars.showSuccessSnackBar(
+                  "Success", 'You have logged in successfully.');
+            }
           } else {
             AppSnackBars.showErrorSnackBar("Error", response['data']);
           }
@@ -220,7 +222,8 @@ class AuthController extends GetxController {
         return {
           "status": true,
           "lat": double.parse(userModel.location!.split(',')[0]),
-          "long": double.parse(userModel.location!.split(',')[1])
+          "long": double.parse(userModel.location!.split(',')[1]),
+          "address": userModel.address
         };
       } else {
         log("Error in fetching recyclerIds ${response['data']}");

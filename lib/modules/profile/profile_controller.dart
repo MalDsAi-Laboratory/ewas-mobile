@@ -12,10 +12,10 @@ import 'package:simple_ui/services/validation_field.dart';
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
 
 class ProfileController extends GetxController {
-  RxString firstName = 'honey'.obs;
-  RxString lastName = 'bansal'.obs;
-  RxString mobileNumber = '1234567890'.obs;
-  RxString email = 'savage@gmail.com'.obs;
+  RxString firstName = ''.obs;
+  RxString lastName = ''.obs;
+  RxString mobileNumber = ''.obs;
+  RxString email = ''.obs;
   var selectedLatLng = Rxn<LatLng>(); // Nullable LatLng
   var selectedAddress = "".obs;
   RxBool isLoading = false.obs;
@@ -54,14 +54,6 @@ class ProfileController extends GetxController {
     selectedAddress.value = "";
   }
 
-  void clearFields() {
-    firstName.value = "";
-    lastName.value = "";
-    mobileNumber.value = "";
-    email.value = "";
-    clearLocation();
-  }
-
   void updateUser() async {
     try {
       if (checkIfAnyFieldIsEmpty()) {
@@ -73,30 +65,42 @@ class ProfileController extends GetxController {
         return;
       }
       UserModel model = Get.find<MainScreenController>().user!;
-      UserModel userModel = UserModel(
-        userId: model.userId,
-        firstName: firstName.value,
-        lastName: lastName.value,
-        email: email.value,
-        phoneNumber: mobileNumber.value,
-        address: selectedAddress.value,
-        roles: model.roles,
-        lastLogin: DateTime.now().toUtc().toIso8601String(),
-      );
-      isLoading.value = true;
-      Map<String, dynamic> response = await updateUserApi(data: userModel);
-      if (response['status']) {
-        SecureStorageServices().setUserModel(userModel.toJson());
-        SecureStorageServices().setUserLocation({
-          "latitude": selectedLatLng.value!.latitude,
-          "longitude": selectedLatLng.value!.longitude
-        });
-        clearFields();
-        AppSnackBars.showSuccessSnackBar(
-            "Success", 'Updated profile successfully.');
-      } else {
-        log("error in registerUser ${response['data']}");
-        AppSnackBars.showErrorSnackBar("Error", response['data']);
+      Map<String, dynamic> passwordResponse =
+          await getUserAccountPasswordApi(userId: model.userId);
+      if (passwordResponse['status']) {
+        UserModel userModel = UserModel(
+          userId: model.userId,
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          phoneNumber: mobileNumber.value,
+          password: passwordResponse['data'],
+          address: selectedAddress.value,
+          roles: model.roles,
+          lastLogin: DateTime.now().toUtc().toIso8601String(),
+        );
+        isLoading.value = true;
+        Map<String, dynamic> response = await updateUserApi(data: userModel);
+        if (response['status']) {
+          SecureStorageServices().setUserModel(userModel.toJson());
+          await updateUser2Api(
+              data: CreateUserModel(
+                  userid: model.userId,
+                  role: model.roles![0],
+                  location:
+                      "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
+                  address: selectedAddress.value));
+          SecureStorageServices().setUserLocation({
+            "latitude": selectedLatLng.value!.latitude,
+            "longitude": selectedLatLng.value!.longitude,
+            "address": selectedAddress.value
+          });
+          AppSnackBars.showSuccessSnackBar(
+              "Success", 'Updated profile successfully.');
+        } else {
+          log("error in registerUser ${response['data']}");
+          AppSnackBars.showErrorSnackBar("Error", response['data']);
+        }
       }
     } catch (e) {
       log("error in registerUser $e");
@@ -127,12 +131,19 @@ class ProfileController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     UserModel model = Get.find<MainScreenController>().user!;
     firstName.value = model.firstName!;
     lastName.value = model.lastName!;
     mobileNumber.value = model.phoneNumber!;
     email.value = model.email!;
+    Map<String, dynamic> location =
+        await SecureStorageServices().getUserLocation() ?? {};
+    if (location.containsKey("latitude") && location.containsKey("longitude")) {
+      selectedLatLng.value =
+          LatLng(location['latitude'], location['longitude']);
+      selectedAddress.value = location['address'];
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/contact_us/contact_us_page.dart';
+import 'package:simple_ui/modules/profile/edit_profile.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
@@ -24,7 +25,7 @@ class AppDrawerWidget extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  // Get.to(() => ContactUsPage());
+                  Get.to(() => UpdateProfileScreen());
                 },
                 borderRadius: BorderRadius.all(Radius.circular(10.r)),
                 child: Container(

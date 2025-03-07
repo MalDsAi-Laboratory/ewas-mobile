@@ -124,8 +124,8 @@ Future<Map<String, dynamic>> getUserByUserIdApi2({String? userId}) async {
 Future<Map<String, dynamic>> updateUser2Api({CreateUserModel? data}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(
-      () => dio.request(LocatioAPIPath.createUser.path,
-          data: jsonEncode(data!.toJson()),
+      () => dio.request("/${data!.userid}",
+          data: jsonEncode(data.toJson()),
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),

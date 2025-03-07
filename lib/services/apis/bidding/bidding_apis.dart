@@ -49,11 +49,11 @@ Future<Map<String, dynamic>> getAllBiddingApi({String? orderId}) async {
       final dioError = e;
       final response = dioError.response;
       if (response != null) {
-        log("response ${response.data}");
+        log("response getAllBiddingApi ee ${response.data}");
         return {
           "status": false,
           "statusCode": response.statusCode ?? 0,
-          "data": response.data?['detail'].toString(),
+          "data": response.data.toString(),
         };
       }
     }
