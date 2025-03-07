@@ -23,6 +23,8 @@ class CartController extends GetxController {
       <String, SubsidiaryInventoryModel>{}.obs;
   // Add this function to your controller
   void pollOrderStatusAndUpdateCart() {
+         isCartProductsLoading.value = true;
+
     // Create a timer that checks every 2 seconds
     Timer.periodic(const Duration(seconds: 2), (timer) async {
       AllOrderController allOrderController = Get.find<AllOrderController>();
@@ -336,6 +338,6 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    pollOrderStatusAndUpdateCart();
+    // pollOrderStatusAndUpdateCart();
   }
 }

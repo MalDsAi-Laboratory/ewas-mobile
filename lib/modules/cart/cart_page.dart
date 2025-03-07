@@ -19,6 +19,9 @@ class _CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
     Get.put(CartController());
+    if(Get.isRegistered<CartController>()){
+      Get.find<CartController>().pollOrderStatusAndUpdateCart();
+    }
   }
 
   @override

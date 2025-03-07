@@ -137,6 +137,7 @@ class _OrderComponentState extends State<OrderComponent> {
                         // height: 30,
                         child: ViewBiddingButton(
                             buttonText: "View Bidding",
+                            isBtnActive: true,
                             onTap: () {
                               Get.to(() => ProductBiddingScreen(
                                   productModel:

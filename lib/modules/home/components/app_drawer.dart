@@ -11,6 +11,7 @@ class AppDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -23,24 +24,89 @@ class AppDrawerWidget extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
+                  // Get.to(() => ContactUsPage());
+                },
+                borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  width: size.width,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person_rounded,
+                        color: AppColors.primaryColor,
+                        size: 30.r,
+                      ),
+                      SizedBox(
+                        width: 15.w,
+                      ),
+                      BricolageText(
+                        text: 'Edit Profile',
+                        style: TextStyle(fontSize: 15.sp),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              InkWell(
+                borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                onTap: () {
+                  // Get.to(() => ContactUsPage());
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  width: size.width,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.password,
+                        color: AppColors.primaryColor,
+                        size: 30.r,
+                      ),
+                      SizedBox(
+                        width: 15.w,
+                      ),
+                      BricolageText(
+                        text: 'Change Password',
+                        style: TextStyle(fontSize: 15.sp),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              InkWell(
+                borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                onTap: () {
                   Get.to(() => ContactUsPage());
                 },
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                child: Row(
-                  // onTap: () {
-                  //   Get.to(() => ContactUsPage());
-                  // },
-                  children: [
-                    Icon(
-                      Icons.contact_phone_sharp,
-                      color: AppColors.primaryColor,
-                      size: 30.r,
-                    ),
-                    SizedBox(
-                      width: 15.w,
-                    ),
-                    BricolageText(text: 'Contact Us'),
-                  ],
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  width: size.width,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.contact_phone_sharp,
+                        color: AppColors.primaryColor,
+                        size: 30.r,
+                      ),
+                      SizedBox(
+                        width: 15.w,
+                      ),
+                      BricolageText(
+                        text: 'Contact Us',
+                        style: TextStyle(fontSize: 15.sp),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
