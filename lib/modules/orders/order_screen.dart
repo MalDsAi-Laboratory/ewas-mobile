@@ -151,6 +151,7 @@ class _OrderComponentState extends State<OrderComponent> {
                             isBtnActive: true,
                             onTap: () {
                               Get.to(() => ProductBiddingScreen(
+                                  order: orderController.currentOrder,
                                   productModel:
                                       orderController.currentInventory!));
                             }),
