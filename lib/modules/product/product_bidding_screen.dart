@@ -19,14 +19,10 @@ import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class ProductBiddingScreen extends StatefulWidget {
   final InventoryModel productModel;
-  final String? sellerName;
   final int? orderIndex;
   final OrderModel? order;
   ProductBiddingScreen(
-      {required this.productModel,
-      this.sellerName,
-      this.order,
-      this.orderIndex});
+      {required this.productModel, this.order, this.orderIndex});
   @override
   _ProductBiddingScreenState createState() => _ProductBiddingScreenState();
 }
@@ -184,8 +180,8 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                     )),
                                 SizedBox(width: 4.w),
                                 BricolageText(
-                                    text: widget.sellerName ??
-                                        "${Get.find<MainScreenController>().user!.firstName} ${Get.find<MainScreenController>().user!.lastName}",
+                                    text:
+                                        "${widget.order!.firstName} ${widget.order!.lastName}",
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
