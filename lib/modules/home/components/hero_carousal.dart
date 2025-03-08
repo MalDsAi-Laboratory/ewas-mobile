@@ -133,7 +133,7 @@ class CarousalWidget extends StatelessWidget {
             height: 200.h, // Height of the carousel
             autoPlay: autoPlay, // Auto-play the carousel
             enlargeCenterPage: false, // Enlarge the center image
-
+            autoPlayInterval: Duration(seconds: 3),
             aspectRatio: 1, // Aspect ratio of the images
             autoPlayCurve: Curves.fastOutSlowIn, // Animation curve
             enableInfiniteScroll: true, // Infinite scrolling

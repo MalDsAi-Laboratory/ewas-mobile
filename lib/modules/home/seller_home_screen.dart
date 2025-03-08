@@ -31,17 +31,20 @@ class _SellerHomePageState extends State<SellerHomePage> {
     double currentScroll = _scrollController.position.pixels;
 
     setState(() {
-      if (currentScroll < maxScroll * 0.33) {
+      if (currentScroll < maxScroll * 0.2) {
+        // Reduced from 0.33
         _isBannerAutoPlay = true;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = false;
         _isHero3AutoPlay = false;
-      } else if (currentScroll < maxScroll * 0.66) {
+      } else if (currentScroll < maxScroll * 0.4) {
+        // Reduced from 0.66
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = true;
         _isHero2AutoPlay = false;
         _isHero3AutoPlay = false;
-      } else if (currentScroll < maxScroll * 0.90) {
+      } else if (currentScroll < maxScroll * 0.7) {
+        // Reduced from 0.90
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = true;
@@ -50,7 +53,7 @@ class _SellerHomePageState extends State<SellerHomePage> {
         _isBannerAutoPlay = false;
         _isHero1AutoPlay = false;
         _isHero2AutoPlay = false;
-        _isHero3AutoPlay = true; // Enabling autoplay for last carousel
+        _isHero3AutoPlay = true;
       }
     });
   }
