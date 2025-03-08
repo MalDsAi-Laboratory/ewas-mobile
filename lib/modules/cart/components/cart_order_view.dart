@@ -233,7 +233,7 @@ class _OrderComponentState extends State<OrderComponent> {
                     ),
                     orderModel.orderStatus == OrderStatus.orderPlaced
                         ? RadialGradientButton(
-                            buttonText: 'Scrape Cart',
+                            buttonText: 'Start Bidding',
                             onTap: () {
                               cartController.submitItem(
                                   orderModel.eid!, widget.orderIndex, context);

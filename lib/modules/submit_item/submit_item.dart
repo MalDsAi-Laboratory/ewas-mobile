@@ -247,21 +247,53 @@ class SubmitItemComponent extends StatelessWidget {
         SizedBox(height: 10),
         Column(
           children: [
-            GetBuilder<SubmitItemController>(builder: (controller) {
-              return RadialGradientButton(
-                buttonText: 'Submit',
-                onTap: () {
-                  controller.submitProduct(context, willGoUnderAuction);
-                },
-                isBtnActive: controller.volumeController.text
-                        .trim()
-                        .isNotEmpty &&
-                    (willGoUnderAuction
-                        ? controller.basePriceController.text.trim().isNotEmpty
-                        : true) &&
-                    controller.images.isNotEmpty,
-              );
-            }),
+            Row(
+              children: [
+                Expanded(
+                  child:
+                      GetBuilder<SubmitItemController>(builder: (controller) {
+                    return RadialGradientButton(
+                      buttonText: 'Submit',
+                      onTap: () {
+                        controller.submitProduct(
+                            context, willGoUnderAuction, false);
+                      },
+                      isBtnActive:
+                          controller.volumeController.text.trim().isNotEmpty &&
+                              (willGoUnderAuction
+                                  ? controller.basePriceController.text
+                                      .trim()
+                                      .isNotEmpty
+                                  : true) &&
+                              controller.images.isNotEmpty,
+                    );
+                  }),
+                ),
+                SizedBox(
+                  width: 15.w,
+                ),
+                Expanded(
+                  child:
+                      GetBuilder<SubmitItemController>(builder: (controller) {
+                    return RadialGradientButton(
+                      buttonText: 'Scrape Cart',
+                      onTap: () {
+                        controller.submitProduct(
+                            context, willGoUnderAuction, true);
+                      },
+                      isBtnActive:
+                          controller.volumeController.text.trim().isNotEmpty &&
+                              (willGoUnderAuction
+                                  ? controller.basePriceController.text
+                                      .trim()
+                                      .isNotEmpty
+                                  : true) &&
+                              controller.images.isNotEmpty,
+                    );
+                  }),
+                ),
+              ],
+            ),
             SizedBox(
               height: 20.h,
             )

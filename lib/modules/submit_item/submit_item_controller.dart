@@ -27,7 +27,8 @@ class SubmitItemController extends GetxController {
   var images = <File>[];
   bool isOrderCreated = true;
 
-  Future<void> submitProduct(context, willGoUnderAuction) async {
+  Future<void> submitProduct(
+      context, willGoUnderAuction, willGoUnderCart) async {
     if (volumeController.text.isEmpty) {
       Get.snackbar("Error", "Please enter volume details");
       return;
@@ -56,17 +57,55 @@ class SubmitItemController extends GetxController {
         AppSnackBars.showErrorSnackBar("Error", "Failed to create order");
       } else {
         if (willGoUnderAuction) {
-          // Save order data to local storage
-          bool response = await saveOrderDataToLocalStorage(orderId);
-          if (response) {
-            Get.back();
-            Get.back();
-            Get.back();
-            Get.back();
-            AppSnackBars.showSuccessSnackBar("Success",
-                "Product listed for auction!\nYou can view your product for auction from orders screen.");
+          if (willGoUnderCart) {
+            // Save order data to local storage
+            bool response = await saveOrderDataToLocalStorage(orderId);
+            if (response) {
+              Get.back();
+              Get.back();
+              Get.back();
+              Get.back();
+              AppSnackBars.showSuccessSnackBar(
+                  "Success", "Product saved to cart.");
+            } else {
+              Get.back();
+            }
           } else {
-            Get.back();
+            bool response = await createInventory(orderId, willGoUnderAuction);
+            if (!response) {
+              isOrderCreated = true;
+              update();
+              Get.back();
+              print("createInventory failed");
+
+              AppSnackBars.showErrorSnackBar(
+                  "Error", "Failed to create inventory");
+            } else {
+              await Future.wait([
+                updateOrderStatus(orderId: orderId),
+                productImageUpload(orderId),
+              ]);
+              Get.back();
+              Get.back();
+              Get.back();
+              Get.back();
+              AppSnackBars.showSuccessSnackBar("Success",
+                  "Product listed for auction!\nYou can view your product for auction from orders screen.");
+              AllOrderController controller = Get.find<AllOrderController>();
+              try {
+                controller.isInventoryLoading.value = false;
+                Map<String, dynamic> response =
+                    await getInventoryByIdApi(orderId: orderId);
+                if (response['status']) {
+                  controller.inventoryMap[orderId] =
+                      InventoryModel.fromJson(response['data']);
+                }
+              } catch (e) {
+                log("error in getInventoryByIdApi $e");
+              } finally {
+                controller.isInventoryLoading.value = false;
+              }
+            }
           }
         } else {
           bool response = await createInventory(orderId, willGoUnderAuction);
@@ -79,18 +118,13 @@ class SubmitItemController extends GetxController {
             AppSnackBars.showErrorSnackBar(
                 "Error", "Failed to create inventory");
           } else {
-            willGoUnderAuction
-                ? await Future.wait([
-                    updateOrderStatus(orderId: orderId),
-                    productImageUpload(orderId),
-                  ])
-                : await productImageUpload(orderId);
+            await productImageUpload(orderId);
             Get.back();
             Get.back();
             Get.back();
             Get.back();
-            AppSnackBars.showSuccessSnackBar("Success",
-                "Product listed for auction!\nYou can view your product for auction from orders screen.");
+            AppSnackBars.showSuccessSnackBar(
+                "Success", "You can view your product from orders screen.");
             AllOrderController controller = Get.find<AllOrderController>();
             try {
               controller.isInventoryLoading.value = false;
