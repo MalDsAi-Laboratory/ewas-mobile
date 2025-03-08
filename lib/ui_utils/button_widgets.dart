@@ -87,7 +87,7 @@ class RadialGradientButton extends StatelessWidget {
       child: Center(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 15.h),
+            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
             backgroundColor:
                 Colors.transparent, // Make the button itself transparent
             shadowColor: const Color.fromARGB(

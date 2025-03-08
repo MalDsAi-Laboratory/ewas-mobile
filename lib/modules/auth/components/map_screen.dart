@@ -216,7 +216,7 @@ class _MapScreenState extends State<MapScreen> {
                       borderRadius: BorderRadius.circular(30.r),
                       child: Container(
                         width: 1.sw * 0.77,
-                        height: 50.h,
+                        // height: 50.h,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(30.r),
@@ -230,15 +230,11 @@ class _MapScreenState extends State<MapScreen> {
                         child: TextFormField(
                           controller: _searchController,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                              size: 25.r,
-                            ),
                             hintText: "Search location...",
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20.w, vertical: 5.h),
+                              horizontal: 20.w,
+                            ),
                           ),
                           onChanged: (value) => _searchAddress(value),
                         ),
