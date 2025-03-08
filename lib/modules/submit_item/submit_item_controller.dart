@@ -294,7 +294,7 @@ class SubmitItemController extends GetxController {
             : OrderStatus.awaitingForPick,
         orderDate: now,
         orderDetails:
-            "${now.toIso8601String()} || ${willGoUnderAuction ? "Minimum base price ₹ ${basePriceController.text.trim()}" : "${Get.find<LocateRecyclersController>().selectedRecycler.value.userId ?? ""} is chosen with price ₹ ${Get.find<LocateRecyclersController>().selectedRecycler.value.price}"}",
+            "${now.toIso8601String()} || ${willGoUnderAuction ? "Minimum base price ₹ ${basePriceController.text.trim()}" : "${Get.find<LocateRecyclersController>().selectedRecycler.value.userId ?? ""} is chosen with price ₹ ${Get.find<LocateRecyclersController>().selectedRecycler.value.price} \n${now.toIso8601String()} || Final price is ₹ ${Get.find<LocateRecyclersController>().selectedRecycler.value.price! * double.parse(volumeController.text.trim())}"}",
       );
       Map<String, dynamic> response = await createOrderApi(data: orderModel);
       if (response['status']) {

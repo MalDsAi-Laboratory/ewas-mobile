@@ -269,29 +269,34 @@ class SubmitItemComponent extends StatelessWidget {
                     );
                   }),
                 ),
-                SizedBox(
-                  width: 15.w,
-                ),
-                Expanded(
-                  child:
-                      GetBuilder<SubmitItemController>(builder: (controller) {
-                    return RadialGradientButton(
-                      buttonText: 'Scrape Cart',
-                      onTap: () {
-                        controller.submitProduct(
-                            context, willGoUnderAuction, true);
-                      },
-                      isBtnActive:
-                          controller.volumeController.text.trim().isNotEmpty &&
-                              (willGoUnderAuction
-                                  ? controller.basePriceController.text
-                                      .trim()
-                                      .isNotEmpty
-                                  : true) &&
-                              controller.images.isNotEmpty,
-                    );
-                  }),
-                ),
+                willGoUnderAuction
+                    ? SizedBox(
+                        width: 15.w,
+                      )
+                    : SizedBox(),
+                willGoUnderAuction
+                    ? Expanded(
+                        child: GetBuilder<SubmitItemController>(
+                            builder: (controller) {
+                          return RadialGradientButton(
+                            buttonText: 'Scrape Cart',
+                            onTap: () {
+                              controller.submitProduct(
+                                  context, willGoUnderAuction, true);
+                            },
+                            isBtnActive: controller.volumeController.text
+                                    .trim()
+                                    .isNotEmpty &&
+                                (willGoUnderAuction
+                                    ? controller.basePriceController.text
+                                        .trim()
+                                        .isNotEmpty
+                                    : true) &&
+                                controller.images.isNotEmpty,
+                          );
+                        }),
+                      )
+                    : SizedBox(),
               ],
             ),
             SizedBox(

@@ -424,46 +424,63 @@ class _OrderComponentState extends State<OrderComponent> {
                                         ? Column(
                                             children: [
                                               SizedBox(height: 8.h),
-                                              Builder(builder: (context) {
-                                                String details = "";
-                                                String? input = orderController
-                                                    .currentOrder?.orderDetails;
-                                                if (input != null) {
-                                                  List<String> parts = input
-                                                      .split("||")
-                                                      .map((e) => e.trim())
-                                                      .toList();
-                                                  if (parts.length == 1) {
-                                                    details = input;
-                                                  } else {
-                                                    // Extract timestamp and parse it
-                                                    String timestamp = parts[0];
-                                                    DateTime dateTime =
-                                                        DateTime.parse(
-                                                            timestamp);
+                                              Builder(
+                                                builder: (context) {
+                                                  String details = "";
+                                                  String? input =
+                                                      orderController
+                                                          .currentOrder
+                                                          ?.orderDetails;
 
-                                                    // Format the date for UI
-                                                    String formattedTime =
-                                                        "${getMonthName(dateTime.month)} ${dateTime.day}, ${dateTime.year}, "
-                                                        "${formatHour(dateTime.hour)}:${formatMinute(dateTime.minute)} ${getAmPm(dateTime.hour)}";
+                                                  if (input != null) {
+                                                    // Split input by newline
+                                                    List<String> lines = input
+                                                        .split("\n")
+                                                        .map((e) => e.trim())
+                                                        .toList();
 
-                                                    details = orderController
-                                                            .currentOrder
-                                                            ?.orderDetails ??
-                                                        "";
-                                                    details =
-                                                        "${formattedTime} || ${parts[1]}";
+                                                    List<String>
+                                                        formattedLines =
+                                                        lines.map((line) {
+                                                      List<String> parts = line
+                                                          .split("||")
+                                                          .map((e) => e.trim())
+                                                          .toList();
+
+                                                      if (parts.length == 1) {
+                                                        return line; // Return as is if no timestamp
+                                                      } else {
+                                                        // Extract timestamp and parse it
+                                                        String timestamp =
+                                                            parts[0];
+                                                        DateTime dateTime =
+                                                            DateTime.parse(
+                                                                timestamp);
+
+                                                        // Format the date for UI
+                                                        String formattedTime =
+                                                            "${getMonthName(dateTime.month)} ${dateTime.day}, ${dateTime.year}, "
+                                                            "${formatHour(dateTime.hour)}:${formatMinute(dateTime.minute)} ${getAmPm(dateTime.hour)}";
+
+                                                        return "$formattedTime || ${parts[1]}";
+                                                      }
+                                                    }).toList();
+
+                                                    details = formattedLines.join(
+                                                        "\n"); // Join formatted lines back
                                                   }
-                                                }
-                                                return BricolageText(
-                                                  text: details,
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
+
+                                                  return BricolageText(
+                                                    text: details,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
                                                       fontSize: 14.sp,
                                                       fontWeight:
-                                                          FontWeight.normal),
-                                                );
-                                              })
+                                                          FontWeight.normal,
+                                                    ),
+                                                  );
+                                                },
+                                              )
                                             ],
                                           )
                                         : SizedBox(),
