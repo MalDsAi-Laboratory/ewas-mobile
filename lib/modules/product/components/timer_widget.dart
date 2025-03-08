@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,8 +7,10 @@ import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class TimerWidget extends StatefulWidget {
   final DateTime inputTime;
+  final bool enabletimer;
 
-  const TimerWidget({super.key, required this.inputTime});
+  const TimerWidget(
+      {super.key, required this.inputTime, required this.enabletimer});
 
   @override
   _TimerWidgetState createState() => _TimerWidgetState();
@@ -23,9 +24,12 @@ class _TimerWidgetState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
-    log('inputTime ${widget.inputTime}');
-    _calculateTargetTime();
-    _startTimer();
+    if (widget.enabletimer) {
+      _calculateTargetTime();
+      _startTimer();
+    } else {
+      remainingTime = Duration.zero;
+    }
   }
 
   void _calculateTargetTime() {
@@ -47,7 +51,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         setState(() {
           remainingTime = targetTime.difference(DateTime.now());
           Get.find<ProductController>().remainingDatetime = remainingTime;
-           Get.find<ProductController>().update();
+          Get.find<ProductController>().update();
           if (remainingTime.isNegative) {
             remainingTime = Duration.zero;
             _timer?.cancel();

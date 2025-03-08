@@ -15,13 +15,13 @@ import 'package:simple_ui/ui_utils/app_snackbars.dart';
 class AuthController extends GetxController {
   RxBool isObscure = true.obs;
   RxBool isConfirmObscure = true.obs;
-  RxString password = '&honeyB90'.obs;
-  RxString confirmPassword = '&honeyB90'.obs;
-  RxString userId = 'honey123'.obs;
-  RxString firstName = 'honey'.obs;
-  RxString lastName = 'bansal'.obs;
-  RxString mobileNumber = '1234567890'.obs;
-  RxString email = 'savage@gmail.com'.obs;
+  RxString password = ''.obs;
+  RxString confirmPassword = ''.obs;
+  RxString userId = ''.obs;
+  RxString firstName = ''.obs;
+  RxString lastName = ''.obs;
+  RxString mobileNumber = ''.obs;
+  RxString email = ''.obs;
   RxString userRole = UserRole.seller.obs;
   var selectedLatLng = Rxn<LatLng>(); // Nullable LatLng
   var selectedAddress = "".obs;

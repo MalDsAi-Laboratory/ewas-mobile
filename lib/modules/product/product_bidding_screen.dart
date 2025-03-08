@@ -33,6 +33,7 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
     super.initState();
     var controller = Get.put(ProductController());
     controller.getBiddingDetails(
+        orderStatus: widget.order!.orderStatus,
         orderId: widget.productModel.orderId,
         dateTime: DateTime.parse(widget.productModel.dateAndTime!));
   }
@@ -51,8 +52,6 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
         actions: [
           widget.orderIndex != null
               ? Obx(() {
-                  print(
-                      "status ${orderController.filteredOrdersUnderAuction[widget.orderIndex!].orderStatus}");
                   return Get.find<MainScreenController>().user?.roles?[0] ==
                               UserRole.seller &&
                           orderController
@@ -83,18 +82,23 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                   )
                                 : RejectBiddingButton2(
                                     buttonText: 'Reject Bidding',
-                                    onTap: () async {
-                                      productController.isBiddingRejecting =
-                                          true;
-                                      productController.update();
-                                      await productController.updateOrderStatus(
-                                          orderId: widget.order!.eid!,
-                                          orderStatus:
-                                              OrderStatus.biddingRejected);
-                                      productController.isBiddingRejecting =
-                                          false;
-                                      productController.update();
-                                    },
+                                    onTap: productController
+                                                .remainingDatetime ==
+                                            Duration.zero
+                                        ? () async {
+                                            productController
+                                                .isBiddingRejecting = true;
+                                            productController.update();
+                                            await productController
+                                                .updateOrderStatus(
+                                                    orderId: widget.order!.eid!,
+                                                    orderStatus: OrderStatus
+                                                        .biddingRejected);
+                                            productController
+                                                .isBiddingRejecting = false;
+                                            productController.update();
+                                          }
+                                        : () {},
                                     isBtnActive:
                                         productController.remainingDatetime ==
                                             Duration.zero,
@@ -158,6 +162,12 @@ class _ProductBiddingScreenState extends State<ProductBiddingScreen> {
                                             fontWeight: FontWeight.w400),
                                       ),
                                       TimerWidget(
+                                          enabletimer: (widget
+                                                      .order!.orderStatus ==
+                                                  OrderStatus.biddingStarted ||
+                                              widget.order!.orderStatus ==
+                                                  OrderStatus
+                                                      .biddingInProgress),
                                           inputTime: DateTime.parse(widget
                                                       .productModel
                                                       .dateAndTime ??

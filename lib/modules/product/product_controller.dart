@@ -38,11 +38,18 @@ class ProductController extends GetxController {
   }
 
 // Modify your getBiddingDetails function to ensure proper sequencing
-  void getBiddingDetails({String? orderId, DateTime? dateTime}) async {
+  void getBiddingDetails(
+      {String? orderStatus, String? orderId, DateTime? dateTime}) async {
     isLoading.value = true;
     try {
       // Then set the remaining duration and wait for it to complete
-      await setRemainingDuration(dateTime);
+      if (orderStatus == OrderStatus.biddingStarted ||
+          orderStatus == OrderStatus.biddingInProgress) {
+        await setRemainingDuration(dateTime);
+      } else {
+        remainingDatetime = Duration.zero;
+        update();
+      }
       Map<String, dynamic> response = await getAllBiddingApi(orderId: orderId);
       if (response['status']) {
         List<BiddingModel> temp = [];
