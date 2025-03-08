@@ -123,8 +123,8 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       HeroCarousal(
                         title: 'Find E-waste',
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/findewaste/1.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/findewaste/2.jpg',
                         ],
                         autoPlay: _isHero1AutoPlay,
                         showBottomWidget: false,
@@ -136,8 +136,8 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       HeroCarousal(
                         title: 'Update your purchase prices',
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/updateprice/1.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/updateprice/2.jpg',
                         ],
                         autoPlay: _isHero2AutoPlay,
                         showBottomWidget: false,
@@ -155,8 +155,8 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                           // Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/1.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/2.jpg',
                         ],
                       ),
                     ],

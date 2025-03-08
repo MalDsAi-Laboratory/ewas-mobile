@@ -128,8 +128,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                           Get.to(() => CategoriesPage());
                         },
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/sellewaste/2.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/sellewaste/1.jpg',
                         ],
                       ),
                       SizedBox(height: 16.h),
@@ -141,8 +141,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                           Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/vieworders/1.jpg',
+                        //  'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
                         ],
                       ),
                       SizedBox(height: 16.h),
@@ -155,8 +155,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                           // Get.to(() => SellerItemsScreen());
                         },
                         imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-                          'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
+                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/1.jpg',
+                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/2.jpg',
                         ],
                       ),
                     ],
