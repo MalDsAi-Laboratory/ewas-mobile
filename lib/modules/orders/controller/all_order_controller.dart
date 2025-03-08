@@ -4,11 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/orders/controller/order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
+import 'package:simple_ui/services/apis/user/user_apis.dart';
 
 class AllOrderController extends GetxController {
   var orders = <OrderModel>[].obs;
@@ -18,6 +20,7 @@ class AllOrderController extends GetxController {
   var searchId = ''.obs;
   var searchAssignee = ''.obs;
   var selectedStatus = ''.obs;
+
   RxInt filterCount = 0.obs;
   RxBool isOrdersLoading = true.obs;
   RxInt pageNumber = 0.obs;
@@ -25,7 +28,7 @@ class AllOrderController extends GetxController {
   RxInt itemsPerPage = 10.obs; // Items per page for UI pagination
   RxBool isInventoryLoading = true.obs;
   RxMap<String, InventoryModel> inventoryMap = <String, InventoryModel>{}.obs;
-
+  List<UserModel> deliveryUsers = <UserModel>[]; // List of delivery users
   // Computed property for paginated orders
   List<OrderModel> get paginatedOrders {
     final startIndex = currentPage.value * itemsPerPage.value;
@@ -70,32 +73,37 @@ class AllOrderController extends GetxController {
     }
   }
 
-  void fetchOrders() async {
-    if (orders.isEmpty) {
-      try {
-        String role = Get.find<MainScreenController>().user!.roles![0];
-        Map<String, dynamic>? response = await getAllOrdersApi(
-            role: role,
-            userId: Get.find<MainScreenController>().user!.userId,
-            pageNumber: pageNumber.value,
-            pageSize: 10000);
-        if (response['status']) {
-          List<OrderModel> allOrders = [];
-          for (var i = 0; i < response['data']['orders'].length; i++) {
-            allOrders.add(OrderModel.fromJson(response['data']['orders'][i]));
-          }
-          orders.assignAll(allOrders);
-          isOrdersLoading.value = false;
-        } else {
-          isOrdersLoading.value = false;
+  Future<void> getOrders() async {
+    try {
+      String role = Get.find<MainScreenController>().user!.roles![0];
+      Map<String, dynamic>? response = await getAllOrdersApi(
+          role: role,
+          userId: Get.find<MainScreenController>().user!.userId,
+          pageNumber: pageNumber.value,
+          pageSize: 10000);
+      if (response['status']) {
+        List<OrderModel> allOrders = [];
+        for (var i = 0; i < response['data']['orders'].length; i++) {
+          allOrders.add(OrderModel.fromJson(response['data']['orders'][i]));
         }
-      } catch (e) {
+        orders.assignAll(allOrders);
         isOrdersLoading.value = false;
-        if (kDebugMode) {
-          log('Error occured in fetch orders: $e');
-        }
+      } else {
+        isOrdersLoading.value = false;
+      }
+    } catch (e) {
+      isOrdersLoading.value = false;
+      if (kDebugMode) {
+        log('Error occured in fetch orders: $e');
       }
     }
+  }
+
+  void fetchOrders() async {
+    if (orders.isEmpty) {
+      await Future.wait([getOrders(), fetchDeliveryUsers()]);
+    }
+    log("delivery Users length ${deliveryUsers.length}");
     filteredOrders.assignAll(orders);
     filterOrderUnderAuctionOnly();
     _fetchInventory();
@@ -189,6 +197,24 @@ class AllOrderController extends GetxController {
       );
     }
     update();
+  }
+
+  Future<void> fetchDeliveryUsers() async {
+    try {
+      Map<String, dynamic> response = await getAllUserApi();
+      if (response['status']) {
+        List<UserModel> allUsers = [];
+        for (var i = 0; i < response['data'].length; i++) {
+          UserModel user = UserModel.fromJson(response['data'][i]);
+          if (user.roles?[0] == UserRole.deliveryAgent) {
+            allUsers.add(user);
+          }
+        }
+        deliveryUsers.assignAll(allUsers);
+      }
+    } catch (e) {
+      log("Error in fetching delivery users ${e}");
+    }
   }
 
   void clearFilters({bool? useAllOrders = true}) {

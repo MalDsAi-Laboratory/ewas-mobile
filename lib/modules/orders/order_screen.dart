@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
+import 'package:simple_ui/modules/orders/components/assignee_dropdown.dart';
 import 'package:simple_ui/modules/orders/components/order_product_components.dart';
 import 'package:simple_ui/modules/orders/components/timeline_widget.dart';
 import 'package:simple_ui/modules/orders/components/view_bidding_button.dart';
@@ -49,6 +50,16 @@ class _OrderScreenState extends State<OrderScreen> {
     OrderController orderController = Get.put((OrderController()));
     orderController.currentOrder =
         Get.find<AllOrderController>().orders[widget.orderIndex];
+    if (orderController.currentOrder!.assignee != null) {
+      for (var user in Get.find<AllOrderController>().deliveryUsers) {
+        if (user.userId == orderController.currentOrder!.assignee) {
+          orderController.assigneeName = "${user.firstName} ${user.lastName}";
+          orderController.assigneeController.text =
+              "${user.firstName} ${user.lastName}";
+          orderController.assignee = user.userId!;
+        }
+      }
+    }
     orderController.currentInventory = Get.find<AllOrderController>()
         .inventoryMap[orderController.currentOrder!.eid ?? ""];
     orderController.update();
@@ -247,18 +258,18 @@ class _OrderComponentState extends State<OrderComponent> {
                           InkWell(
                             overlayColor:
                                 WidgetStateProperty.all(Colors.transparent),
-                            onTap: userRole == UserRole.admin && isEditing
-                                ? () async {
-                                    DateTime? pickedDate =
-                                        await datePicker(context);
-                                    try {
-                                      if (pickedDate != null) {
-                                        orderController.orderDate = pickedDate;
-                                        orderController.update();
-                                      }
-                                    } catch (e) {}
-                                  }
-                                : null,
+                            // onTap: userRole == UserRole.admin && isEditing
+                            //     ? () async {
+                            //         DateTime? pickedDate =
+                            //             await datePicker(context);
+                            //         try {
+                            //           if (pickedDate != null) {
+                            //             orderController.orderDate = pickedDate;
+                            //             orderController.update();
+                            //           }
+                            //         } catch (e) {}
+                            //       }
+                            //     : null,
                             child: OrderDetailItemWidget(
                               title: "Date",
                               value: DateFormat.yMMMd().format(
@@ -270,21 +281,16 @@ class _OrderComponentState extends State<OrderComponent> {
                           SizedBox(height: 10.h),
 
                           userRole == UserRole.admin && isEditing
-                              ? EditableField(
-                                  controller:
-                                      orderController.assigneeController,
-                                  label: "Assignee",
-                                  icon: Icon(Icons.person_2, size: 25.r),
-                                )
+                              ? AssigneeDropdown()
                               : orderController.currentOrder!.assignee !=
                                           null &&
                                       orderController.currentOrder?.assignee !=
                                           ""
                                   ? OrderDetailItemWidget(
                                       title: "Assignee",
-                                      value: orderController
-                                          .currentOrder!.assignee!)
+                                      value: orderController.assigneeName)
                                   : SizedBox(),
+                          SizedBox(height: 20.h),
 
                           /// Status (Editable for Admin & Delivery Agent)
                           if (userRole == UserRole.admin ||
@@ -383,13 +389,14 @@ class _OrderComponentState extends State<OrderComponent> {
                                           ),
                                   ],
                                 ),
+                                SizedBox(height: 5.h),
                                 Divider(
                                   color:
                                       const Color.fromARGB(255, 227, 227, 227),
                                 )
                               ],
                             ),
-
+                          SizedBox(height: 5.h),
                           userRole == UserRole.admin && isEditing
                               ? EditableField(
                                   controller:
@@ -553,7 +560,7 @@ class OrderDetailItemWidget extends StatelessWidget {
         BricolageText(
           text: title,
           style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w300,
               color: const Color.fromARGB(255, 88, 88, 88)),
         ),

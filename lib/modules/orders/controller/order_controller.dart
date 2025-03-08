@@ -17,6 +17,8 @@ class OrderController extends GetxController {
 
   /// manage the current inventory
   InventoryModel? currentInventory;
+  var assignee = '';
+  var assigneeName = '';
 
   /// admin rights to edit order summary
   final TextEditingController nameController = TextEditingController();
@@ -33,7 +35,7 @@ class OrderController extends GetxController {
         "${currentOrder?.firstName} ${currentOrder?.lastName}";
     addressController.text = currentOrder?.address ?? "";
     emailController.text = currentOrder?.userId ?? "";
-    assigneeController.text = currentOrder?.assignee ?? "";
+
     orderDetailsController.text = currentOrder?.orderDetails ?? "";
     orderStatus = currentOrder?.orderStatus ?? 'Order Placed';
     orderDate = currentOrder?.orderDate ?? DateTime.now();
@@ -50,7 +52,7 @@ class OrderController extends GetxController {
         firstName: nameController.text.split(' ')[0],
         lastName: nameController.text.split(' ')[1],
         address: addressController.text,
-        assignee: assigneeController.text,
+        assignee: assignee,
         userId: emailController.text,
         orderStatus: orderStatus,
         orderDate: orderDate,
