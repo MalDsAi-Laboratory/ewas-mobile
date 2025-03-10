@@ -223,28 +223,37 @@ class SubmitItemController extends GetxController {
       List<File> validImages =
           images.where((image) => image.path.isNotEmpty).toList();
 
-      // Create a list of upload tasks
-      List<Future<Map<String, dynamic>>> uploadTasks = [];
+      // Ensure there's a maximum of 5 images
+      validImages = validImages.take(5).toList();
 
-      for (int i = 0; i < validImages.length; i++) {
-        File imageFile = validImages[i];
+      // Process images in batches of two
+      for (int i = 0; i < validImages.length; i += 2) {
+        List<Future<Map<String, dynamic>>> uploadTasks = [];
 
-        uploadTasks.add(uploadInventoryImageApi(
-          imageForm: dio.FormData.fromMap({
-            "file": await dio.MultipartFile.fromFile(imageFile.path,
-                filename: imageFile.path.split('/').last),
-          }),
-          index: i + 1, // Assuming index starts from 1
-          orderId: orderId,
-        ));
-      }
+        // Get the current batch of images (at most 2)
+        List<File> batch = validImages.sublist(
+            i, (i + 2) > validImages.length ? validImages.length : (i + 2));
 
-      // Run all uploads in parallel
-      List<Map<String, dynamic>> responses = await Future.wait(uploadTasks);
+        for (int j = 0; j < batch.length; j++) {
+          File imageFile = batch[j];
 
-      // Log all responses
-      for (var response in responses) {
-        log("Image upload response: $response");
+          uploadTasks.add(uploadInventoryImageApi(
+            imageForm: dio.FormData.fromMap({
+              "file": await dio.MultipartFile.fromFile(imageFile.path,
+                  filename: imageFile.path.split('/').last),
+            }),
+            index: i + j + 1, // Adjust index properly
+            orderId: orderId,
+          ));
+        }
+
+        // Wait for the batch to complete before moving to the next
+        List<Map<String, dynamic>> responses = await Future.wait(uploadTasks);
+
+        // Log all responses for the batch
+        for (var response in responses) {
+          log("Image upload response: $response");
+        }
       }
     } catch (e) {
       log("Error in productImageUpload: $e");
