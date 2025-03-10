@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,10 +14,14 @@ import 'package:simple_ui/modules/orders/all_order_page.dart';
 import 'package:simple_ui/modules/orders/recycler_order_page.dart';
 import 'package:simple_ui/modules/support/support_page.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
+import 'package:simple_ui/services/apis/user/user_apis.dart';
+import 'package:simple_ui/services/notifications/firebase_api.dart';
+import 'package:simple_ui/services/notifications/server_key.dart';
 
 class MainScreenController extends GetxController {
   int currentIndex = 2;
   UserModel? user;
+  String? serverToken;
   MainScreenController({required this.user});
 
   /// isSettingUpApp: Processing the role based setup of app
@@ -159,8 +165,26 @@ class MainScreenController extends GetxController {
     }
   }
 
+  updateFcmToken() async {
+    try {
+      Map<String, dynamic> passwordResponse =
+          await getUserAccountPasswordApi(userId: user?.userId);
+      if (passwordResponse['status']) {
+        String? token = await FirebaseApi().getToken();
+        if (token != null) {
+          // update user model
+          await updateUserApi(
+              data: user!.copyWith(
+                  fcmToken: token, password: passwordResponse['data']));
+        }
+      }
+    } catch (e) {
+      log("Error in updating fcm token: $e");
+    }
+  }
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     pages = getRoleBasedScreen(user!);
     bottomNavBarItems = getRoleBasedBottomNavItems(user!);
@@ -168,6 +192,9 @@ class MainScreenController extends GetxController {
         user?.roles?[0] == UserRole.deliveryAgent) {
       currentIndex = 1;
     }
+    String data = await get_server_key().server_token();
+    serverToken = data;
+    updateFcmToken();
     isSettingUpApp = false;
     update();
   }

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_ui/models/create_user_model.dart';
 import 'package:simple_ui/models/inventory_model.dart';
 import 'package:simple_ui/models/order_model.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/categories/categories_controller.dart';
 import 'package:simple_ui/modules/locate_recyclers/locate_recyclers_controller.dart';
 import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
@@ -13,9 +15,12 @@ import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/modules/submit_item/submit_item.dart';
 import 'package:simple_ui/services/apis/inventory/inventory_apis.dart';
+import 'package:simple_ui/services/apis/location/location_apis.dart';
 import 'package:simple_ui/services/apis/order/order_apis.dart';
 import 'dart:io';
 import "package:dio/dio.dart" as dio;
+import 'package:simple_ui/services/apis/user/user_apis.dart';
+import 'package:simple_ui/services/notifications/firebase_api.dart';
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -85,6 +90,7 @@ class SubmitItemController extends GetxController {
                 updateOrderStatus(orderId: orderId),
                 productImageUpload(orderId),
               ]);
+              sendNotification();
               Get.back();
               Get.back();
               Get.back();
@@ -378,5 +384,56 @@ class SubmitItemController extends GetxController {
   void removeImage(int index) {
     images.removeAt(index);
     update();
+  }
+
+  void sendNotification() async {
+    try {
+      String? serverKey = Get.find<MainScreenController>().serverToken;
+      if (serverKey != null) {
+        List<String> recyclerIds = await getRecyclerIds();
+        // use Future.wait to get user details using recylerId
+        List<Future<Map<String, dynamic>?>> futures =
+            recyclerIds.map((recyclerId) {
+          return getUserByUserIdApi(userId: recyclerId);
+        }).toList();
+
+        List<Map<String, dynamic>?> responses = await Future.wait(futures);
+
+        for (var i = 0; i < responses.length; i++) {
+          if (responses[i]?['status'] == true) {
+            UserModel user = UserModel.fromJson(responses[i]!['data']);
+            if (user.fcmToken != null) {
+              FirebaseApi().sendFCMNotification(
+                  token: serverKey,
+                  FCMtoken: user.fcmToken!,
+                  title: "More E-ewaste near to you",
+                  body: "Check the E-waste around you");
+            }
+          }
+        }
+      }
+    } catch (e) {
+      log("Error in sending notification ${e}");
+    }
+  }
+
+  Future<List<String>> getRecyclerIds() async {
+    try {
+      Map<String, dynamic> response = await getUserByUserIdApi2(
+          userId: Get.find<MainScreenController>().user?.userId ?? "");
+      if (response['status']) {
+        List<String> recyclerIds = [];
+        CreateUserModel userModel = CreateUserModel.fromJson(response['data']);
+        // split the userModel.crossuserId by ;
+        recyclerIds = userModel.crossuserId!.split(';');
+        return recyclerIds;
+      } else {
+        log("Error in fetching recyclerIds ${response['data']}");
+        return [];
+      }
+    } catch (e) {
+      log("Error in fetching recyclerIds ${e}");
+      return [];
+    }
   }
 }

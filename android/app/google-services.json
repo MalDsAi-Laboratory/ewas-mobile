@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "993580053981",
+    "project_id": "scrapit-1826c",
+    "storage_bucket": "scrapit-1826c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993580053981:android:1da3decc95de3afc12f234",
+        "android_client_info": {
+          "package_name": "com.ewaste.ewas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7V0bZkPHF34Q5D1MNQmZObQPnq-EzReA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

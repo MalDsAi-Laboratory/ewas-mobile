@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
@@ -46,5 +47,6 @@ class SecureStorageServices {
   // Logout (Clear all storage)
   Future<void> logOut() async {
     await _secureStorage.deleteAll();
+    await FirebaseMessaging.instance.deleteToken();
   }
 }
