@@ -25,7 +25,7 @@ Future<Map<String, dynamic>> createUser2Api({CreateUserModel? data}) async {
     print("data ${jsonEncode(data!.toJson())}");
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(LocatioAPIPath.createUser.path,
-          data: jsonEncode(data!.toJson()),
+          data: jsonEncode(data.toJson()),
           options: Options(method: "POST", extra: {
             "requiresToken": false,
           })),

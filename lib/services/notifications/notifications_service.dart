@@ -43,7 +43,7 @@ void initializeAppNotifications() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
-    sound: false, // We'll handle the sound manually
+    sound: false,
   );
 }
 
@@ -84,10 +84,6 @@ Future<void> setupNotifications() async {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
 
-    // setState(() {
-    //   _lastMessage = 'Received notification: ${message.notification?.title}';
-    // });
-
     // Play the custom sound
     await _audioPlayer.setAsset('assets/ringtone.mp3');
     await _audioPlayer.play();
@@ -118,19 +114,9 @@ Future<void> setupNotifications() async {
 
   // Handle notification opening app from terminated state
   FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-    if (message != null) {
-      // setState(() {
-      //   _lastMessage =
-      //       'App opened from notification: ${message.notification?.title}';
-      // });
-    }
+    if (message != null) {}
   });
 
   // Handle notification opening app from background state
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    // setState(() {
-    //   _lastMessage =
-    //       'App opened from background: ${message.notification?.title}';
-    // });
-  });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
 }
