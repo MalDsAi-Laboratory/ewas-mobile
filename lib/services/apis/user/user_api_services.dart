@@ -15,6 +15,10 @@ var handlers = [];
 
 class UserDioSingleton {
   static Dio? _dio;
+
+  /// Call this once at startup (after dotenv loads) to force a fresh instance.
+  static void reset() => _dio = null;
+
   static Dio get instance {
     if (_dio == null) {
       final baseOptions = BaseOptions(

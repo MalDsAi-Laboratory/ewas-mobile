@@ -69,20 +69,17 @@ class ProfileController extends GetxController {
         return;
       }
       UserModel model = Get.find<MainScreenController>().user!;
-      Map<String, dynamic> passwordResponse =
-          await getUserAccountPasswordApi(userId: model.userId);
-      if (passwordResponse['status']) {
-        UserModel userModel = UserModel(
-          userId: model.userId,
-          firstName: firstName.value,
-          lastName: lastName.value,
-          email: email.value,
-          phoneNumber: mobileNumber.value,
-          password: passwordResponse['data'],
-          address: selectedAddress.value,
-          roles: model.roles,
-          lastLogin: DateTime.now().toUtc().toIso8601String(),
-        );
+      
+      UserModel userModel = UserModel(
+        userId: model.userId,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        phoneNumber: mobileNumber.value,
+        address: selectedAddress.value,
+        roles: model.roles,
+        lastLogin: DateTime.now().toUtc().toIso8601String(),
+      );
         isLoading.value = true;
         Map<String, dynamic> response = await updateUserApi(data: userModel);
         if (response['status']) {
@@ -110,7 +107,6 @@ class ProfileController extends GetxController {
           log("error in registerUser ${response['data']}");
           AppSnackBars.showErrorSnackBar("Error", response['data']);
         }
-      }
     } catch (e) {
       log("error in registerUser $e");
     } finally {

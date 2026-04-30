@@ -3,34 +3,34 @@ class CreateUserModel {
   String? role;
   String? address;
   String? location;
-  String? crossuserId;
-  String? crossuserLocations;
+  String? recyclerId;
+  String? recyclerLocations;
 
   CreateUserModel(
       {this.userid,
       this.role,
       this.address,
       this.location,
-      this.crossuserId,
-      this.crossuserLocations});
+      this.recyclerId,
+      this.recyclerLocations});
 
   CreateUserModel.fromJson(Map<String, dynamic> json) {
     userid = json['userid'];
     role = json['role'];
     address = json['address'];
     location = json['location'];
-    crossuserId = json['crossuserId'];
-    crossuserLocations = json['crossuserLocations'];
+    recyclerId = json['recyclerId'] ?? json['crossuserId'];
+    recyclerLocations = json['recyclerLocations'] ?? json['crossuserLocations'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userid'] = this.userid;
-    data['role'] = this.role;
+    if (this.role != null) data['role'] = this.role;
     data['address'] = this.address;
     data['location'] = this.location;
-    data['crossuserId'] = this.crossuserId;
-    data['crossuserLocations'] = this.crossuserLocations;
+    data['recyclerId'] = this.recyclerId ?? "none";
+    data['recyclerLocations'] = this.recyclerLocations ?? "none";
     return data;
   }
 }

@@ -6,124 +6,79 @@ import 'package:flutter/foundation.dart';
 import 'package:retry/retry.dart';
 import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/services/apis/user/user_api_services.dart';
-import "package:http/http.dart" as http;
 import 'package:simple_ui/services/load_env.dart';
 
-Dio dio = UserDioSingleton.instance; // Create an instance of DioSingleton
+/// Singleton for user CRUD calls (baseUrl = /api/v1/users)
+Dio dio = UserDioSingleton.instance;
 
-enum UserAPIPath { createUser }
+/// Plain Dio with no baseUrl, used for auth endpoints that live outside /users
+final Dio _authDio = Dio(
+  BaseOptions(
+    connectTimeout: const Duration(minutes: 1),
+    receiveTimeout: const Duration(minutes: 1),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  ),
+);
 
-extension UserAPIPathExtension on UserAPIPath {
-  String get path {
-    switch (this) {
-      case UserAPIPath.createUser:
-        return "/add";
-    }
-  }
-}
+/// Derives the auth base URL from userBaseUrl by stripping /api/v1/users -> /api/v1/auth
+String get _authBaseUrl => userBaseUrl!.replaceFirst('/api/v1/users', '/api/v1/auth');
 
 Future<Map<String, dynamic>> createUserApi({UserModel? data}) async {
   try {
-    log(" create user ${jsonEncode(data!.toJson())}");
+    log("create user ${jsonEncode(data!.toJson())}");
     final response = await const RetryOptions(maxAttempts: 2).retry(
-      () => dio.request(UserAPIPath.createUser.path,
-          data: jsonEncode(data.toJson()),
-          options: Options(method: "POST", extra: {
-            "requiresToken": false,
-          })),
+      () => _authDio.post(
+        '$_authBaseUrl/register',
+        data: jsonEncode(data.toJson()),
+      ),
       retryIf: (e) => e is DioException || e is SocketException,
     );
-
-    final responseBody = response.data;
     return {
       'status': true,
       "statusCode": response.statusCode,
-      "data": responseBody,
+      "data": response.data,
     };
   } catch (e) {
-    if (e is DioException) {
-      // Handle DioError and access the response
-      final dioError = e;
-      final response = dioError.response;
-      if (response != null) {
-        return {
-          'status': false,
-          "statusCode": response.statusCode ?? 0,
-          "data": response.data?['message'],
-        };
-      }
+    if (e is DioException && e.response != null) {
+      return {
+        'status': false,
+        "statusCode": e.response?.statusCode ?? 0,
+        "data": e.response?.data?['message'] ?? 'Registration failed',
+      };
     }
-    // Handle SocketException for abrupt connection resets
     Map<String, dynamic>? result = checkSocketException(e);
-    if (result != null) {
-      return result;
-    }
-    // Handle other exceptions here
-    if (kDebugMode) {
-      print('Error: $e');
-    }
-    return {
-      'status': false,
-      "statusCode":
-          0, // You can set a default status code or handle differently
-      "data": "Something went wrong",
-    };
+    if (result != null) return result;
+    if (kDebugMode) print('createUserApi error: $e');
+    return {'status': false, "statusCode": 0, "data": "Something went wrong"};
   }
 }
 
-Future<Map<String, dynamic>> getUserAccountPasswordApi({String? userId}) async {
+Future<Map<String, dynamic>> loginUserApi({required String email, required String password}) async {
   try {
-    final Uri url = Uri.parse("$userBaseUrl/$userId/password");
-
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    final response = await const RetryOptions(maxAttempts: 2).retry(
+      () => _authDio.post(
+        '$_authBaseUrl/login',
+        data: jsonEncode({"email": email, "password": password}),
+      ),
+      retryIf: (e) => e is DioException || e is SocketException,
     );
-
-    log('Response Body: ${response.body}');
-
-    // Ensure response body is handled correctly
-    if (response.statusCode == 200) {
-      try {
-        final data = response.body;
-        return {
-          "status": true,
-          "statusCode": response.statusCode,
-          "data": data, // JSON response
-        };
-      } catch (e) {
-        // If response is not JSON, return it as plain text
-        return {
-          "status": true,
-          "statusCode": response.statusCode,
-          "data": response.body, // Plain text response
-        };
-      }
-    }
-
     return {
-      "status": false,
+      "status": true,
       "statusCode": response.statusCode,
-      "data": response.body.isNotEmpty ? response.body : 'Unknown error',
+      "data": response.data,
     };
   } catch (e) {
-    log("Error in getUserAccountPasswordApi: $e");
-
-    if (e is SocketException) {
+    if (e is DioException && e.response != null) {
       return {
         "status": false,
-        "statusCode": 0,
-        "data": "No Internet Connection",
+        "statusCode": e.response?.statusCode ?? 0,
+        "data": e.response?.data?['message'] ?? 'Login failed',
       };
     }
-
-    return {
-      "status": false,
-      "statusCode": 0,
-      "data": e.toString(),
-    };
+    return {"status": false, "statusCode": 0, "data": "Something went wrong"};
   }
 }
 

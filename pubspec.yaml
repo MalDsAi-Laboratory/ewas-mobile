@@ -22,7 +22,7 @@ dependencies:
   flutter_svg: ^2.0.17
   geolocator: ^13.0.2
   get: ^4.6.6
-  google_fonts: ^6.2.1
+  google_fonts: ^8.1.0
   image_picker: ^1.1.2
   latlong2: ^0.9.1
   location: ^8.0.0
@@ -46,6 +46,7 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - .env
+    - .env.dev
+    - .env.prod
     - assets/images/
     - assets/icons/

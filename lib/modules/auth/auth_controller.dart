@@ -122,27 +122,33 @@ class AuthController extends GetxController {
       isLoading.value = true;
       Map<String, dynamic> response = await createUserApi(data: userModel);
       if (response['status']) {
-        Map<String, dynamic> response = await createUser2Api(
-            data: CreateUserModel(
-                address: selectedAddress.value,
-                userid: userId.value,
-                location:
-                    "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
-                role: userRole.value));
-        if (response['status']) {
-          tabController.animateTo(0);
-          SecureStorageServices().setUserModel(userModel.toJson());
-          SecureStorageServices().setUserLocation({
-            "latitude": selectedLatLng.value!.latitude,
-            "longitude": selectedLatLng.value!.longitude
-          });
-          clearFields();
-          AppSnackBars.showSuccessSnackBar(
-              "Success", 'You have registered successfully.\nPlease login.');
-        } else {
-          log("error in registerUser ${response['data']}");
-          AppSnackBars.showErrorSnackBar("Error", response['data']);
+        // Save user account first (auth succeeded).
+        SecureStorageServices().setUserModel(userModel.toJson());
+        SecureStorageServices().setUserLocation({
+          "latitude": selectedLatLng.value!.latitude,
+          "longitude": selectedLatLng.value!.longitude
+        });
+
+        // Attempt to register seller location — non-blocking.
+        try {
+          Map<String, dynamic> locationResponse = await createUser2Api(
+              data: CreateUserModel(
+                  address: selectedAddress.value,
+                  userid: userId.value,
+                  location:
+                      "${selectedLatLng.value!.latitude},${selectedLatLng.value!.longitude}",
+                  role: userRole.value));
+          if (!locationResponse['status']) {
+            log("Warning: seller-location registration failed: ${locationResponse['data']}");
+          }
+        } catch (e) {
+          log("Warning: seller-location service unavailable: $e");
         }
+
+        tabController.animateTo(0);
+        clearFields();
+        AppSnackBars.showSuccessSnackBar(
+            "Success", 'You have registered successfully.\nPlease login.');
       } else {
         log("error in registerUser ${response['data']}");
         AppSnackBars.showErrorSnackBar("Error", response['data']);
@@ -163,49 +169,36 @@ class AuthController extends GetxController {
       }
       isLoading.value = true;
       Map<String, dynamic> response =
-          await getUserAccountPasswordApi(userId: userId.value);
+          await loginUserApi(email: userId.value, password: password.value);
       if (response['status']) {
-        if (password.value.trim() == response['data']) {
-          Map<String, dynamic> response =
-              await getUserByUserIdApi(userId: userId.value);
-          if (response['status']) {
-            UserModel user = UserModel.fromJson(response['data']);
-            if (user.roles![0] == UserRole.recycler ||
-                user.roles![0] == UserRole.seller) {
-              Map<String, dynamic> response2 =
-                  await getRecyclersIds(userId.value);
-              if (response2['status']) {
-                await SecureStorageServices().setUserModel(response['data']);
-                await SecureStorageServices().setUserLocation({
-                  "latitude": response2['lat'],
-                  "longitude": response2['long'],
-                  "address": response2['address'] ?? ""
-                });
-                clearFields();
-                Get.offAll(() =>
-                    AppScreen(user: UserModel.fromJson(response['data'])));
-                AppSnackBars.showSuccessSnackBar(
-                    "Success", 'You have logged in successfully.');
-              } else {
-                AppSnackBars.showErrorSnackBar("Error", response['data']);
-              }
-            } else {
-              await SecureStorageServices().setUserModel(response['data']);
-
-              clearFields();
-              Get.offAll(
-                  () => AppScreen(user: UserModel.fromJson(response['data'])));
-              AppSnackBars.showSuccessSnackBar(
-                  "Success", 'You have logged in successfully.');
-            }
+        UserModel user = UserModel.fromJson(response['data']);
+        
+        if (user.roles != null && user.roles!.isNotEmpty &&
+           (user.roles![0] == UserRole.recycler || user.roles![0] == UserRole.seller)) {
+          // Try to fetch seller location from scheduling service.
+          // If the service is down, log in anyway using locally cached location.
+          Map<String, dynamic> response2 = await getRecyclersIds(user.userId ?? "");
+          await SecureStorageServices().setUserModel(response['data']);
+          if (response2['status']) {
+            await SecureStorageServices().setUserLocation({
+              "latitude": response2['lat'],
+              "longitude": response2['long'],
+              "address": response2['address'] ?? ""
+            });
           } else {
-            AppSnackBars.showErrorSnackBar("Error", response['data']);
+            log("Warning: seller-location fetch failed (service may be down): ${response2['data']}");
           }
+          clearFields();
+          Get.offAll(() => AppScreen(user: user));
+          AppSnackBars.showSuccessSnackBar("Success", 'You have logged in successfully.');
         } else {
-          AppSnackBars.showErrorSnackBar("Error", "Invalid credentials");
+          await SecureStorageServices().setUserModel(response['data']);
+          clearFields();
+          Get.offAll(() => AppScreen(user: user));
+          AppSnackBars.showSuccessSnackBar("Success", 'You have logged in successfully.');
         }
       } else {
-        AppSnackBars.showErrorSnackBar("Error", response['data']);
+        AppSnackBars.showErrorSnackBar("Error", response['data']?.toString() ?? "Invalid credentials");
       }
     } catch (e) {
       log("error in loginUser $e");

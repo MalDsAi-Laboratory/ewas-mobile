@@ -21,7 +21,7 @@ class UserModel {
       this.lastLogin});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    userId = json['userId'];
+    userId = json['userId'] ?? json['id']?.toString();
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
@@ -48,8 +48,8 @@ class UserModel {
 }
 
 class UserRole {
-  static const String admin = "Admin";
-  static const String deliveryAgent = "DeliveryUser";
-  static const String recycler = "Recycler";
-  static const String seller = "Seller";
+  static const String admin = "admin";
+  static const String deliveryAgent = "deliveryuser";
+  static const String recycler = "recycler";
+  static const String seller = "seller";
 }

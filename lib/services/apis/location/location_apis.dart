@@ -15,7 +15,7 @@ extension UserAPIPathExtension on LocatioAPIPath {
   String get path {
     switch (this) {
       case LocatioAPIPath.createUser:
-        return "/post";
+        return "";
     }
   }
 }

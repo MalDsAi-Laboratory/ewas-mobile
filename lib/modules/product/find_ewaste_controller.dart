@@ -249,7 +249,7 @@ class FindEwasteController extends GetxController {
         List<String> sellerIds = [];
         CreateUserModel userModel = CreateUserModel.fromJson(response['data']);
         // split the userModel.crossuserId by ;
-        sellerIds = userModel.crossuserId!.split(';');
+        sellerIds = userModel.recyclerId!.split(';');
         return sellerIds;
       } else {
         log("Error in fetching sellerIds ${response['data']}");
