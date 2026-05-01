@@ -6,6 +6,7 @@ import 'package:simple_ui/modules/home/components/app_drawer.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/seller_items/seller_items.dart';
+import 'package:simple_ui/ui_utils/app_images.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SellerHomePage extends StatefulWidget {
@@ -127,10 +128,7 @@ class _SellerHomePageState extends State<SellerHomePage> {
                         onTap: () {
                           Get.to(() => CategoriesPage());
                         },
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/sellewaste/2.jpg',
-                          'http://ewas.maldsai.com:8080/myapp/sellewaste/1.jpg',
-                        ],
+                        imgList: AppImages.sellEwaste,
                       ),
                       SizedBox(height: 16.h),
                       HeroCarousal(
@@ -140,24 +138,15 @@ class _SellerHomePageState extends State<SellerHomePage> {
                         onTap: () {
                           Get.to(() => SellerItemsScreen());
                         },
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/vieworders/1.jpg',
-                        //  'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
-                        ],
+                        imgList: AppImages.viewOrders,
                       ),
                       SizedBox(height: 16.h),
                       HeroCarousal(
                         title: 'Buy Recycled Items',
-                        autoPlay:
-                            _isHero3AutoPlay, // Updated autoplay condition
+                        autoPlay: _isHero3AutoPlay,
                         showBottomWidget: false,
-                        onTap: () {
-                          // Get.to(() => SellerItemsScreen());
-                        },
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/1.jpg',
-                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/2.jpg',
-                        ],
+                        onTap: () {},
+                        imgList: AppImages.buyRecycled,
                       ),
                     ],
                   ),

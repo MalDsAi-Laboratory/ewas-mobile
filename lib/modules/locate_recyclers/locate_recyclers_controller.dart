@@ -65,10 +65,20 @@ class LocateRecyclersController extends GetxController {
     try {
       Map<String, dynamic> location =
           await SecureStorageServices().getUserLocation() ?? {};
-      currentLocation.value =
-          LatLng(location['latitude'], location['longitude']);
+      final lat = location['latitude'];
+      final lon = location['longitude'];
+      if (lat != null && lon != null) {
+        currentLocation.value = LatLng(
+          (lat is double) ? lat : double.tryParse(lat.toString()) ?? 20.5937,
+          (lon is double) ? lon : double.tryParse(lon.toString()) ?? 78.9629,
+        );
+      } else {
+        // Default to center of India when no location cached
+        currentLocation.value = LatLng(20.5937, 78.9629);
+      }
     } catch (e) {
       log("Error in fetching user location: $e");
+      currentLocation.value = LatLng(20.5937, 78.9629);
     }
   }
 

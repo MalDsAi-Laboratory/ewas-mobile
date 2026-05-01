@@ -7,6 +7,7 @@ import 'package:simple_ui/modules/home/components/hero_carousal.dart';
 import 'package:simple_ui/modules/product/find_ewaste_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
+import 'package:simple_ui/ui_utils/app_images.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class RecyclerHomePage extends StatefulWidget {
@@ -122,10 +123,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                     children: [
                       HeroCarousal(
                         title: 'Find E-waste',
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/findewaste/1.jpg',
-                          'http://ewas.maldsai.com:8080/myapp/findewaste/2.jpg',
-                        ],
+                        imgList: AppImages.findEwaste,
                         autoPlay: _isHero1AutoPlay,
                         showBottomWidget: false,
                         onTap: () {
@@ -135,10 +133,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       SizedBox(height: 16.h),
                       HeroCarousal(
                         title: 'Update your purchase prices',
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/updateprice/1.jpg',
-                          'http://ewas.maldsai.com:8080/myapp/updateprice/2.jpg',
-                        ],
+                        imgList: AppImages.updatePrice,
                         autoPlay: _isHero2AutoPlay,
                         showBottomWidget: false,
                         onTap: () {
@@ -148,16 +143,10 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                       SizedBox(height: 16.h),
                       HeroCarousal(
                         title: 'Buy Recycled Items',
-                        autoPlay:
-                            _isHero3AutoPlay, // Updated autoplay condition
+                        autoPlay: _isHero3AutoPlay,
                         showBottomWidget: false,
-                        onTap: () {
-                          // Get.to(() => SellerItemsScreen());
-                        },
-                        imgList: [
-                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/1.jpg',
-                          'http://ewas.maldsai.com:8080/myapp/buyrecycled/2.jpg',
-                        ],
+                        onTap: () {},
+                        imgList: AppImages.buyRecycled,
                       ),
                     ],
                   ),

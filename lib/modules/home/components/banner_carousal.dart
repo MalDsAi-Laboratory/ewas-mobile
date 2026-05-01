@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:simple_ui/ui_utils/app_images.dart';
 
 class BannerCarousal extends StatelessWidget {
   final bool autoPlay;
@@ -29,11 +30,7 @@ class BannerCarousal extends StatelessWidget {
         child: CarousalWidget(
           autoPlay: autoPlay,
           height: 270.h,
-          imgList: [
-            'http://ewas.maldsai.com:8080/myapp/home_banner/1.webp',
-            'http://ewas.maldsai.com:8080/myapp/home_banner/2.webp',
-            'http://ewas.maldsai.com:8080/myapp/home_banner/3.webp',
-          ],
+          imgList: AppImages.homeBanner,
         ),
       ),
     );
