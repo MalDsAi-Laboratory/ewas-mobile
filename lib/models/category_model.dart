@@ -5,7 +5,9 @@ class CategoryModel {
   CategoryModel({this.imagePath, this.category});
 
   CategoryModel.fromJson(Map<String, dynamic> json) {
-    imagePath = "http://93.229.113.153:8080/" + json['imagePath'];
+    final raw = json['imagePath']?.toString() ?? '';
+    // Use URL as-is if it's already absolute, otherwise skip prepending old prod host
+    imagePath = raw.startsWith('http') ? raw : '';
     category = json['category'];
   }
 

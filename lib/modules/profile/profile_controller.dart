@@ -25,12 +25,7 @@ class ProfileController extends GetxController {
     if (firstName.value.isEmpty ||
         lastName.value.isEmpty ||
         mobileNumber.value.isEmpty ||
-        email.value.isEmpty ||
-        (Get.find<MainScreenController>().user?.roles![0] == UserRole.seller ||
-                Get.find<MainScreenController>().user?.roles![0] ==
-                    UserRole.recycler
-            ? selectedAddress.value.isEmpty
-            : false)) {
+        email.value.isEmpty) {
       return true;
     }
     return false;
@@ -84,10 +79,11 @@ class ProfileController extends GetxController {
         Map<String, dynamic> response = await updateUserApi(data: userModel);
         if (response['status']) {
           SecureStorageServices().setUserModel(userModel.toJson());
-          if (Get.find<MainScreenController>().user?.roles![0] ==
+          if ((Get.find<MainScreenController>().user?.roles![0] ==
                   UserRole.seller ||
               Get.find<MainScreenController>().user?.roles![0] ==
-                  UserRole.recycler) {
+                  UserRole.recycler) &&
+              selectedLatLng.value != null) {
             await updateUser2Api(
                 data: CreateUserModel(
                     userid: model.userId,
@@ -146,9 +142,15 @@ class ProfileController extends GetxController {
     Map<String, dynamic> location =
         await SecureStorageServices().getUserLocation() ?? {};
     if (location.containsKey("latitude") && location.containsKey("longitude")) {
-      selectedLatLng.value =
-          LatLng(location['latitude'], location['longitude']);
-      selectedAddress.value = location['address'];
+      final lat = location['latitude'];
+      final lon = location['longitude'];
+      if (lat != null && lon != null) {
+        selectedLatLng.value = LatLng(
+          (lat is double) ? lat : double.tryParse(lat.toString()) ?? 0.0,
+          (lon is double) ? lon : double.tryParse(lon.toString()) ?? 0.0,
+        );
+      }
+      selectedAddress.value = location['address']?.toString() ?? '';
     }
   }
 }

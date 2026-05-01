@@ -21,7 +21,8 @@ class SubCategoryModel {
     productName = json['productName'];
     category = json['category'];
     materialDetails = json['materialDetails'];
-    imagePath = "http://93.229.113.153:8080/" + json['imagePath'];
+    final raw = json['imagePath']?.toString() ?? '';
+    imagePath = raw.startsWith('http') ? raw : '';
     units = json['units'];
     scale = json['scale'];
   }
