@@ -17,11 +17,11 @@ class NavBar extends StatelessWidget {
       elevation: 0.0,
       color: const Color.fromARGB(255, 255, 255, 255),
       padding: EdgeInsets.all(0.r),
-      height: 75.h,
+      height: 85.h,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(0.r),
         child: Container(
-          height: 60.h,
+          height: 70.h,
           padding: EdgeInsets.only(bottom: 11.h),
           color: const Color.fromARGB(255, 255, 255, 255),
           child: GetBuilder<MainScreenController>(builder: (controller) {

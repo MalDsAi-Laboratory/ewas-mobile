@@ -231,5 +231,6 @@ class UpdatePriceController extends GetxController {
   void onInit() {
     super.onInit();
     searchController.addListener(_filterSubCategories);
+    getProductsPricing();
   }
 }
