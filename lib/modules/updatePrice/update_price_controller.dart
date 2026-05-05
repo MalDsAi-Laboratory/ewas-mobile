@@ -63,8 +63,13 @@ class UpdatePriceController extends GetxController {
         }
         fetchedProductDetails.value = temp;
         await initializeAllSubCategories(productDetails: temp);
+      } else {
+        await initializeAllSubCategories(productDetails: []);
       }
-    } catch (e) {}
+    } catch (e) {
+      log("Error fetching products pricing: $e");
+      await initializeAllSubCategories(productDetails: []);
+    }
   }
 
   Future<void> initializeAllSubCategories(
