@@ -313,55 +313,36 @@ class _OrderComponentState extends State<OrderComponent> {
                                     isEditing
                                         ? Expanded(
                                             child: DropDownWidget(
-                                              value: orderController
-                                                      .currentOrder
-                                                      ?.orderStatus ??
-                                                  OrderStatus.orderPlaced,
+                                              value: (orderController
+                                                          .currentOrder
+                                                          ?.orderStatus ??
+                                                      OrderStatus.orderPlaced)
+                                                  .value,
                                               dropDownItems:
                                                   Get.find<MainScreenController>()
                                                               .user
                                                               ?.roles?[0] ==
                                                           UserRole.admin
-                                                      ? [
-                                                          OrderStatus
-                                                              .orderPlaced,
-                                                          OrderStatus
-                                                              .biddingStarted,
-                                                          OrderStatus
-                                                              .biddingInProgress,
-                                                          OrderStatus
-                                                              .biddingCompleted,
-                                                          OrderStatus
-                                                              .biddingRejected,
-                                                          OrderStatus
-                                                              .awaitingForPick,
-                                                          OrderStatus
-                                                              .deliveredForRecycle,
-                                                          OrderStatus
-                                                              .deliveredToWarehouse,
-                                                          OrderStatus
-                                                              .orderCollected,
-                                                          OrderStatus.completed,
-                                                        ]
+                                                      ? OrderStatus.values
                                                           .map((status) =>
                                                               DropdownMenuItem(
-                                                                value: status,
+                                                                value: status.value,
                                                                 child: Text(
-                                                                    status),
+                                                                    status.value),
                                                               ))
                                                           .toList()
                                                       : orderController
                                                           .deliveryOrderSequence
                                                           .map((status) =>
                                                               DropdownMenuItem(
-                                                                value: status,
+                                                                value: status.value,
                                                                 child: Text(
-                                                                    status),
+                                                                    status.value),
                                                               ))
                                                           .toList(),
-                                              onChanged: (newStatus) {
+                                              onChanged: (newStatusValue) {
                                                 orderController.orderStatus =
-                                                    newStatus;
+                                                    OrderStatus.fromString(newStatusValue);
                                                 orderController.update();
                                               },
                                             ),
@@ -372,15 +353,14 @@ class _OrderComponentState extends State<OrderComponent> {
                                             decoration: BoxDecoration(
                                               color: getStatusColor(
                                                   orderController.currentOrder!
-                                                          .orderStatus ??
-                                                      ""),
+                                                      .orderStatus),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
                                             child: BricolageText(
                                               text: orderController
                                                       .currentOrder!
-                                                      .orderStatus ??
+                                                      .orderStatus?.value ??
                                                   "No Order",
                                               style: TextStyle(
                                                   color: Colors.white,
@@ -508,7 +488,7 @@ class _OrderComponentState extends State<OrderComponent> {
                                 OrderStatusTimeline(
                                     currentStatus:
                                         orderController.orderStatus ??
-                                            "Order Placed"),
+                                            OrderStatus.orderPlaced),
                               ],
                             ),
                           SizedBox(height: 20.h),

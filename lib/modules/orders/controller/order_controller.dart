@@ -26,7 +26,7 @@ class OrderController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController assigneeController = TextEditingController();
   final TextEditingController orderDetailsController = TextEditingController();
-  String? orderStatus;
+  OrderStatus? orderStatus;
   DateTime? orderDate;
   bool isUpdatingOrder = false;
 
@@ -37,7 +37,7 @@ class OrderController extends GetxController {
     emailController.text = currentOrder?.userId ?? "";
 
     orderDetailsController.text = currentOrder?.orderDetails ?? "";
-    orderStatus = currentOrder?.orderStatus ?? 'Order Placed';
+    orderStatus = currentOrder?.orderStatus ?? OrderStatus.orderPlaced;
     orderDate = currentOrder?.orderDate ?? DateTime.now();
     isLoadingCurrentOrder = false;
     deliveryOrderSequence = nextStatuses();
@@ -87,14 +87,14 @@ class OrderController extends GetxController {
     emailController.clear();
     assigneeController.clear();
     orderDetailsController.clear();
-    orderStatus = 'Order Placed';
+    orderStatus = OrderStatus.orderPlaced;
     orderDate = DateTime.now();
     isLoadingCurrentOrder = true;
     update();
   }
 
   // List of order statuses in a sequential order
-  final List<String> orderSequence = [
+  final List<OrderStatus> orderSequence = [
     OrderStatus.orderPlaced,
     OrderStatus.biddingStarted,
     OrderStatus.biddingInProgress,
@@ -107,9 +107,9 @@ class OrderController extends GetxController {
     OrderStatus.completed,
   ];
 
-  List<String> deliveryOrderSequence = [];
+  List<OrderStatus> deliveryOrderSequence = [];
 
-  List<String> nextStatuses() {
+  List<OrderStatus> nextStatuses() {
     int currentIndex = orderSequence.indexOf(orderStatus!);
     if (currentIndex == orderSequence.length - 1) {
       // If Completed, loop back to Order Placed

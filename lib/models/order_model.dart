@@ -1,3 +1,5 @@
+import 'package:simple_ui/modules/orders/order_helper.dart';
+
 class OrderModel {
   final String? eid;
   String? firstName;
@@ -5,7 +7,7 @@ class OrderModel {
   String? address;
   String? assignee;
   String? userId;
-  String? orderStatus;
+  OrderStatus? orderStatus;
   DateTime? orderDate;
   String? orderDetails;
   String? productImagePath;
@@ -32,7 +34,7 @@ class OrderModel {
       address: json['address'],
       assignee: json['assignee'],
       userId: json['userId'],
-      orderStatus: json['orderStatus'],
+      orderStatus: OrderStatus.fromString(json['orderStatus']),
       orderDate:
           json['orderDate'] != null ? DateTime.parse(json['orderDate']) : null,
       orderDetails: json['orderDetails'],
@@ -48,7 +50,7 @@ class OrderModel {
       'address': address,
       'assignee': assignee,
       'userId': userId,
-      'orderStatus': orderStatus,
+      'orderStatus': orderStatus?.value,
       'orderDate': orderDate?.toIso8601String(),
       'orderDetails': orderDetails,
     };

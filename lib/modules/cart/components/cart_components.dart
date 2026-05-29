@@ -35,11 +35,11 @@ class CartStatusWidget extends StatelessWidget {
                 ),
                 BricolageText(
                   textAlign: TextAlign.left,
-                  text: "${order.orderStatus}",
+                  text: order.orderStatus?.value ?? '',
                   style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
-                      color: getStatusColor(order.orderStatus ?? "")),
+                      color: getStatusColor(order.orderStatus)),
                 ),
               ],
             )
@@ -60,11 +60,11 @@ class CartStatusWidget extends StatelessWidget {
                     ),
                     BricolageText(
                       textAlign: TextAlign.left,
-                      text: "${order.orderStatus}",
+                      text: order.orderStatus?.value ?? '',
                       style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
-                          color: getStatusColor(order.orderStatus ?? "")),
+                          color: getStatusColor(order.orderStatus)),
                     ),
                   ],
                 )
@@ -81,11 +81,11 @@ class CartStatusWidget extends StatelessWidget {
                     ),
                     BricolageText(
                       textAlign: TextAlign.left,
-                      text: "${order.orderStatus}",
+                      text: order.orderStatus?.value ?? '',
                       style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
-                          color: getStatusColor(order.orderStatus ?? "")),
+                          color: getStatusColor(order.orderStatus)),
                     ),
                   ],
                 ),

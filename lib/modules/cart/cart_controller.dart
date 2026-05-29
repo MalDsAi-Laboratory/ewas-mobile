@@ -338,6 +338,8 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // pollOrderStatusAndUpdateCart();
+    if (Get.isRegistered<AllOrderController>()) {
+      getCartProducts();
+    }
   }
 }

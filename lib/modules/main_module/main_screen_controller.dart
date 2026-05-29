@@ -39,48 +39,35 @@ class MainScreenController extends GetxController {
     update();
   }
 
-  getRoleBasedScreen(UserModel user) {
-    switch (user.roles![0]) {
+  List<Widget> getRoleBasedScreen(UserModel user) {
+    switch (user.roles?.isNotEmpty == true ? user.roles![0] : '') {
       case UserRole.admin:
-        return [
-          CategoriesPage(
-            isAccessFromBottomTab: true,
-          ),
-          AdminOrderScreen(),
-          UserQueryScreen(),
-        ];
       case UserRole.deliveryAgent:
         return [
-          CategoriesPage(
-            isAccessFromBottomTab: true,
-          ),
+          CategoriesPage(isAccessFromBottomTab: true),
           AdminOrderScreen(),
           UserQueryScreen(),
         ];
       case UserRole.seller:
         return [
-          CategoriesPage(
-            isAccessFromBottomTab: true,
-          ),
+          CategoriesPage(isAccessFromBottomTab: true),
           AllOrderScreen(),
           SellerHomePage(),
-          CartPage()
+          CartPage(),
         ];
       case UserRole.recycler:
         return [
-          UpdatePriceScreen(
-            isAccessFromBottomTab: true,
-          ),
+          UpdatePriceScreen(isAccessFromBottomTab: true),
           RecyclerOrderPage(),
           RecyclerHomePage(),
         ];
       default:
-        return CartPage();
+        return [CartPage()];
     }
   }
 
-  getRoleBasedBottomNavItems(UserModel user) {
-    switch (user.roles![0]) {
+  List<BottomNavBarItem> getRoleBasedBottomNavItems(UserModel user) {
+    switch (user.roles?.isNotEmpty == true ? user.roles![0] : '') {
       case UserRole.admin:
         return [
           const BottomNavBarItem(
@@ -155,7 +142,7 @@ class MainScreenController extends GetxController {
           ),
         ];
       default:
-        return CartPage();
+        return [const BottomNavBarItem(text: 'Home', icon: Icons.home, index: 0)];
     }
   }
 

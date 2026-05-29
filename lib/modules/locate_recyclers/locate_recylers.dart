@@ -20,14 +20,14 @@ class LocateRecyclers extends StatefulWidget {
 
 class _LocateRecyclersState extends State<LocateRecyclers> {
   final MapController _mapController = MapController();
-  double fixedRadiusMeters = double.parse(radius ?? "3000");
+  double fixedRadiusMeters = double.parse(radius.isNotEmpty ? radius : "3000");
   double _zoom = 12.0;
   int _selectedRecyclerIndex = 0; // Default to first recycler
 
   @override
   void initState() {
     super.initState();
-    fixedRadiusMeters = double.parse(radius ?? "3000");
+    fixedRadiusMeters = double.parse(radius.isNotEmpty ? radius : "3000");
     print("radius ${radius}");
     setState(() {});
     Get.put(LocateRecyclersController(

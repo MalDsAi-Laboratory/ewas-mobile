@@ -177,7 +177,7 @@ class AllOrderController extends GetxController {
                     .contains(searchAssignee.value.toLowerCase())) &&
             (selectedStatus.isEmpty ||
                 selectedStatus.value == "All" ||
-                order.orderStatus == selectedStatus.value);
+                order.orderStatus?.value == selectedStatus.value);
       }).toList());
     } else {
       filteredOrdersUnderAuction.assignAll(
@@ -192,7 +192,7 @@ class AllOrderController extends GetxController {
                       .contains(searchAssignee.value.toLowerCase())) &&
               (selectedStatus.isEmpty ||
                   selectedStatus.value == "All" ||
-                  order.orderStatus == selectedStatus.value);
+                  order.orderStatus?.value == selectedStatus.value);
         }).toList(),
       );
     }

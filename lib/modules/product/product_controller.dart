@@ -39,7 +39,7 @@ class ProductController extends GetxController {
 
 // Modify your getBiddingDetails function to ensure proper sequencing
   void getBiddingDetails(
-      {String? orderStatus, String? orderId, DateTime? dateTime}) async {
+      {OrderStatus? orderStatus, String? orderId, DateTime? dateTime}) async {
     isLoading.value = true;
     try {
       // Then set the remaining duration and wait for it to complete
@@ -179,7 +179,7 @@ class ProductController extends GetxController {
   }
 
   Future<void> updateOrderStatus(
-      {required String orderId, required String orderStatus}) async {
+      {required String orderId, required OrderStatus orderStatus}) async {
     try {
       OrderModel order = OrderModel();
       if (orderStatus == OrderStatus.biddingInProgress) {

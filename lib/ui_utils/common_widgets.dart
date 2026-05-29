@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:simple_ui/modules/orders/order_helper.dart';
-import 'package:simple_ui/modules/splash/splash_screen.dart';
+import 'package:simple_ui/modules/auth/register_page.dart';
+import 'package:simple_ui/services/apis/user/user_apis.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
@@ -54,7 +55,7 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-Color getStatusColor(String status) {
+Color getStatusColor(OrderStatus? status) {
   switch (status) {
     case OrderStatus.orderPlaced:
       return Colors.orange;
@@ -76,7 +77,7 @@ Color getStatusColor(String status) {
       return Colors.red;
     case OrderStatus.completed:
       return Colors.blue;
-    default:
+    case null:
       return Colors.grey;
   }
 }
@@ -125,8 +126,9 @@ class LogOutButton extends StatelessWidget {
       ),
       onPressed: () async {
         try {
+          await logoutApi();
           await SecureStorageServices().logOut();
-          Get.off(() => SplashScreen());
+          Get.offAll(() => AuthScreen());
         } catch (e) {
           log("error in logOut $e");
         }

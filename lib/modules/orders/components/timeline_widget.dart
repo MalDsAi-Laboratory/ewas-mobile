@@ -6,7 +6,7 @@ import 'package:simple_ui/ui_utils/app_colors.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class OrderStatusTimeline extends StatefulWidget {
-  final String currentStatus;
+  final OrderStatus? currentStatus;
 
   const OrderStatusTimeline({super.key, required this.currentStatus});
 
@@ -15,7 +15,7 @@ class OrderStatusTimeline extends StatefulWidget {
 }
 
 class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
-  late List<String> orderFlow;
+  late List<OrderStatus> orderFlow;
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
     return SizedBox(
       height: 100.h,
       child: EasyStepper(
-        activeStep: orderFlow.indexOf(widget.currentStatus),
+        activeStep: widget.currentStatus != null ? orderFlow.indexOf(widget.currentStatus!) : 0,
         lineStyle: LineStyle(
           lineLength: 70.w,
           lineSpace: 0,
@@ -68,20 +68,22 @@ class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
         internalPadding: 70.w,
         showStepBorder: false,
         steps: orderFlow
-            .map((status) => _buildStep(status, orderFlow.indexOf(status)))
+            .map((status) => _buildStep(status))
             .toList(),
       ),
     );
   }
 
-  EasyStep _buildStep(String title, int stepIndex) {
+  EasyStep _buildStep(OrderStatus status) {
+    final stepIndex = orderFlow.indexOf(status);
+    final activeIndex = orderFlow.indexOf(widget.currentStatus!);
     return EasyStep(
       customStep: CircleAvatar(
         radius: 12,
-        backgroundColor: stepIndex <= orderFlow.indexOf(widget.currentStatus)
+        backgroundColor: stepIndex <= activeIndex
             ? AppColors.primaryColor
             : const Color.fromARGB(255, 231, 231, 231),
-        child: stepIndex <= orderFlow.indexOf(widget.currentStatus)
+        child: stepIndex <= activeIndex
             ? Icon(
                 Icons.check,
                 size: 15.r,
@@ -90,7 +92,7 @@ class _OrderStatusTimelineState extends State<OrderStatusTimeline> {
             : null,
       ),
       customTitle: BricolageText(
-        text: title,
+        text: status.value,
         style: TextStyle(color: Colors.black87, fontSize: 13.sp),
       ),
     );

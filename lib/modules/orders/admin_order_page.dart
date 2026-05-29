@@ -167,13 +167,13 @@ class AdminOrderScreen extends StatelessWidget {
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: getStatusColor(
-                                                order.orderStatus ?? ""),
+                                                order.orderStatus),
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
                                           child: BricolageText(
                                             text:
-                                                order.orderStatus ?? "No Order",
+                                                order.orderStatus?.value ?? "No Order",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15.sp,

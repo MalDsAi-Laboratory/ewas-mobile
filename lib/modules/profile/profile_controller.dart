@@ -132,13 +132,13 @@ class ProfileController extends GetxController {
   }
 
   @override
-  void onInit() async {
+  Future<void> onInit() async {
     super.onInit();
     UserModel model = Get.find<MainScreenController>().user!;
-    firstName.value = model.firstName!;
-    lastName.value = model.lastName!;
-    mobileNumber.value = model.phoneNumber!;
-    email.value = model.email!;
+    firstName.value = model.firstName ?? '';
+    lastName.value = model.lastName ?? '';
+    mobileNumber.value = model.phoneNumber ?? '';
+    email.value = model.email ?? '';
     Map<String, dynamic> location =
         await SecureStorageServices().getUserLocation() ?? {};
     if (location.containsKey("latitude") && location.containsKey("longitude")) {

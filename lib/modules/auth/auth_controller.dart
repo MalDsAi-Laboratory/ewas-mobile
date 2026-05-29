@@ -108,21 +108,33 @@ class AuthController extends GetxController {
       if (!areFieldsValidated()) {
         return;
       }
-      UserModel userModel = UserModel(
-        userId: userId.value,
-        firstName: firstName.value,
-        lastName: lastName.value,
-        email: email.value,
-        phoneNumber: mobileNumber.value,
-        password: password.value,
-        address: selectedAddress.value,
-        roles: [userRole.value],
-        lastLogin: DateTime.now().toUtc().toIso8601String(),
-      );
+      // Registration payload includes password for the API call only.
+      // Password is discarded immediately after — never persisted.
+      final registrationPayload = {
+        'userId': userId.value,
+        'firstName': firstName.value,
+        'lastName': lastName.value,
+        'email': email.value,
+        'phoneNumber': mobileNumber.value,
+        'password': password.value,
+        'address': selectedAddress.value,
+        'roles': [userRole.value],
+        'lastLogin': DateTime.now().toUtc().toIso8601String(),
+      };
       isLoading.value = true;
-      Map<String, dynamic> response = await createUserApi(data: userModel);
+      Map<String, dynamic> response = await createUserApi(data: registrationPayload);
       if (response['status']) {
-        // Save user account first (auth succeeded).
+        // Persist user model without password.
+        final userModel = UserModel(
+          userId: userId.value,
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          phoneNumber: mobileNumber.value,
+          address: selectedAddress.value,
+          roles: [userRole.value],
+          lastLogin: DateTime.now().toUtc().toIso8601String(),
+        );
         SecureStorageServices().setUserModel(userModel.toJson());
         SecureStorageServices().setUserLocation({
           "latitude": selectedLatLng.value!.latitude,
@@ -212,19 +224,23 @@ class AuthController extends GetxController {
       Map<String, dynamic> response = await getUserByUserIdApi2(userId: userId);
       if (response['status']) {
         CreateUserModel userModel = CreateUserModel.fromJson(response['data']);
-        return {
-          "status": true,
-          "lat": double.parse(userModel.location!.split(',')[0]),
-          "long": double.parse(userModel.location!.split(',')[1]),
-          "address": userModel.address
-        };
+        final parts = userModel.location?.split(',') ?? [];
+        if (parts.length < 2) {
+          return {"status": false, "data": "Invalid location format"};
+        }
+        final lat = double.tryParse(parts[0]);
+        final lng = double.tryParse(parts[1]);
+        if (lat == null || lng == null) {
+          return {"status": false, "data": "Could not parse location coordinates"};
+        }
+        return {"status": true, "lat": lat, "long": lng, "address": userModel.address};
       } else {
         log("Error in fetching recyclerIds ${response['data']}");
         return {"status": false, "data": response['data']};
       }
     } catch (e) {
-      log("Error in fetching recyclerIds ${e}");
-      return {"status": false, "data": e};
+      log("Error in fetching recyclerIds $e");
+      return {"status": false, "data": e.toString()};
     }
   }
 }

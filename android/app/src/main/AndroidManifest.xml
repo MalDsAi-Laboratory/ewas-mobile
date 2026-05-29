@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 package="com.ewaste.ewas">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="E-WAS"
+        android:label="ScrapIt"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

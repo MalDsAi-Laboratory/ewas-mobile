@@ -224,7 +224,7 @@ class _OrderComponentState extends State<OrderComponent> {
                         ),
                         SizedBox(height: 8.h),
                         BricolageText(
-                          text: orderModel.orderStatus ?? "Order Placed",
+                          text: orderModel.orderStatus?.value ?? "Order Placed",
                           style: TextStyle(
                               fontSize: 14.sp, fontWeight: FontWeight.normal),
                         ),

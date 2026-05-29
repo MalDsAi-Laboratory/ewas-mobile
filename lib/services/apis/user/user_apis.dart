@@ -24,35 +24,30 @@ final Dio _authDio = Dio(
 );
 
 /// Derives the auth base URL from userBaseUrl by stripping /api/v1/users -> /api/v1/auth
-String get _authBaseUrl => userBaseUrl!.replaceFirst('/api/v1/users', '/api/v1/auth');
+String get _authBaseUrl => userBaseUrl.replaceFirst('/api/v1/users', '/api/v1/auth');
 
-Future<Map<String, dynamic>> createUserApi({UserModel? data}) async {
+// Accepts raw map so the password can be included for registration without
+// storing it in UserModel (which is used for persistence).
+Future<Map<String, dynamic>> createUserApi({required Map<String, dynamic> data}) async {
   try {
-    log("create user ${jsonEncode(data!.toJson())}");
+    if (kDebugMode) log('createUserApi payload keys: ${data.keys.toList()}');
     final response = await const RetryOptions(maxAttempts: 2).retry(
-      () => _authDio.post(
-        '$_authBaseUrl/register',
-        data: jsonEncode(data.toJson()),
-      ),
+      () => _authDio.post('$_authBaseUrl/register', data: jsonEncode(data)),
       retryIf: (e) => e is DioException || e is SocketException,
     );
-    return {
-      'status': true,
-      "statusCode": response.statusCode,
-      "data": response.data,
-    };
+    return {'status': true, 'statusCode': response.statusCode, 'data': response.data};
   } catch (e) {
     if (e is DioException && e.response != null) {
       return {
         'status': false,
-        "statusCode": e.response?.statusCode ?? 0,
-        "data": e.response?.data?['message'] ?? 'Registration failed',
+        'statusCode': e.response?.statusCode ?? 0,
+        'data': e.response?.data?['message'] ?? 'Registration failed',
       };
     }
     Map<String, dynamic>? result = checkSocketException(e);
     if (result != null) return result;
-    if (kDebugMode) print('createUserApi error: $e');
-    return {'status': false, "statusCode": 0, "data": "Something went wrong"};
+    if (kDebugMode) log('createUserApi error: $e');
+    return {'status': false, 'statusCode': 0, 'data': 'Something went wrong'};
   }
 }
 
@@ -205,11 +200,8 @@ Future<Map<String, dynamic>> getAllUserApi() async {
       "data": responseBody,
     };
   } catch (e) {
-    // FirebaseCrashlytics.instance.recordError(e, StackTrace.current);
     if (e is DioException) {
-      // Handle DioError and access the response
-      final dioError = e;
-      final response = dioError.response;
+      final response = e.response;
       if (response != null) {
         log("response ${response.data}");
         return {
@@ -219,20 +211,21 @@ Future<Map<String, dynamic>> getAllUserApi() async {
         };
       }
     }
-    // Handle SocketException for abrupt connection resets
     Map<String, dynamic>? result = checkSocketException(e);
     if (result != null) {
       return result;
     }
-    // Handle other exceptions here
-    if (kDebugMode) {
-      log('Error: $e');
-    }
-    return {
-      "status": false,
-      "statusCode":
-          0, // You can set a default status code or handle differently
-      "data": e.toString(),
-    };
+    if (kDebugMode) log('Error: $e');
+    return {"status": false, "statusCode": 0, "data": e.toString()};
+  }
+}
+
+Future<Map<String, dynamic>> logoutApi() async {
+  try {
+    final response = await _authDio.post('$_authBaseUrl/logout');
+    return {'status': true, 'statusCode': response.statusCode, 'data': response.data};
+  } catch (e) {
+    if (kDebugMode) log('logoutApi error (non-fatal): $e');
+    return {'status': false, 'statusCode': 0, 'data': 'Logout failed'};
   }
 }

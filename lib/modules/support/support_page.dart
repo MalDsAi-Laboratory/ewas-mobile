@@ -5,6 +5,7 @@ import 'package:simple_ui/models/query_model.dart';
 import 'package:simple_ui/modules/home/components/app_drawer.dart';
 import 'package:simple_ui/modules/support/support_controller.dart';
 import 'package:simple_ui/ui_utils/app_colors.dart';
+import 'package:simple_ui/modules/orders/order_helper.dart';
 import 'package:simple_ui/ui_utils/common_widgets.dart';
 import 'package:simple_ui/ui_utils/loading_widgets.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
@@ -154,7 +155,7 @@ class _UserQueryScreenState extends State<UserQueryScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: getStatusColor(query.status ?? ""),
+                                      color: getStatusColor(OrderStatus.fromString(query.status)),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: BricolageText(

@@ -1,21 +1,19 @@
 name: simple_ui
-description: A simple Flutter UI
+description: E-waste marketplace connecting sellers, recyclers, and delivery agents.
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   cached_network_image: ^3.4.1
   carousel_slider: ^5.0.0
   cupertino_icons: ^1.0.8
-  device_preview_plus: ^2.2.4
   dio: ^5.8.0+1
   drop_down_search_field: ^1.1.2+2
   easy_debounce: ^2.0.3
   easy_stepper: ^0.8.5+1
   flutter:
     sdk: flutter
-  flutter_dotenv: ^5.2.1
   flutter_map: ^7.0.2
   flutter_screenutil: ^5.9.3
   flutter_secure_storage: ^9.2.4
@@ -26,12 +24,14 @@ dependencies:
   image_picker: ^1.1.2
   latlong2: ^0.9.1
   location: ^8.0.0
+  path_provider: ^2.1.5
   retry: ^3.1.2
   shared_preferences: ^2.5.2
   shimmer: ^3.0.0
   url_launcher: ^6.3.1
 
 dev_dependencies:
+  device_preview_plus: ^2.2.4
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
@@ -46,7 +46,5 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - .env.dev
-    - .env.prod
     - assets/images/
     - assets/icons/
