@@ -1,6 +1,49 @@
 {
     "version": "0.2.0",
     "configurations": [
+
+        // ── Local: Chrome (web) ──────────────────────────────────────────────
+        // Start backend first: see docker-compose commands below.
+        // Uses localhost — works because Chrome and Docker are on the same machine.
+        {
+            "name": "ScrapIt (local - web)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+            "args": [
+                "--web-port=3000",
+                "--dart-define=PRODUCT_CATALOGUE_BASE_URL=http://localhost:4082/api/v1/products",
+                "--dart-define=ORDER_BASE_URL=http://localhost:8083/api/v1/orders",
+                "--dart-define=INVENTORY_BASE_URL=http://localhost:4081/api/v1/inventory",
+                "--dart-define=USER_BASE_URL=http://localhost:4080/api/v1/users",
+                "--dart-define=BIDDING_BASE_URL=http://localhost:6060/api/v1/bidding",
+                "--dart-define=PRODUCT_DETAILS_BASE_URL=http://localhost:5080/api/v1/product-details",
+                "--dart-define=LOCATION_BASE_URL=http://localhost:8086/api/v1/locations",
+                "--dart-define=RADIUS=10000"
+            ]
+        },
+
+        // ── Local: Physical device (iOS/Android on same WiFi) ────────────────
+        // Mac LAN IP: 172.20.10.2  — update if your IP changes (ipconfig getifaddr en0)
+        // Android: use this config as-is.
+        // iOS: also allow http in Info.plist (NSAppTransportSecurity → NSAllowsArbitraryLoads).
+        {
+            "name": "ScrapIt (local - device)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=PRODUCT_CATALOGUE_BASE_URL=http://172.20.10.2:4082/api/v1/products",
+                "--dart-define=ORDER_BASE_URL=http://172.20.10.2:8083/api/v1/orders",
+                "--dart-define=INVENTORY_BASE_URL=http://172.20.10.2:4081/api/v1/inventory",
+                "--dart-define=USER_BASE_URL=http://172.20.10.2:4080/api/v1/users",
+                "--dart-define=BIDDING_BASE_URL=http://172.20.10.2:6060/api/v1/bidding",
+                "--dart-define=PRODUCT_DETAILS_BASE_URL=http://172.20.10.2:5080/api/v1/product-details",
+                "--dart-define=LOCATION_BASE_URL=http://172.20.10.2:8086/api/v1/locations",
+                "--dart-define=RADIUS=10000"
+            ]
+        },
+
+        // ── Remote dev server (existing) ─────────────────────────────────────
         {
             "name": "ScrapIt (dev)",
             "request": "launch",
