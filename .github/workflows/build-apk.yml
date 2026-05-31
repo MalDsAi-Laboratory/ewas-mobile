@@ -62,6 +62,17 @@ jobs:
           echo "LOCATION_BASE_URL=http://13.204.227.253:8086/api/v1/locations"          >> $GITHUB_ENV
           echo "RADIUS=10000"                                                            >> $GITHUB_ENV
 
+      # ── Generate debug keystore (CI runners don't have one pre-installed) ──
+      - name: Generate debug keystore
+        run: |
+          mkdir -p ~/.android
+          keytool -genkey -v \
+            -keystore ~/.android/debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -storepass android -keypass android
+
       # ── Build release APK ─────────────────────────────────────────────────
       - name: Build APK
         run: |
