@@ -62,16 +62,20 @@ jobs:
           echo "LOCATION_BASE_URL=http://13.204.227.253:8086/api/v1/locations"          >> $GITHUB_ENV
           echo "RADIUS=10000"                                                            >> $GITHUB_ENV
 
-      # ── Generate debug keystore (CI runners don't have one pre-installed) ──
+      # ── Generate debug keystore + write key.properties for Gradle ───────────
       - name: Generate debug keystore
         run: |
-          mkdir -p ~/.android
+          mkdir -p $HOME/.android
           keytool -genkey -v \
-            -keystore ~/.android/debug.keystore \
+            -keystore $HOME/.android/debug.keystore \
             -alias androiddebugkey \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -dname "CN=Android Debug,O=Android,C=US" \
             -storepass android -keypass android
+
+          # Write key.properties so build.gradle can find it
+          printf "storeFile=%s/.android/debug.keystore\nstorePassword=android\nkeyAlias=androiddebugkey\nkeyPassword=android\n" \
+            "$HOME" > android/key.properties
 
       # ── Build release APK ─────────────────────────────────────────────────
       - name: Build APK

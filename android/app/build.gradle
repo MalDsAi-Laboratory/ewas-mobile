@@ -22,23 +22,12 @@ android {
     signingConfigs {
         release {
             def keyPropsFile = rootProject.file('key.properties')
-            if (keyPropsFile.exists()) {
-                def props = new Properties()
-                props.load(new FileInputStream(keyPropsFile))
-                keyAlias     = props['keyAlias']
-                keyPassword  = props['keyPassword']
-                storeFile    = file(props['storeFile'])
-                storePassword = props['storePassword']
-            }
-            // If key.properties is absent (CI without secrets / dev machine)
-            // fall back to the debug keystore so the build still succeeds.
-            // Replace with a real keystore before submitting to Play Store.
-            else {
-                keyAlias     = "androiddebugkey"
-                keyPassword  = "android"
-                storeFile    = file("${System.properties['user.home']}/.android/debug.keystore")
-                storePassword = "android"
-            }
+            def props = new Properties()
+            props.load(new FileInputStream(keyPropsFile))
+            keyAlias      = props['keyAlias']
+            keyPassword   = props['keyPassword']
+            storeFile     = file(props['storeFile'])
+            storePassword = props['storePassword']
         }
     }
 
