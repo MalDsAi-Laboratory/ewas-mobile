@@ -258,7 +258,7 @@
 
   <script>
     const REPO = 'MalDsAi-Laboratory/ewas-mobile';
-    const API  = 'https://scrapit-releases.pranaykumariitkgp.workers.dev';
+    const API  = `https://api.github.com/repos/${REPO}/releases/latest`;
 
     const ua        = navigator.userAgent || '';
     const isAndroid = /android/i.test(ua);
@@ -364,7 +364,7 @@
     }
 
     // ── Fetch latest release from GitHub API ──
-    fetch(API)
+    fetch(API, { headers: { Accept: 'application/vnd.github+json' } })
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
