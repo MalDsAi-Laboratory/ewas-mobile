@@ -157,8 +157,17 @@ class _EditProfileMapScreenState extends State<EditProfileMapScreen> {
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: locationController.selectedLatLng.value ??
-                    LatLng(20.5937, 78.9629),
+                    LatLng(20.5937, 78.9629), // Centre of India
                 initialZoom: 5,
+                minZoom: 4,   // can't zoom out past country level
+                maxZoom: 18,
+                // Lock camera so user can never pan outside India
+                cameraConstraint: CameraConstraint.containCenter(
+                  bounds: LatLngBounds(
+                    LatLng(6.5, 68.0),   // SW — tip of Kerala / Lakshadweep
+                    LatLng(37.5, 97.5),  // NE — Arunachal Pradesh
+                  ),
+                ),
                 onTap: (_, latLng) => _onMapTap(latLng),
               ),
               children: [
