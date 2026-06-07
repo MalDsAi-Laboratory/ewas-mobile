@@ -52,9 +52,9 @@ class _MapScreenState extends State<MapScreen> {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse ||
+      if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        // Handle the case where permission is not granted
+        // Permission denied — cannot get location
         return;
       }
     }
