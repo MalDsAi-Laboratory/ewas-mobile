@@ -18,3 +18,7 @@
 # Keep Kotlin metadata
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
+
+# Flutter references Play Store split-install classes for deferred components.
+# This app doesn't use deferred components, so suppress the missing-class warnings.
+-dontwarn com.google.android.play.core.**
