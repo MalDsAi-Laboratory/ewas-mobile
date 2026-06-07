@@ -93,8 +93,10 @@ class _EditProfileMapScreenState extends State<EditProfileMapScreen> {
         return;
       }
 
+      // countrycodes=in  → India results only
+      // viewbox + bounded=1 → bias ranking toward India's bounding box
       final url =
-          "https://nominatim.openstreetmap.org/search?format=json&q=$query";
+          "https://nominatim.openstreetmap.org/search?format=json&q=$query&countrycodes=in&viewbox=68.0,37.5,97.5,6.5&bounded=1";
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
