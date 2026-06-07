@@ -166,6 +166,8 @@ class _EditProfileMapScreenState extends State<EditProfileMapScreen> {
                   urlTemplate:
                       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c'],
+                  // Required by OSM tile usage policy — without this tiles return 403
+                  userAgentPackageName: 'com.ewaste.ewas',
                 ),
                 if (locationController.selectedLatLng.value != null)
                   MarkerLayer(

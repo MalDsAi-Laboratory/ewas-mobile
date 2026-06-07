@@ -77,8 +77,10 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<String> _getAddressFromLatLng(LatLng latLng) async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'));
+      final response = await http.get(
+          Uri.parse(
+              'https://nominatim.openstreetmap.org/reverse?lat=${latLng.latitude}&lon=${latLng.longitude}&format=json'),
+          headers: {'User-Agent': 'ScrapIt/1.0 (com.ewaste.ewas)'});
       print("response: " + response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -102,7 +104,8 @@ class _MapScreenState extends State<MapScreen> {
 
       final url =
           "https://nominatim.openstreetmap.org/search?format=json&q=$query";
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url),
+          headers: {'User-Agent': 'ScrapIt/1.0 (com.ewaste.ewas)'});
 
       if (response.statusCode == 200) {
         setState(() {
@@ -133,6 +136,7 @@ class _MapScreenState extends State<MapScreen> {
       final response = await http.get(
         Uri.parse(
             'https://nominatim.openstreetmap.org/reverse.php?lat=${latLng.latitude}&lon=${latLng.longitude}&format=jsonv2'),
+        headers: {'User-Agent': 'ScrapIt/1.0 (com.ewaste.ewas)'},
       );
       print("response lcation ${response.statusCode}");
       if (response.statusCode == 200) {
@@ -178,6 +182,8 @@ class _MapScreenState extends State<MapScreen> {
                   urlTemplate:
                       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: ['a', 'b', 'c'],
+                  // Required by OSM tile usage policy — without this tiles return 403
+                  userAgentPackageName: 'com.ewaste.ewas',
                 ),
                 if (locationController.selectedLatLng.value != null)
                   MarkerLayer(
