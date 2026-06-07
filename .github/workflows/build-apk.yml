@@ -34,7 +34,29 @@ jobs:
         with:
           flutter-version: '3.41.8'
           channel: stable
-          cache: true
+          cache: true   # caches the Flutter SDK itself
+
+      # Cache Gradle dependencies + Android SDK CMake so they aren't
+      # re-downloaded from scratch on every run (saves ~2-3 min per build).
+      - name: Cache Gradle & Android SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            /usr/local/lib/android/sdk/cmake
+          key: ${{ runner.os }}-gradle-cmake-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-cmake-
+
+      # Cache pub packages separately so flutter pub get is instant on cache hit.
+      - name: Cache pub packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Install dependencies
         run: flutter pub get
