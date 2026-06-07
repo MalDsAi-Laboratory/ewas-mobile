@@ -125,30 +125,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ── Deploy landing page to GitHub Pages ──────────────────────────────────
-  deploy-pages:
-    name: Deploy Download Page
-    runs-on: ubuntu-latest
-    needs: build-apk
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload docs/ as Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/
-
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
+  # Landing page is hosted on Cloudflare Pages (auto-deploys on push)
+  # No GitHub Pages deploy step needed
