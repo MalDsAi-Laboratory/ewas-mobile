@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_ui/modules/auth/auth_controller.dart';
 import 'package:simple_ui/modules/auth/components/login_widget.dart';
 import 'package:simple_ui/modules/auth/components/register_widget.dart';
@@ -42,57 +41,30 @@ class _AuthScreenState extends State<AuthScreen>
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 20.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset("assets/images/scrapit_logo.png", height: 60.h),
-                SizedBox(width: 10.w),
-                InterText(
-                  text: "Scrap It",
-                  style: TextStyle(
-                      fontSize: 26.sp,
-                      letterSpacing: -0.5,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 24.h),
+            // ── Logo placeholder — replace with Image.asset once final logo is ready ──
+            _LogoPlaceholder(),
+            SizedBox(height: 16.h),
             InterText(
-                text: "Welcome to Scrap It",
-                style: TextStyle(
-                    fontSize: 23.sp,
-                    letterSpacing: -0.5,
-                    fontWeight: FontWeight.w500)),
-            SizedBox(height: 5.h),
-            RichText(
-                text: TextSpan(children: <TextSpan>[
-              TextSpan(
-                text: "For Smarter, Greener ",
-                style: GoogleFonts.bricolageGrotesque(
-                    textStyle: TextStyle(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500)),
+              text: "ScrapIt",
+              style: TextStyle(
+                fontSize: 28.sp,
+                letterSpacing: -0.8,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primaryColor,
               ),
-              TextSpan(
-                text: "& ",
-                style: GoogleFonts.bricolageGrotesque(
-                    textStyle: TextStyle(
-                        color: const Color.fromARGB(255, 27, 27, 27),
-                        fontSize: 13.sp)),
+            ),
+            SizedBox(height: 6.h),
+            InterText(
+              text: "E-waste recycling, simplified.",
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.1,
               ),
-              TextSpan(
-                text: "Sustainable India",
-                style: GoogleFonts.bricolageGrotesque(
-                    textStyle: TextStyle(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500)),
-              )
-            ])),
-            SizedBox(height: 20.h),
+            ),
+            SizedBox(height: 24.h),
             TabBar(
               controller: controller.tabController,
               labelColor: Colors.green,
@@ -114,6 +86,31 @@ class _AuthScreenState extends State<AuthScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Temporary logo placeholder.
+/// Replace with: Image.asset('assets/images/scrapit_logo.png', height: 64.h)
+/// once the final logo asset is ready.
+class _LogoPlaceholder extends StatelessWidget {
+  const _LogoPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.primaryColor.withOpacity(0.25), width: 1.5),
+      ),
+      child: Icon(
+        Icons.recycling_rounded,
+        size: 38,
+        color: AppColors.primaryColor,
       ),
     );
   }

@@ -79,10 +79,10 @@ jobs:
           printf "storeFile=%s/.android/debug.keystore\nstorePassword=android\nkeyAlias=androiddebugkey\nkeyPassword=android\n" \
             "$HOME" > android/key.properties
 
-      # ── Build release APK ─────────────────────────────────────────────────
+      # ── Build release APK (split per ABI — arm64 ~17MB vs fat ~50MB) ────────
       - name: Build APK
         run: |
-          flutter build apk --release \
+          flutter build apk --release --split-per-abi \
             --dart-define=PRODUCT_CATALOGUE_BASE_URL=${{ env.PRODUCT_CATALOGUE_BASE_URL }} \
             --dart-define=ORDER_BASE_URL=${{ env.ORDER_BASE_URL }} \
             --dart-define=INVENTORY_BASE_URL=${{ env.INVENTORY_BASE_URL }} \
@@ -92,13 +92,19 @@ jobs:
             --dart-define=LOCATION_BASE_URL=${{ env.LOCATION_BASE_URL }} \
             --dart-define=RADIUS=${{ env.RADIUS }}
 
-      # ── Rename APK with version + environment ─────────────────────────────
-      - name: Rename APK
+      # ── Rename APKs with version + environment ────────────────────────────
+      # split-per-abi produces: app-arm64-v8a-release.apk (modern phones)
+      #                         app-armeabi-v7a-release.apk (older phones)
+      #                         app-x86_64-release.apk (emulators)
+      - name: Rename APKs
         run: |
           ENV_TAG=${{ github.event.inputs.environment || 'prod' }}
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          mv build/app/outputs/flutter-apk/app-release.apk \
-             build/app/outputs/flutter-apk/ScrapIt-${ENV_TAG}-${SHORT_SHA}.apk
+          cd build/app/outputs/flutter-apk
+          for f in app-*-release.apk; do
+            ABI=$(echo "$f" | sed 's/app-\(.*\)-release.apk/\1/')
+            mv "$f" "ScrapIt-${ABI}-${ENV_TAG}-${SHORT_SHA}.apk"
+          done
 
       # ── Upload to GitHub Release ──────────────────────────────────────────
       - name: Create GitHub Release
