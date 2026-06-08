@@ -42,29 +42,21 @@ class _AuthScreenState extends State<AuthScreen>
         child: Column(
           children: [
             SizedBox(height: 24.h),
-            // ── Logo placeholder — replace with Image.asset once final logo is ready ──
-            _LogoPlaceholder(),
-            SizedBox(height: 16.h),
+            Image.asset(
+              'assets/images/scrapit_logo.png',
+              height: 110.h,
+            ),
+            SizedBox(height: 8.h),
             InterText(
-              text: "ScrapIt",
+              text: "FOR SMARTER GREENER & SUSTAINABLE INDIA",
               style: TextStyle(
-                fontSize: 28.sp,
-                letterSpacing: -0.8,
-                fontWeight: FontWeight.w800,
+                fontSize: 10.sp,
                 color: AppColors.primaryColor,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
             ),
-            SizedBox(height: 6.h),
-            InterText(
-              text: "E-waste recycling, simplified.",
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.1,
-              ),
-            ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 20.h),
             TabBar(
               controller: controller.tabController,
               labelColor: Colors.green,
@@ -86,31 +78,6 @@ class _AuthScreenState extends State<AuthScreen>
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Temporary logo placeholder.
-/// Replace with: Image.asset('assets/images/scrapit_logo.png', height: 64.h)
-/// once the final logo asset is ready.
-class _LogoPlaceholder extends StatelessWidget {
-  const _LogoPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryColor.withOpacity(0.25), width: 1.5),
-      ),
-      child: Icon(
-        Icons.recycling_rounded,
-        size: 38,
-        color: AppColors.primaryColor,
       ),
     );
   }
