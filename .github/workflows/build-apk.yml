@@ -2,7 +2,7 @@ name: Build & Release APK
 
 on:
   push:
-    branches: [scrapit-audit, main]
+    branches: [scrapit-audit]   # main has no Flutter source — don't auto-build from it
   workflow_dispatch:
     inputs:
       environment:
