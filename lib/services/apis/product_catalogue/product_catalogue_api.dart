@@ -14,9 +14,9 @@ extension ProductCatalogueAPIPathExtension on ProductCatalogueAPIPath {
   String get path {
     switch (this) {
       case ProductCatalogueAPIPath.categories:
-        return "/products/categories";
+        return "/api/products/categories";
       case ProductCatalogueAPIPath.products:
-        return "/products/category/";
+        return "/api/products/category/";
     }
   }
 }

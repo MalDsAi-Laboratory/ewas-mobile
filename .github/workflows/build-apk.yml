@@ -65,7 +65,7 @@ jobs:
       - name: Set environment URLs (prod)
         if: github.event.inputs.environment != 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/v1/products" >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/products" >> $GITHUB_ENV
           echo "ORDER_BASE_URL=http://13.204.227.253:8083/api/v1/orders"               >> $GITHUB_ENV
           echo "INVENTORY_BASE_URL=http://13.204.227.253:4081/api/v1/inventory"        >> $GITHUB_ENV
           echo "USER_BASE_URL=http://13.204.227.253:4080/api/v1/users"                 >> $GITHUB_ENV
@@ -77,7 +77,7 @@ jobs:
       - name: Set environment URLs (dev)
         if: github.event.inputs.environment == 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/v1/products"  >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/products"  >> $GITHUB_ENV
           echo "ORDER_BASE_URL=http://13.204.227.253:8083/api/v1/orders"                >> $GITHUB_ENV
           echo "INVENTORY_BASE_URL=http://13.204.227.253:4081/api/v1/inventory"         >> $GITHUB_ENV
           echo "USER_BASE_URL=http://13.204.227.253:4080/api/v1/users"                  >> $GITHUB_ENV
