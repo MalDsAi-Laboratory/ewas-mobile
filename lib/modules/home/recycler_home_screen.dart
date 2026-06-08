@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:simple_ui/modules/home/components/app_drawer.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/product/find_ewaste_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_screen.dart';
 import 'package:simple_ui/modules/updatePrice/update_price_controller.dart';
 import 'package:simple_ui/ui_utils/app_images.dart';
+import 'package:simple_ui/ui_utils/app_snackbars.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class RecyclerHomePage extends StatefulWidget {
@@ -95,7 +97,7 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BricolageText(
-              text: "Hi !",
+              text: "Hi, ${Get.find<MainScreenController>().user?.firstName ?? 'there'} 👋",
               style: TextStyle(fontSize: 16.sp),
             ),
             BricolageText(
@@ -145,7 +147,10 @@ class _RecyclerHomePageState extends State<RecyclerHomePage> {
                         title: 'Buy Recycled Items',
                         autoPlay: _isHero3AutoPlay,
                         showBottomWidget: false,
-                        onTap: () {},
+                        onTap: () {
+                          AppSnackBars.showNormalSnackBar(
+                              "Coming Soon", "Buy Recycled Items will be available soon!");
+                        },
                         imgList: AppImages.buyRecycled,
                       ),
                     ],

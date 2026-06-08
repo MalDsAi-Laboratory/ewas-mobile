@@ -5,8 +5,10 @@ import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/home/components/app_drawer.dart';
 import 'package:simple_ui/modules/home/components/banner_carousal.dart';
 import 'package:simple_ui/modules/home/components/hero_carousal.dart';
+import 'package:simple_ui/modules/main_module/main_screen_controller.dart';
 import 'package:simple_ui/modules/seller_items/seller_items.dart';
 import 'package:simple_ui/ui_utils/app_images.dart';
+import 'package:simple_ui/ui_utils/app_snackbars.dart';
 import 'package:simple_ui/ui_utils/text_widgets.dart';
 
 class SellerHomePage extends StatefulWidget {
@@ -94,7 +96,7 @@ class _SellerHomePageState extends State<SellerHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BricolageText(
-              text: "Hi !",
+              text: "Hi, ${Get.find<MainScreenController>().user?.firstName ?? 'there'} 👋",
               style: TextStyle(fontSize: 16.sp),
             ),
             BricolageText(
@@ -145,7 +147,10 @@ class _SellerHomePageState extends State<SellerHomePage> {
                         title: 'Buy Recycled Items',
                         autoPlay: _isHero3AutoPlay,
                         showBottomWidget: false,
-                        onTap: () {},
+                        onTap: () {
+                          AppSnackBars.showNormalSnackBar(
+                              "Coming Soon", "Buy Recycled Items will be available soon!");
+                        },
                         imgList: AppImages.buyRecycled,
                       ),
                     ],
