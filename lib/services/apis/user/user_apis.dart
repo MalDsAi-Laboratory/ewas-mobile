@@ -51,6 +51,36 @@ Future<Map<String, dynamic>> createUserApi({required Map<String, dynamic> data})
   }
 }
 
+/// Sends the Google ID token to the backend for verification.
+/// The backend verifies with Google, then creates/finds the user and returns a JWT.
+Future<Map<String, dynamic>> loginWithGoogleApi({
+  required String idToken,
+  String role = 'user',
+}) async {
+  try {
+    final response = await const RetryOptions(maxAttempts: 2).retry(
+      () => _authDio.post(
+        '$_authBaseUrl/google',
+        data: jsonEncode({'idToken': idToken, 'role': role}),
+      ),
+      retryIf: (e) => e is DioException || e is SocketException,
+    );
+    return {'status': true, 'statusCode': response.statusCode, 'data': response.data};
+  } catch (e) {
+    if (e is DioException && e.response != null) {
+      return {
+        'status': false,
+        'statusCode': e.response?.statusCode ?? 0,
+        'data': e.response?.data?['message'] ?? 'Google login failed',
+      };
+    }
+    Map<String, dynamic>? result = checkSocketException(e);
+    if (result != null) return result;
+    if (kDebugMode) log('loginWithGoogleApi error: $e');
+    return {'status': false, 'statusCode': 0, 'data': 'Something went wrong'};
+  }
+}
+
 Future<Map<String, dynamic>> loginUserApi({required String email, required String password}) async {
   try {
     final response = await const RetryOptions(maxAttempts: 2).retry(

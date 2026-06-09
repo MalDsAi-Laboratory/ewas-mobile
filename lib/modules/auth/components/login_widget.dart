@@ -65,7 +65,64 @@ class LoginWidget extends StatelessWidget {
                         onTap: controller.loginUser,
                         isBtnActive: true),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 16.h),
+              // ── OR divider ───────────────────────────────────────────────
+              Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.grey.shade300)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: InterText(
+                      text: "OR",
+                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                    ),
+                  ),
+                  Expanded(child: Divider(color: Colors.grey.shade300)),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              // ── Google Sign-In button ─────────────────────────────────────
+              Obx(
+                () => GestureDetector(
+                  onTap: controller.isLoading.value
+                      ? null
+                      : () => controller.loginWithGoogle(),
+                  child: Container(
+                    width: double.infinity,
+                    height: 52.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
+                          height: 22.h,
+                          width: 22.h,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.g_mobiledata_rounded,
+                            size: 24.r,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        InterText(
+                          text: "Continue with Google",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
               InterText(
                 text: "By signing in, you agree to terms and conditions",
                 textAlign: TextAlign.center,

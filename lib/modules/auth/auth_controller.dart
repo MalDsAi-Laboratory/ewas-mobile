@@ -8,6 +8,7 @@ import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/main_module/app_screen.dart';
 import 'package:simple_ui/services/apis/location/location_apis.dart';
 import 'package:simple_ui/services/apis/user/user_apis.dart';
+import 'package:simple_ui/services/google_sign_in_service.dart';
 import 'package:simple_ui/services/secure_storage/user_caching.dart';
 import 'package:simple_ui/services/validation_field.dart';
 import 'package:simple_ui/ui_utils/app_snackbars.dart';
@@ -214,6 +215,51 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       log("error in loginUser $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Google Sign-In flow.
+  /// [role] is passed only when creating a new account — existing users keep their role.
+  void loginWithGoogle({String role = 'user'}) async {
+    try {
+      isLoading.value = true;
+
+      final result = await GoogleSignInService.signIn();
+      if (result == null) {
+        // User cancelled the Google picker
+        return;
+      }
+
+      final response = await loginWithGoogleApi(idToken: result.idToken, role: role);
+      if (response['status']) {
+        final user = UserModel.fromJson(response['data']);
+        await SecureStorageServices().setUserModel(response['data']);
+
+        // Try to fetch location from scheduling service (non-blocking)
+        if (user.roles != null && user.roles!.isNotEmpty) {
+          try {
+            final locResp = await getRecyclersIds(user.userId ?? '');
+            if (locResp['status']) {
+              await SecureStorageServices().setUserLocation({
+                'latitude': locResp['lat'],
+                'longitude': locResp['long'],
+                'address': locResp['address'] ?? '',
+              });
+            }
+          } catch (_) {}
+        }
+
+        clearFields();
+        Get.offAll(() => AppScreen(user: user));
+        AppSnackBars.showSuccessSnackBar('Welcome!', 'Signed in as ${result.displayName}');
+      } else {
+        AppSnackBars.showErrorSnackBar('Error', response['data']?.toString() ?? 'Google sign-in failed');
+      }
+    } catch (e) {
+      log('loginWithGoogle error: $e');
+      AppSnackBars.showErrorSnackBar('Error', 'Google sign-in failed. Please try again.');
     } finally {
       isLoading.value = false;
     }
