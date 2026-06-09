@@ -227,10 +227,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
 
       final result = await GoogleSignInService.signIn();
-      if (result == null) {
-        // User cancelled the Google picker
-        return;
-      }
+      if (result == null) return; // User cancelled — silent
 
       final response = await loginWithGoogleApi(idToken: result.idToken, role: role);
       if (response['status']) {
@@ -259,7 +256,9 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       log('loginWithGoogle error: $e');
-      AppSnackBars.showErrorSnackBar('Error', 'Google sign-in failed. Please try again.');
+      // Show the actual error message so we can diagnose SHA-1 / token issues
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      AppSnackBars.showErrorSnackBar('Google Sign-In Failed', msg);
     } finally {
       isLoading.value = false;
     }

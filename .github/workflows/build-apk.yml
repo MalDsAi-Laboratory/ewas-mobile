@@ -86,16 +86,15 @@ jobs:
           echo "LOCATION_BASE_URL=http://13.204.227.253:8086/api/v1/locations"          >> $GITHUB_ENV
           echo "RADIUS=10000"                                                            >> $GITHUB_ENV
 
-      # ── Generate debug keystore + write key.properties for Gradle ───────────
-      - name: Generate debug keystore
+      # ── Restore fixed debug keystore (SHA-1 registered in Firebase) ─────────
+      # SCRAPIT_DEBUG_KEYSTORE is the base64-encoded keystore file stored as a
+      # GitHub secret.  Decoding it here gives us the same SHA-1 every build,
+      # so Google Sign-In works.  Alias/passwords match what keytool used when
+      # the keystore was generated (/tmp/scrapit-debug.keystore).
+      - name: Restore fixed debug keystore
         run: |
           mkdir -p $HOME/.android
-          keytool -genkey -v \
-            -keystore $HOME/.android/debug.keystore \
-            -alias androiddebugkey \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -dname "CN=Android Debug,O=Android,C=US" \
-            -storepass android -keypass android
+          echo "${{ secrets.SCRAPIT_DEBUG_KEYSTORE }}" | base64 --decode > $HOME/.android/debug.keystore
 
           # Write key.properties so build.gradle can find it
           printf "storeFile=%s/.android/debug.keystore\nstorePassword=android\nkeyAlias=androiddebugkey\nkeyPassword=android\n" \

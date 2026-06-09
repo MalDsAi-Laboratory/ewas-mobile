@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "43416928850-rm06sq359546dkr608c2otg5lqforh6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ewaste.ewas",
+            "certificate_hash": "d5a82222583b1d3f5f3ffa64f21a4da5b42cc06a"
+          }
+        },
+        {
           "client_id": "43416928850-oq8e8o5dgp9i2jldabqjdqcatn5o2f99.apps.googleusercontent.com",
           "client_type": 3
         }

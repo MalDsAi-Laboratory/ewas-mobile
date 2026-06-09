@@ -24,28 +24,29 @@ class GoogleSignInService {
   );
 
   /// Signs the user in with Google and returns their ID token.
-  /// Returns null if the user cancels or an error occurs.
+  /// Throws a descriptive [Exception] on failure so the caller can show an error.
   static Future<_GoogleAuthResult?> signIn() async {
-    try {
-      // Sign out first to force the account picker to show every time
-      await _googleSignIn.signOut();
+    // Sign out first to force the account picker every time
+    await _googleSignIn.signOut();
 
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
-      if (account == null) return null; // User cancelled
+    final GoogleSignInAccount? account = await _googleSignIn.signIn();
+    if (account == null) return null; // User cancelled — not an error
 
-      final GoogleSignInAuthentication auth = await account.authentication;
-      final String? idToken = auth.idToken;
+    final GoogleSignInAuthentication auth = await account.authentication;
+    final String? idToken = auth.idToken;
 
-      if (idToken == null) return null;
-
-      return _GoogleAuthResult(
-        idToken: idToken,
-        email: account.email,
-        displayName: account.displayName ?? account.email,
+    if (idToken == null) {
+      throw Exception(
+        'Google sign-in returned no ID token.\n'
+        'Make sure the app SHA-1 is registered in Firebase Project Settings.',
       );
-    } catch (e) {
-      return null;
     }
+
+    return _GoogleAuthResult(
+      idToken: idToken,
+      email: account.email,
+      displayName: account.displayName ?? account.email,
+    );
   }
 
   /// Signs the user out of Google (clears local Google session).
