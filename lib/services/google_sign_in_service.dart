@@ -13,8 +13,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 ///   6. Add to android/app/build.gradle (bottom):
 ///        apply plugin: 'com.google.gms.google-services'
 class GoogleSignInService {
+  // Web Client ID (type 3) from google-services.json — required so the
+  // ID token is issued for our backend to verify.
+  static const _webClientId =
+      '43416928850-oq8e8o5dgp9i2jldabqjdqcatn5o2f99.apps.googleusercontent.com';
+
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
+    serverClientId: _webClientId,
   );
 
   /// Signs the user in with Google and returns their ID token.

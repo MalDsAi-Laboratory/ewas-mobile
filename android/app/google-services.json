@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "43416928850",
+    "project_id": "scrapit-89dcd",
+    "storage_bucket": "scrapit-89dcd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43416928850:android:dc6ca96ba79c1e5a56558b",
+        "android_client_info": {
+          "package_name": "com.ewaste.ewas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43416928850-3cn1566bps5jipss4aj0bb83l2ug4958.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ewaste.ewas",
+            "certificate_hash": "6e4bf2a5cd8d2e3b5e420651eba09cd625a94cfc"
+          }
+        },
+        {
+          "client_id": "43416928850-oq8e8o5dgp9i2jldabqjdqcatn5o2f99.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZUWYnDr7ffstADRGpo6avYa8YrfX5Aho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43416928850-oq8e8o5dgp9i2jldabqjdqcatn5o2f99.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
