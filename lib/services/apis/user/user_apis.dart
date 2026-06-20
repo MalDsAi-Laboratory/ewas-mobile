@@ -33,7 +33,7 @@ Future<Map<String, dynamic>> createUserApi({required Map<String, dynamic> data})
     if (kDebugMode) log('createUserApi payload keys: ${data.keys.toList()}');
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => _authDio.post('$_authBaseUrl/register', data: jsonEncode(data)),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     return {'status': true, 'statusCode': response.statusCode, 'data': response.data};
   } catch (e) {
@@ -63,7 +63,7 @@ Future<Map<String, dynamic>> loginWithGoogleApi({
         '$_authBaseUrl/google',
         data: jsonEncode({'idToken': idToken, 'role': role}),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     return {'status': true, 'statusCode': response.statusCode, 'data': response.data};
   } catch (e) {
@@ -88,7 +88,7 @@ Future<Map<String, dynamic>> loginUserApi({required String email, required Strin
         '$_authBaseUrl/login',
         data: jsonEncode({"email": email, "password": password}),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     return {
       "status": true,
@@ -119,7 +119,7 @@ Future<Map<String, dynamic>> getUserByUserIdApi({String? userId}) async {
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
@@ -169,7 +169,7 @@ Future<Map<String, dynamic>> updateUserApi({UserModel? data}) async {
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;
@@ -221,7 +221,7 @@ Future<Map<String, dynamic>> getAllUserApi() async {
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {

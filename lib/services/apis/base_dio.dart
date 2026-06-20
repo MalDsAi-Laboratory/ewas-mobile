@@ -13,6 +13,11 @@ class ErrorModel {
 void Function()? _onUnauthorized;
 void setUnauthorizedCallback(void Function() cb) => _onUnauthorized = cb;
 
+// Prevents multiple concurrent 401 responses from all firing _onUnauthorized.
+// Resets automatically after enough time for all in-flight retries to drain.
+bool _isHandlingUnauthorized = false;
+void resetUnauthorizedHandling() => _isHandlingUnauthorized = false;
+
 /// Creates a fully-configured Dio instance for the given [baseUrl].
 /// All interceptors (JWT auth, logging, 401 handling) are wired here once.
 Dio createDio(String baseUrl) {
@@ -52,18 +57,16 @@ Dio createDio(String baseUrl) {
   dio.interceptors.add(InterceptorsWrapper(
     onError: (DioException e, handler) async {
       if (e.response?.statusCode == 401) {
-        await SecureStorageServices().logOut();
-        _onUnauthorized?.call();
-        // Reject with DioExceptionType.cancel so RetryOptions.retryIf
-        // (which matches DioException) does NOT fire a second attempt —
-        // retrying an expired-token request would just trigger a second
-        // _onUnauthorized call and cause the login-page flicker.
-        handler.reject(DioException(
-          requestOptions: e.requestOptions,
-          response: e.response,
-          error: 'Session expired',
-          type: DioExceptionType.cancel,
-        ));
+        // Only fire once even if multiple concurrent requests all return 401.
+        // Reset after 5 s so the next fresh login session is clean.
+        if (!_isHandlingUnauthorized) {
+          _isHandlingUnauthorized = true;
+          await SecureStorageServices().logOut();
+          _onUnauthorized?.call();
+          Future.delayed(const Duration(seconds: 5),
+              () => _isHandlingUnauthorized = false);
+        }
+        handler.reject(e);
         return;
       }
       if (kDebugMode) {

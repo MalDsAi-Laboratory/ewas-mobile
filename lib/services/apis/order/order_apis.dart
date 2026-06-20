@@ -31,7 +31,7 @@ Future<Map<String, dynamic>> createOrderApi({OrderModel? data}) async {
           options: Options(method: "POST", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;
@@ -74,21 +74,21 @@ Future<Map<String, dynamic>> createOrderApi({OrderModel? data}) async {
 Future<Map<String, dynamic>> getAllOrdersApi(
     {String? userId, int? pageNumber, int? pageSize, String? role}) async {
   try {
+    // Admin/delivery agent: GET /api/v1/orders?page=N&size=N  (paginated all-orders)
+    // Everyone else:        GET /api/v1/orders/user/{userId}?page=N&size=N
+    final path = (role == UserRole.admin || role == UserRole.deliveryAgent)
+        ? "?page=$pageNumber&size=$pageSize"
+        : "/user/$userId?page=$pageNumber&size=$pageSize";
     final response = await const RetryOptions(maxAttempts: 2).retry(
       () => dio.request(
-        OrderAPIPath.getAllOrders.path +
-            ((role == UserRole.admin || role == UserRole.deliveryAgent)
-                ? "pagination"
-                : userId!) +
-            "?page=${pageNumber}&size=${pageSize}",
+        path,
         options: Options(
           method: "GET",
-          extra: {
-            "requiresToken": false,
-          },
+          extra: {"requiresToken": false},
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException ||
+          (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
@@ -138,7 +138,7 @@ Future<Map<String, dynamic>> updateOrderApi({OrderModel? data}) async {
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;

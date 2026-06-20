@@ -39,7 +39,7 @@ Future<Map<String, dynamic>> getAllProductPricingApi({String? userId}) async {
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
@@ -89,7 +89,7 @@ Future<Map<String, dynamic>> createProductDetailsApi(
           options: Options(method: "POST", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;
@@ -140,7 +140,7 @@ Future<Map<String, dynamic>> updateProductDetailsApi(
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;
@@ -192,7 +192,7 @@ Future<Map<String, dynamic>> getProductPricingApi({String? productId}) async {
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {

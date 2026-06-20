@@ -29,7 +29,7 @@ Future<Map<String, dynamic>> createUser2Api({CreateUserModel? data}) async {
           options: Options(method: "POST", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;
@@ -81,7 +81,7 @@ Future<Map<String, dynamic>> getUserByUserIdApi2({String? userId}) async {
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
@@ -130,7 +130,7 @@ Future<Map<String, dynamic>> updateUser2Api({CreateUserModel? data}) async {
           options: Options(method: "PUT", extra: {
             "requiresToken": false,
           })),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
 
     final responseBody = response.data;

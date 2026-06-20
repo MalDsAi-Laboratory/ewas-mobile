@@ -63,8 +63,17 @@ class CategoriesController extends GetxController {
     }
     filteredCategories.assignAll(allCategories);
     await fetchAllSubCategories();
-    if (Get.find<MainScreenController>().user?.roles?[0] == UserRole.recycler) {
-      Get.find<UpdatePriceController>().getProductsPricing();
+    try {
+      if (Get.isRegistered<MainScreenController>()) {
+        final roles = Get.find<MainScreenController>().user?.roles;
+        if (roles != null && roles.isNotEmpty && roles[0] == UserRole.recycler) {
+          if (Get.isRegistered<UpdatePriceController>()) {
+            Get.find<UpdatePriceController>().getProductsPricing();
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) log('CategoriesController: post-fetch guard error: $e');
     }
   }
 

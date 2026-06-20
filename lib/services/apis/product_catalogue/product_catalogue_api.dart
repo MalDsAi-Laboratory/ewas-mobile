@@ -35,7 +35,7 @@ Future<Map<String, dynamic>> getAllCategoriesApi(
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
@@ -89,7 +89,7 @@ Future<Map<String, dynamic>> getProductsFromCategoryApi(
           },
         ),
       ),
-      retryIf: (e) => e is DioException || e is SocketException,
+      retryIf: (e) => e is SocketException || (e is DioException && e.response == null),
     );
     final responseBody = response.data;
     return {
