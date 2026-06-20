@@ -186,6 +186,9 @@ class AuthController extends GetxController {
       if (response['status']) {
         UserModel user = UserModel.fromJson(response['data']);
         
+        final token = response['data']['token'] as String?;
+        if (token != null) await SecureStorageServices().setAccessToken(token);
+
         if (user.roles != null && user.roles!.isNotEmpty &&
            (user.roles![0] == UserRole.recycler || user.roles![0] == UserRole.seller)) {
           // Try to fetch seller location from scheduling service.
@@ -208,7 +211,7 @@ class AuthController extends GetxController {
           await SecureStorageServices().setUserModel(response['data']);
           clearFields();
           Get.offAll(() => AppScreen(user: user));
-          AppSnackBars.showSuccessSnackBar("Success", 'You have logged in successfully.');
+          AppSnackBars.showSuccessSnackBar('Success', 'You have logged in successfully.');
         }
       } else {
         AppSnackBars.showErrorSnackBar("Error", response['data']?.toString() ?? "Invalid credentials");
@@ -232,6 +235,8 @@ class AuthController extends GetxController {
       final response = await loginWithGoogleApi(idToken: result.idToken, role: role);
       if (response['status']) {
         final user = UserModel.fromJson(response['data']);
+        final googleToken = response['data']['token'] as String?;
+        if (googleToken != null) await SecureStorageServices().setAccessToken(googleToken);
         await SecureStorageServices().setUserModel(response['data']);
 
         // Try to fetch location from scheduling service (non-blocking)
