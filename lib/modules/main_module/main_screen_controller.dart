@@ -62,7 +62,13 @@ class MainScreenController extends GetxController {
           RecyclerHomePage(),
         ];
       default:
-        return [CartPage()];
+        // "user" role (backend default) and any unknown role → seller experience
+        return [
+          CategoriesPage(isAccessFromBottomTab: true),
+          AllOrderScreen(),
+          SellerHomePage(),
+          CartPage(),
+        ];
     }
   }
 
@@ -142,7 +148,12 @@ class MainScreenController extends GetxController {
           ),
         ];
       default:
-        return [const BottomNavBarItem(text: 'Home', icon: Icons.home, index: 0)];
+        return [
+          const BottomNavBarItem(text: "Category", icon: Icons.category, index: 0),
+          const BottomNavBarItem(text: "Orders", icon: Icons.list, index: 1),
+          const BottomNavBarItem(index: 2),
+          const BottomNavBarItem(text: "Cart", index: 3, icon: CupertinoIcons.cart_fill),
+        ];
     }
   }
 
@@ -155,6 +166,8 @@ class MainScreenController extends GetxController {
         user?.roles?[0] == UserRole.deliveryAgent) {
       currentIndex = 1;
     }
+    // Guard: clamp so a bad/unknown role never causes a RangeError on pages[]
+    currentIndex = currentIndex.clamp(0, pages.length - 1);
     isSettingUpApp = false;
     update();
   }
