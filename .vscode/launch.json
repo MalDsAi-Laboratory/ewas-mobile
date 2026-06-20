@@ -43,6 +43,39 @@
             ]
         },
 
+        // ── Production: E2E Networks (151.185.45.95) ─────────────────────────
+        {
+            "name": "ScrapIt (prod)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--dart-define=PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products",
+                "--dart-define=ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders",
+                "--dart-define=INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory",
+                "--dart-define=USER_BASE_URL=http://151.185.45.95:4080/api/v1/users",
+                "--dart-define=BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding",
+                "--dart-define=PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details",
+                "--dart-define=LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations",
+                "--dart-define=RADIUS=10000"
+            ]
+        },
+        {
+            "name": "ScrapIt (prod, profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": [
+                "--dart-define=PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products",
+                "--dart-define=ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders",
+                "--dart-define=INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory",
+                "--dart-define=USER_BASE_URL=http://151.185.45.95:4080/api/v1/users",
+                "--dart-define=BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding",
+                "--dart-define=PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details",
+                "--dart-define=LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations",
+                "--dart-define=RADIUS=10000"
+            ]
+        },
+
         // ── Remote dev server (existing) ─────────────────────────────────────
         {
             "name": "ScrapIt (dev)",

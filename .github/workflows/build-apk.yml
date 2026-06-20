@@ -65,26 +65,26 @@ jobs:
       - name: Set environment URLs (prod)
         if: github.event.inputs.environment != 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/products" >> $GITHUB_ENV
-          echo "ORDER_BASE_URL=http://13.204.227.253:8083/api/v1/orders"               >> $GITHUB_ENV
-          echo "INVENTORY_BASE_URL=http://13.204.227.253:4081/api/v1/inventory"        >> $GITHUB_ENV
-          echo "USER_BASE_URL=http://13.204.227.253:4080/api/v1/users"                 >> $GITHUB_ENV
-          echo "BIDDING_BASE_URL=http://13.204.227.253:6060/api/v1/bidding"            >> $GITHUB_ENV
-          echo "PRODUCT_DETAILS_BASE_URL=http://13.204.227.253:5080/api/v1/product-details" >> $GITHUB_ENV
-          echo "LOCATION_BASE_URL=http://13.204.227.253:8086/api/v1/locations"         >> $GITHUB_ENV
-          echo "RADIUS=10000"                                                           >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products"       >> $GITHUB_ENV
+          echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
+          echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
+          echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
+          echo "BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding"                  >> $GITHUB_ENV
+          echo "PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details"  >> $GITHUB_ENV
+          echo "LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations"               >> $GITHUB_ENV
+          echo "RADIUS=10000"                                                                >> $GITHUB_ENV
 
       - name: Set environment URLs (dev)
         if: github.event.inputs.environment == 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://13.204.227.253:4082/api/products"  >> $GITHUB_ENV
-          echo "ORDER_BASE_URL=http://13.204.227.253:8083/api/v1/orders"                >> $GITHUB_ENV
-          echo "INVENTORY_BASE_URL=http://13.204.227.253:4081/api/v1/inventory"         >> $GITHUB_ENV
-          echo "USER_BASE_URL=http://13.204.227.253:4080/api/v1/users"                  >> $GITHUB_ENV
-          echo "BIDDING_BASE_URL=http://13.204.227.253:6060/api/v1/bidding"             >> $GITHUB_ENV
-          echo "PRODUCT_DETAILS_BASE_URL=http://13.204.227.253:5080/api/v1/product-details" >> $GITHUB_ENV
-          echo "LOCATION_BASE_URL=http://13.204.227.253:8086/api/v1/locations"          >> $GITHUB_ENV
-          echo "RADIUS=10000"                                                            >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products"       >> $GITHUB_ENV
+          echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
+          echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
+          echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
+          echo "BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding"                  >> $GITHUB_ENV
+          echo "PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details"  >> $GITHUB_ENV
+          echo "LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations"               >> $GITHUB_ENV
+          echo "RADIUS=10000"                                                                >> $GITHUB_ENV
 
       # ── Restore fixed debug keystore (SHA-1 registered in Firebase) ─────────
       # SCRAPIT_DEBUG_KEYSTORE is the base64-encoded keystore file stored as a
