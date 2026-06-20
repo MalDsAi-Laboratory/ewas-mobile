@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/models/user_model.dart';
 import 'package:simple_ui/modules/auth/auth_controller.dart';
 import 'package:simple_ui/ui_utils/button_widgets.dart';
 import 'package:simple_ui/ui_utils/text_fields.dart';
@@ -86,7 +87,7 @@ class LoginWidget extends StatelessWidget {
                 () => GestureDetector(
                   onTap: controller.isLoading.value
                       ? null
-                      : () => controller.loginWithGoogle(),
+                      : () => _showRolePicker(context, controller),
                   child: Container(
                     width: double.infinity,
                     height: 52.h,
@@ -132,6 +133,123 @@ class LoginWidget extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+void _showRolePicker(BuildContext context, AuthController controller) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+    ),
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 40.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40.w,
+            height: 4.h,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2.r),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          BricolageText(
+            text: "I am a...",
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
+          ),
+          SizedBox(height: 8.h),
+          InterText(
+            text: "Choose how you want to use ScrapIt",
+            style: TextStyle(fontSize: 13.sp, color: Colors.grey),
+          ),
+          SizedBox(height: 24.h),
+          _RoleOption(
+            icon: Icons.sell_outlined,
+            title: "Seller",
+            subtitle: "I want to sell my e-waste",
+            onTap: () {
+              Navigator.pop(ctx);
+              controller.loginWithGoogle(role: UserRole.seller);
+            },
+          ),
+          SizedBox(height: 12.h),
+          _RoleOption(
+            icon: Icons.recycling_outlined,
+            title: "Recycler",
+            subtitle: "I collect and recycle e-waste",
+            onTap: () {
+              Navigator.pop(ctx);
+              controller.loginWithGoogle(role: UserRole.recycler);
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _RoleOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _RoleOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade200, width: 1.5),
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.r),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2E7D32).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(icon, color: const Color(0xFF2E7D32), size: 22.r),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BricolageText(
+                    text: title,
+                    style: TextStyle(
+                        fontSize: 15.sp, fontWeight: FontWeight.w600),
+                  ),
+                  InterText(
+                    text: subtitle,
+                    style:
+                        TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios_rounded,
+                size: 14.r, color: Colors.grey.shade400),
+          ],
+        ),
       ),
     );
   }

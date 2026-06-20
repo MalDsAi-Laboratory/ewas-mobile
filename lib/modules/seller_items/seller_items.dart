@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:simple_ui/modules/categories/categories.dart';
 import 'package:simple_ui/modules/orders/components/all_order_page_components.dart';
 import 'package:simple_ui/modules/orders/components/filters_bottom_sheet.dart';
 import 'package:simple_ui/modules/orders/controller/all_order_controller.dart';
@@ -55,6 +56,15 @@ class _SellerItemsScreenState extends State<SellerItemsScreen> {
         title: BricolageText(
           text: "My Orders",
           style: TextStyle(fontSize: 18.sp, color: Colors.black87),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Get.to(() => CategoriesPage()),
+        backgroundColor: AppColors.primaryColor,
+        icon: Icon(Icons.add, color: Colors.white),
+        label: Text(
+          "List Item",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
       body: SafeArea(
