@@ -38,9 +38,13 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _loginUser() async {
     try {
       final userCacheData = await SecureStorageServices().getUserModel();
+      final token = await SecureStorageServices().getAccessToken();
       await Future.delayed(const Duration(milliseconds: 1800));
       if (!mounted) return;
-      if (userCacheData != null) {
+      // Require BOTH a cached user and a stored token — if token is missing or
+      // was cleared after a 401/logout, send the user to login instead of
+      // auto-navigating to AppScreen with an expired/missing session.
+      if (userCacheData != null && token != null) {
         Get.offAll(() => AppScreen(user: UserModel.fromJson(userCacheData)));
       } else {
         Get.offAll(() => AuthScreen());

@@ -12,7 +12,15 @@ void main() async {
   await appStartServices();
 
   // On any 401 response, clear storage and redirect to login.
-  setUnauthorizedCallback(() => Get.offAll(() => AuthScreen()));
+  setUnauthorizedCallback(() {
+    Get.snackbar(
+      'Session expired',
+      'Please log in again.',
+      duration: const Duration(seconds: 3),
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    Get.offAll(() => AuthScreen());
+  });
 
   runApp(MyApp());
 }
