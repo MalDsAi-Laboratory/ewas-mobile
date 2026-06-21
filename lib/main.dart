@@ -30,13 +30,21 @@ void main() async {
     if (Get.isRegistered<MainScreenController>()) {
       Get.delete<MainScreenController>(force: true);
     }
-    Get.snackbar(
-      'Session expired',
-      'Please log in again.',
-      duration: const Duration(seconds: 3),
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    Get.offAll(() => AuthScreen());
+    // If already on the auth screen (e.g. 401 fired during registration's
+    // location call), don't navigate again — doing so disposes the new
+    // TabController before AuthScreen can use it, crashing the UI.
+    final onAuthScreen = Get.currentRoute.contains('AuthScreen') ||
+        Get.currentRoute.contains('auth') ||
+        Get.currentRoute == '/';
+    if (!onAuthScreen) {
+      Get.snackbar(
+        'Session expired',
+        'Please log in again.',
+        duration: const Duration(seconds: 3),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      Get.offAll(() => AuthScreen());
+    }
   });
 
   runApp(MyApp());

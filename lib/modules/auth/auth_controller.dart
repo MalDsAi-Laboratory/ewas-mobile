@@ -125,6 +125,15 @@ class AuthController extends GetxController {
       isLoading.value = true;
       Map<String, dynamic> response = await createUserApi(data: registrationPayload);
       if (response['status']) {
+        // Save the JWT from the registration response BEFORE calling the
+        // location service. Without this the location call goes out with no
+        // Authorization header → 401 → _onUnauthorized fires mid-registration,
+        // navigates back to AuthScreen, and crashes the TabController.
+        final registrationToken = response['data']?['token'] as String?;
+        if (registrationToken != null) {
+          await SecureStorageServices().setAccessToken(registrationToken);
+        }
+
         // Persist user model without password.
         final userModel = UserModel(
           userId: userId.value,
@@ -157,6 +166,10 @@ class AuthController extends GetxController {
         } catch (e) {
           log("Warning: seller-location service unavailable: $e");
         }
+
+        // Clear the temp token so the splash screen doesn't auto-login;
+        // the user should sign in manually to complete their session.
+        await SecureStorageServices().clearTokens();
 
         tabController.animateTo(0);
         clearFields();
