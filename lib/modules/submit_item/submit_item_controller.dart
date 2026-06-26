@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 class SubmitItemController extends GetxController {
   var volumeController = TextEditingController();
   var basePriceController = TextEditingController();
+  var descriptionController = TextEditingController();
   bool isBtnActive = false;
   final ImagePicker _picker = ImagePicker();
   var images = <File>[];
@@ -182,6 +183,7 @@ class SubmitItemController extends GetxController {
         'productName': categoriesController.selectedSubCategory?.productName,
         'units': categoriesController.selectedSubCategory
             ?.units, // Try to extract units from volume text if present
+        'description': descriptionController.text.trim(),
       };
       await metadataFile.writeAsString(jsonEncode(metadata));
 
@@ -264,6 +266,9 @@ class SubmitItemController extends GetxController {
             .selectedSubCategory!
             .productId
             .toString(),
+        description: descriptionController.text.trim().isEmpty
+            ? null
+            : descriptionController.text.trim(),
       );
       Map<String, dynamic> response =
           await createInventoryApi(data: inventoryModel);

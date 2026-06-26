@@ -15,6 +15,7 @@ class InventoryModel {
   String? imgPath5;
   String? dateAndTime;
   String? units;
+  String? description;
 
   InventoryModel({
     this.productId,
@@ -31,6 +32,7 @@ class InventoryModel {
     this.dateAndTime,
     this.units,
     this.mbp,
+    this.description,
   });
 
   InventoryModel.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class InventoryModel {
     dateAndTime = json['dateAndTime'];
     units = json['units'];
     mbp = json['mbp'];
+    description = json['description'];
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -75,6 +78,7 @@ class InventoryModel {
     data['dateAndTime'] = this.dateAndTime;
     data['units'] = this.units;
     data['mbp'] = this.mbp;
+    data['description'] = this.description;
     return data;
   }
 }

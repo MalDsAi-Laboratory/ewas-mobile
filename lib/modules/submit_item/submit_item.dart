@@ -221,6 +221,55 @@ class SubmitItemComponent extends StatelessWidget {
                   height: 20.h,
                 ),
                 BricolageText(
+                  text: "Description",
+                  style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87),
+                ),
+                SizedBox(height: 8.h),
+                GetBuilder<SubmitItemController>(builder: (controller) {
+                  return TextFormField(
+                    controller: controller.descriptionController,
+                    onChanged: (value) {
+                      controller.update();
+                    },
+                    maxLines: 3,
+                    style: TextStyle(fontSize: 14.sp),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 232, 232, 232),
+                              width: 0)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(255, 232, 232, 232),
+                              width: 0)),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                          borderSide: const BorderSide(
+                              color: Color.fromARGB(0, 255, 255, 255),
+                              width: 0)),
+                      hintText: "eg. Lightly used, good condition",
+                      hintStyle: GoogleFonts.bricolageGrotesque(
+                          textStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 111, 111, 111),
+                        fontWeight: FontWeight.w400,
+                      )),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 19.w, vertical: 16.h),
+                      filled: true,
+                      fillColor: Color.fromRGBO(244, 244, 244, 1.0),
+                    ),
+                  );
+                }),
+                SizedBox(
+                  height: 20.h,
+                ),
+                BricolageText(
                   text: "Image Upload*",
                   style: TextStyle(
                       fontSize: 16.sp,
