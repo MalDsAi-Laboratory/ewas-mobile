@@ -190,11 +190,18 @@ class _MapScreenState extends State<MapScreen> {
               ),
               children: [
                 TileLayer(
+                  // CARTO basemaps — built for embedding in apps, no API key,
+                  // not subject to OSM's volunteer-server tile usage policy/bans.
                   urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
-                  // Required by OSM tile usage policy — without this tiles return 403
+                      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+                  subdomains: ['a', 'b', 'c', 'd'],
                   userAgentPackageName: 'com.ewaste.ewas',
+                ),
+                RichAttributionWidget(
+                  attributions: [
+                    TextSourceAttribution('© OpenStreetMap contributors'),
+                    TextSourceAttribution('© CARTO'),
+                  ],
                 ),
                 if (locationController.selectedLatLng.value != null)
                   MarkerLayer(
