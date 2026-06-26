@@ -14,9 +14,12 @@ extension ProductCatalogueAPIPathExtension on ProductCatalogueAPIPath {
   String get path {
     switch (this) {
       case ProductCatalogueAPIPath.categories:
-        return "/api/products/categories";
+        // baseUrl already ends in /api/v1/products — Dio does plain string
+        // concatenation (baseUrl + path), not URI resolution, so this must
+        // be just the suffix or the request 404s against a doubled path.
+        return "/categories";
       case ProductCatalogueAPIPath.products:
-        return "/api/products/category/";
+        return "/category/";
     }
   }
 }
