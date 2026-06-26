@@ -91,6 +91,8 @@ class _LocateRecyclersState extends State<LocateRecyclers> {
                         urlTemplate:
                             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                         subdomains: ['a', 'b', 'c'],
+                        // Required by OSM tile usage policy — without this tiles return 403
+                        userAgentPackageName: 'com.ewaste.ewas',
                       ),
                       // 🟢 Add Circle Layer for User Location Radius
                       if (locationController.currentLocation.value != null)
