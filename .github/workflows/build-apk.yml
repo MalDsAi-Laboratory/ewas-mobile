@@ -1,8 +1,8 @@
-name: Build & Release APK
+name: Build & Release
 
 on:
   push:
-    branches: [scrapit-audit]   # main has no Flutter source — don't auto-build from it
+    branches: [scrapit-audit]
   workflow_dispatch:
     inputs:
       environment:
@@ -13,59 +13,48 @@ on:
         options: [prod, dev]
 
 jobs:
+  # ── APK build (debug keystore, for side-loading & testing) ────────────────
   build-apk:
-    name: Build Android APK
+    name: Build Android APK (testing)
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # required to create GitHub Releases and upload assets
+      contents: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.41.8'
           channel: stable
-          cache: true   # caches the Flutter SDK itself
+          cache: true
 
-      # Cache Gradle dependencies + Android SDK CMake so they aren't
-      # re-downloaded from scratch on every run (saves ~2-3 min per build).
-      - name: Cache Gradle & Android SDK
-        uses: actions/cache@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             /usr/local/lib/android/sdk/cmake
           key: ${{ runner.os }}-gradle-cmake-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-cmake-
+          restore-keys: ${{ runner.os }}-gradle-cmake-
 
-      # Cache pub packages separately so flutter pub get is instant on cache hit.
-      - name: Cache pub packages
-        uses: actions/cache@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
+          restore-keys: ${{ runner.os }}-pub-
 
-      - name: Install dependencies
-        run: flutter pub get
+      - run: flutter pub get
 
-      # ── Determine backend URLs based on environment ──────────────────────
       - name: Set environment URLs (prod)
         if: github.event.inputs.environment != 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products"       >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/products"          >> $GITHUB_ENV
           echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
           echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
           echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
@@ -77,7 +66,7 @@ jobs:
       - name: Set environment URLs (dev)
         if: github.event.inputs.environment == 'dev'
         run: |
-          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/v1/products"       >> $GITHUB_ENV
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/products"          >> $GITHUB_ENV
           echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
           echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
           echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
@@ -86,21 +75,13 @@ jobs:
           echo "LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations"               >> $GITHUB_ENV
           echo "RADIUS=10000"                                                                >> $GITHUB_ENV
 
-      # ── Restore fixed debug keystore (SHA-1 registered in Firebase) ─────────
-      # SCRAPIT_DEBUG_KEYSTORE is the base64-encoded keystore file stored as a
-      # GitHub secret.  Decoding it here gives us the same SHA-1 every build,
-      # so Google Sign-In works.  Alias/passwords match what keytool used when
-      # the keystore was generated (/tmp/scrapit-debug.keystore).
       - name: Restore fixed debug keystore
         run: |
           mkdir -p $HOME/.android
           echo "${{ secrets.SCRAPIT_DEBUG_KEYSTORE }}" | base64 --decode > $HOME/.android/debug.keystore
-
-          # Write key.properties so build.gradle can find it
           printf "storeFile=%s/.android/debug.keystore\nstorePassword=android\nkeyAlias=androiddebugkey\nkeyPassword=android\n" \
             "$HOME" > android/key.properties
 
-      # ── Build release APK (split per ABI — arm64 ~17MB vs fat ~50MB) ────────
       - name: Build APK
         run: |
           flutter build apk --release --split-per-abi \
@@ -113,10 +94,6 @@ jobs:
             --dart-define=LOCATION_BASE_URL=${{ env.LOCATION_BASE_URL }} \
             --dart-define=RADIUS=${{ env.RADIUS }}
 
-      # ── Rename APKs with version + environment ────────────────────────────
-      # split-per-abi produces: app-arm64-v8a-release.apk (modern phones)
-      #                         app-armeabi-v7a-release.apk (older phones)
-      #                         app-x86_64-release.apk (emulators)
       - name: Rename APKs
         run: |
           ENV_TAG=${{ github.event.inputs.environment || 'prod' }}
@@ -127,30 +104,123 @@ jobs:
             mv "$f" "ScrapIt-${ABI}-${ENV_TAG}-${SHORT_SHA}.apk"
           done
 
-      # ── Upload to GitHub Release ──────────────────────────────────────────
-      - name: Create GitHub Release
+      - name: Upload APK to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: "ScrapIt Build #${{ github.run_number }} (${{ github.event.inputs.environment || 'prod' }})"
           body: |
-            ## ScrapIt Android APK
+            ## ScrapIt Android APK (debug-signed, for testing only)
 
             **Environment:** ${{ github.event.inputs.environment || 'prod' }}
             **Commit:** ${{ github.sha }}
-            **Branch:** ${{ github.ref_name }}
 
-            ### Install on Android
-            1. Download the APK below
-            2. On your phone: Settings → Security → Allow unknown sources
-            3. Open the downloaded APK and install
+            ### Install
+            1. Download `ScrapIt-arm64-v8a-*` (modern phones) or `armeabi-v7a` (older)
+            2. Settings → Security → Allow unknown sources → install
 
-            > ⚠️ This is a development build. Not signed with a production keystore.
+            > ⚠️ Signed with debug keystore. For Play Store use the AAB artifact below.
           files: build/app/outputs/flutter-apk/ScrapIt-*.apk
           draft: false
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Landing page is hosted on Cloudflare Pages (auto-deploys on push)
-  # No GitHub Pages deploy step needed
+  # ── AAB build (production upload keystore, for Play Store) ────────────────
+  build-aab:
+    name: Build Android AAB (Play Store)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.8'
+          channel: stable
+          cache: true
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-aab-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-aab-
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - run: flutter pub get
+
+      - name: Set environment URLs (prod)
+        if: github.event.inputs.environment != 'dev'
+        run: |
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/products"          >> $GITHUB_ENV
+          echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
+          echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
+          echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
+          echo "BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding"                  >> $GITHUB_ENV
+          echo "PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details"  >> $GITHUB_ENV
+          echo "LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations"               >> $GITHUB_ENV
+          echo "RADIUS=10000"                                                                >> $GITHUB_ENV
+
+      - name: Set environment URLs (dev)
+        if: github.event.inputs.environment == 'dev'
+        run: |
+          echo "PRODUCT_CATALOGUE_BASE_URL=http://151.185.45.95:4082/api/products"          >> $GITHUB_ENV
+          echo "ORDER_BASE_URL=http://151.185.45.95:8083/api/v1/orders"                     >> $GITHUB_ENV
+          echo "INVENTORY_BASE_URL=http://151.185.45.95:4081/api/v1/inventory"              >> $GITHUB_ENV
+          echo "USER_BASE_URL=http://151.185.45.95:4080/api/v1/users"                       >> $GITHUB_ENV
+          echo "BIDDING_BASE_URL=http://151.185.45.95:6060/api/v1/bidding"                  >> $GITHUB_ENV
+          echo "PRODUCT_DETAILS_BASE_URL=http://151.185.45.95:5080/api/v1/product-details"  >> $GITHUB_ENV
+          echo "LOCATION_BASE_URL=http://151.185.45.95:8086/api/v1/locations"               >> $GITHUB_ENV
+          echo "RADIUS=10000"                                                                >> $GITHUB_ENV
+
+      - name: Restore production upload keystore
+        run: |
+          echo "${{ secrets.SCRAPIT_UPLOAD_KEYSTORE }}" | base64 --decode > $HOME/scrapit-upload.jks
+          printf "storeFile=%s/scrapit-upload.jks\nstorePassword=%s\nkeyAlias=scrapit-upload\nkeyPassword=%s\n" \
+            "$HOME" \
+            "${{ secrets.SCRAPIT_UPLOAD_STORE_PASSWORD }}" \
+            "${{ secrets.SCRAPIT_UPLOAD_KEY_PASSWORD }}" \
+            > android/key.properties
+
+      - name: Build AAB
+        run: |
+          flutter build appbundle --release \
+            --dart-define=PRODUCT_CATALOGUE_BASE_URL=${{ env.PRODUCT_CATALOGUE_BASE_URL }} \
+            --dart-define=ORDER_BASE_URL=${{ env.ORDER_BASE_URL }} \
+            --dart-define=INVENTORY_BASE_URL=${{ env.INVENTORY_BASE_URL }} \
+            --dart-define=USER_BASE_URL=${{ env.USER_BASE_URL }} \
+            --dart-define=BIDDING_BASE_URL=${{ env.BIDDING_BASE_URL }} \
+            --dart-define=PRODUCT_DETAILS_BASE_URL=${{ env.PRODUCT_DETAILS_BASE_URL }} \
+            --dart-define=LOCATION_BASE_URL=${{ env.LOCATION_BASE_URL }} \
+            --dart-define=RADIUS=${{ env.RADIUS }}
+
+      - name: Rename AAB
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          mv build/app/outputs/bundle/release/app-release.aab \
+             build/app/outputs/bundle/release/ScrapIt-${SHORT_SHA}.aab
+
+      - name: Upload AAB to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "ScrapIt Build #${{ github.run_number }} (${{ github.event.inputs.environment || 'prod' }})"
+          files: build/app/outputs/bundle/release/ScrapIt-*.aab
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
